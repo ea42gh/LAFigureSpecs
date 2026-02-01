@@ -2,7 +2,7 @@
 
 This module builds an SVD table by computing the eigen-decomposition of
 ``A^T A`` and converting eigenvalues to singular values. It emits a dictionary
-compatible with :func:`matrixlayout.eigproblem_tex` (case="SVD").
+compatible with :func:`matrixlayout.render_eig_tex` (case="SVD").
 """
 
 from __future__ import annotations
@@ -57,7 +57,7 @@ def svd_tbl_spec_from_right_singular_vectors(
     Returns
     -------
     dict
-        Compatible with :func:`matrixlayout.eigproblem_tex` (case="SVD").
+        Compatible with :func:`matrixlayout.render_eig_tex` (case="SVD").
     """
 
     A = to_sympy_matrix(A)
@@ -171,3 +171,43 @@ def svd_tbl_spec(
         sigma_digits=sigma_digits,
         vec_digits=vec_digits,
     )
+
+
+def svd_matrices_from_spec(
+    eig: Dict[str, Any],
+    *,
+    reduced: bool = True,
+) -> Tuple[sym.Matrix, sym.Matrix, sym.Matrix, int]:
+    """Assemble (U, Σ, V, rank) from an SVD spec dictionary.
+
+    Parameters
+    ----------
+    eig:
+        Spec dict as returned by :func:`svd_tbl_spec`.
+    reduced:
+        If true, drop zero singular value groups.
+    """
+
+    sigmas = list(eig.get("sigma", []))
+    mas = [int(m) for m in eig.get("ma", [])]
+    qvecs = list(eig.get("qvecs", []))
+    uvecs = list(eig.get("uvecs", []))
+
+    cols_V: List[sym.Matrix] = []
+    cols_U: List[sym.Matrix] = []
+    full_sigma: List[Any] = []
+    rank = 0
+    for sigma, m, vgrp, ugrp in zip(sigmas, mas, qvecs, uvecs):
+        keep = True
+        if reduced and getattr(sigma, "is_zero", False):
+            keep = False
+        if keep:
+            rank += m
+            full_sigma.extend([sigma] * m)
+            cols_V.extend([sym.Matrix(v) for v in vgrp])
+            cols_U.extend([sym.Matrix(v) for v in ugrp])
+
+    V = sym.Matrix.hstack(*cols_V) if cols_V else sym.Matrix([])
+    U = sym.Matrix.hstack(*cols_U) if cols_U else sym.Matrix([])
+    Σ = sym.diag(*full_sigma) if full_sigma else sym.Matrix([])
+    return U, Σ, V, rank

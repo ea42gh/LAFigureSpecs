@@ -10,8 +10,14 @@ The core rule is strict layering:
 - matrixlayout does **not** do linear algebra; it only formats and lays out.
 """
 
-from .eig import EigenDecomposition, eig_spec_from_eigenvects, eig_tbl_spec, eigendecomposition
-from .svd import svd_tbl_spec, svd_tbl_spec_from_right_singular_vectors
+from .eig import (
+    EigenDecomposition,
+    eig_spec_from_eigenvects,
+    eig_tbl_spec,
+    eigendecomposition,
+    eig_matrices_from_spec,
+)
+from .svd import svd_tbl_spec, svd_tbl_spec_from_right_singular_vectors, svd_matrices_from_spec
 from .convenience import (
     eig_tbl_bundle,
     eig_tbl_svg,
@@ -26,8 +32,9 @@ from .qr import (
     qr_tbl_layout_spec,
     qr_tbl_spec,
     qr_tbl_spec_from_matrices,
+    qr_matrices_from_grid,
 )
-from .convenience_qr import qr as qr_svg, qr_tbl_bundle as qr_tbl_bundle, qr_tbl_tex, qr_tbl_svg, gram_schmidt_qr
+from .convenience_qr import qr, qr_tbl_bundle as qr_tbl_bundle, qr_tbl_tex, qr_tbl_svg, gram_schmidt_qr
 from .backsub import (
     backsubstitution_tex,
     linear_system_tex,
@@ -35,10 +42,10 @@ from .backsub import (
 )
 from .ge import ge_trace, trace_to_layer_matrices
 from .ge_convenience import show_ge
-from .convenience_ge import ge as ge, ge as svg, ge_tbl_bundle, ge_tbl_layout_spec, ge_tbl_spec, ge_tbl_tex, ge_tbl_svg
-from matrixlayout.ge import grid_svg, grid_tex
-from matrixlayout.qr import qr_grid_svg, qr_grid_tex
-from matrixlayout import eigproblem_svg, eigproblem_tex
+from .convenience_ge import ge as ge, ge_tbl_bundle, ge_tbl_layout_spec, ge_tbl_spec, ge_tbl_tex, ge_tbl_svg
+from matrixlayout.ge import render_ge_svg, render_ge_tex
+from matrixlayout.qr import render_qr_svg, render_qr_tex
+from matrixlayout import render_eig_svg, render_eig_tex
 from .formatting import (
     decorate_tex_entries,
     latexify,
@@ -72,8 +79,10 @@ __all__ = [
     "eigendecomposition",
     "eig_spec_from_eigenvects",
     "eig_tbl_spec",
+    "eig_matrices_from_spec",
     "svd_tbl_spec",
     "svd_tbl_spec_from_right_singular_vectors",
+    "svd_matrices_from_spec",
     "eig_tbl_tex",
     "eig_tbl_svg",
     "eig_tbl_bundle",
@@ -84,6 +93,7 @@ __all__ = [
     "gram_schmidt_qr_matrices",
     "qr_tbl_spec",
     "qr_tbl_spec_from_matrices",
+    "qr_matrices_from_grid",
     "qr_tbl_layout_spec",
     "qr_tbl_tex",
     "qr_tbl_svg",
@@ -101,14 +111,13 @@ __all__ = [
     "show_ge",
     "ge_tbl_bundle",
     "ge",
-    "svg",
-    "grid_svg",
-    "grid_tex",
-    "qr_grid_svg",
-    "qr_grid_tex",
-    "eigproblem_svg",
-    "eigproblem_tex",
-    "qr_svg",
+    "render_ge_svg",
+    "render_ge_tex",
+    "render_qr_svg",
+    "render_qr_tex",
+    "render_eig_svg",
+    "render_eig_tex",
+    "qr",
     "latexify",
     "make_decorator",
     "decorate_tex_entries",

@@ -2,13 +2,34 @@
 
 Key entry points (see module docstrings for details).
 
+Canonical import:
+
+`import la_figures`
+
+Use `la_figures.*_spec` for algorithm/spec building and `la_figures.*_svg` for
+rendered output.
+
+## Which function should I call?
+
+- If you want compute + render in one call (recommended):
+  - `ge_tbl_svg`, `qr_tbl_svg`, `eig_tbl_svg`, `svd_tbl_svg`
+- If you want compute + inspect intermediates + render:
+  - `*_tbl_bundle` (returns standardized bundle:
+    `{"spec", "tex", "svg", "data", "render_error"}`)
+  - Access GE intermediates via `bundle["data"]["..."]` (not top-level keys).
+- If you already have prepared matrices/specs and want low-level renderer control:
+  - `render_ge_*`, `render_qr_*`, `render_eig_*` (re-exported matrixlayout functions)
+
 ## GE
 
 - `la_figures.ge_trace(A, **opts)`: generate a GE trace with pivots and steps. Inputs: matrix-like `A`. Returns: trace dict. Use when you need step-by-step elimination.
 - `la_figures.trace_to_layer_matrices(trace)`: convert a trace to matrix layers. Inputs: trace dict. Returns: list of grid matrices.
 - `la_figures.ge_tbl_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
 - `la_figures.ge_tbl_layout_spec(A, **opts)`: build a typed GE layout spec. Inputs: matrix-like `A`. Returns: typed spec.
-- `la_figures.ge_tbl_bundle(A, **opts)`: build a spec plus TeX/submatrix metadata. Returns: `(spec, span_map, tex)`.
+- `la_figures.ge_tbl_bundle(A, **opts)`: build a GE bundle. Returns standardized bundle; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
+- `la_figures.ge_tbl_tex(A, **opts)`: render GE TeX from the spec path.
+- `la_figures.ge_tbl_svg(A, **opts)`: render GE SVG from the spec path.
+- `la_figures.ge(matrices, **opts)`: legacy-friendly GE stack renderer.
 
 Example options:
 `ge_tbl_spec(A, show_pivots=True, pivoting="partial", gj=False)`
@@ -19,6 +40,12 @@ Example options:
 - `la_figures.gram_schmidt_qr_matrices(A, **opts)`: compute QR grid with rank-deficient handling. Returns: list of grid matrices.
 - `la_figures.qr_tbl_spec(A, W, **opts)`: build a QR spec for matrixlayout. Returns: spec dict.
 - `la_figures.qr_tbl_layout_spec(A, W, **opts)`: build a typed QR layout spec. Returns: typed spec.
+- `la_figures.qr_matrices_from_grid(mats)`: extract `(A, W, WtA, WtW, S, Qt, Q, R)` from the QR grid.
+- `la_figures.qr_tbl_tex(A, W, **opts)`: render QR TeX from the spec path.
+- `la_figures.qr_tbl_svg(A, W, **opts)`: render QR SVG from the spec path.
+- `la_figures.qr_tbl_bundle(A, W, **opts)`: return standardized bundle.
+- `la_figures.qr(matrices, **opts)`: render QR SVG from a precomputed matrix stack.
+- `la_figures.gram_schmidt_qr(A, W, **opts)`: compute Gram-Schmidt matrices and render QR SVG.
 
 Example options:
 `qr_tbl_spec(A, W, array_names=True, rank_deficient=True)`
@@ -26,8 +53,27 @@ Example options:
 ## Eigen/SVD
 
 - `la_figures.eig_tbl_spec(A, **opts)`: build eigenproblem table specs. Returns: spec dict.
+- `la_figures.eig_matrices_from_spec(spec, orthonormal=True)`: assemble `(Λ, V)` from an eigen spec.
 - `la_figures.svd_tbl_spec(A, **opts)`: build SVD table specs. Returns: spec dict.
 - `la_figures.svd_tbl_spec_from_right_singular_vectors(V, **opts)`: build SVD specs from given vectors. Returns: spec dict.
+- `la_figures.svd_matrices_from_spec(spec, reduced=True)`: assemble `(U, Σ, V, rank)` from an SVD spec.
+- `la_figures.eig_tbl_tex(A, **opts)`: render eigen table TeX.
+- `la_figures.eig_tbl_svg(A, **opts)`: render eigen table SVG.
+- `la_figures.eig_tbl_bundle(A, **opts)`: return standardized bundle.
+- `la_figures.svd_tbl_tex(A, **opts)`: render SVD table TeX.
+- `la_figures.svd_tbl_svg(A, **opts)`: render SVD table SVG.
+- `la_figures.svd_tbl_bundle(A, **opts)`: return standardized bundle.
+
+## Re-exported matrixlayout renderers (advanced)
+
+These are re-exported for convenience and parity with matrixlayout:
+
+- `la_figures.render_ge_tex`, `la_figures.render_ge_svg`
+- `la_figures.render_qr_tex`, `la_figures.render_qr_svg`
+- `la_figures.render_eig_tex`, `la_figures.render_eig_svg`
+
+Prefer the higher-level `*_tbl_*` wrappers unless you specifically need direct
+matrixlayout rendering entry points.
 
 ## Backsubstitution
 

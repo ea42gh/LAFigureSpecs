@@ -111,6 +111,25 @@ def gram_schmidt_qr_matrices(
     ]
 
 
+def qr_matrices_from_grid(mats: Sequence[Sequence[sym.Matrix]]) -> Dict[str, Any]:
+    """Extract QR-related matrices from a Gram–Schmidt QR grid.
+
+    Returns a dict with keys: A, W, WtA, WtW, S, Qt, Q, R.
+    """
+
+    grid = list(mats)
+    row1, row2, row3 = (list(r) for r in grid)
+    A = row1[2]
+    W = row1[3]
+    WtA = row2[2]
+    WtW = row2[3]
+    S = row3[0]
+    Qt = row3[1]
+    R = row3[2]
+    Q = Qt.T if Qt is not None else None
+    return dict(A=A, W=W, WtA=WtA, WtW=WtW, S=S, Qt=Qt, Q=Q, R=R)
+
+
 def qr_tbl_spec(
     A: Any,
     W: Any,
@@ -126,7 +145,7 @@ def qr_tbl_spec(
     decorators: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
 ) -> Dict[str, Any]:
-    """Return a layout spec for :func:`matrixlayout.qr.qr_grid_tex`."""
+    """Return a layout spec for :func:`matrixlayout.qr.render_qr_tex`."""
 
     matrices = compute_qr_matrices(A, W)
     return {

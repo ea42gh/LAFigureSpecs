@@ -15,4 +15,4 @@ la_figures provides linear algebra algorithms that produce layout specs for the
 - See `getting-started.md` for minimal examples.
 - See `specs.md` for the spec fields and parameters.
 - See `interop.md` for Julia usage.
-- See `notebooks/` for problem-type walkthroughs.
+- See `notebooks/` for problem-type walkthroughs and top-level API notebooks.

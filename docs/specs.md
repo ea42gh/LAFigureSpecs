@@ -52,7 +52,9 @@ GE convenience wrappers render TeX to SVG via matrixlayout. Shared renderer
 parameters: `toolchain_name`, `crop`, `padding`, `output_dir`, `output_stem`,
 `frame`.
 
-`svg` parameters (subset shown):
+For most users, prefer `ge_tbl_svg(...)` over direct `render_ge_svg(...)`.
+
+`ge(...)` parameters (subset shown):
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -67,6 +69,13 @@ parameters: `toolchain_name`, `crop`, `padding`, `output_dir`, `output_stem`,
 
 `ge_tbl_tex`, `ge_tbl_svg`, `ge_tbl_bundle` accept the same algorithmic
 parameters as `ge_tbl_spec` plus renderer options (for SVG).
+
+Bundle return contract (`ge_tbl_bundle`):
+
+- `spec`, `tex`, `svg`, `data`, `render_error`
+- GE-specific intermediates are in `data`:
+  - `data["trace"]`, `data["decor"]`, `data["layers"]`, `data["typed_layout"]`
+  - optional `data["submatrix_spans"]`
 
 Note on RHS separators:
 
@@ -93,7 +102,7 @@ vertical lines only appear in the matrix rows.
 | `decorators` | list | None | Entry decorators. |
 | `strict` | bool | None | Error on invalid decorators. |
 
-`qr_svg` parameters (subset shown):
+`qr(...)` / `qr_tbl_svg(...)` parameters (subset shown):
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -104,6 +113,10 @@ vertical lines only appear in the matrix rows.
 
 `qr_tbl_tex`, `qr_tbl_svg`, `qr_tbl_bundle` follow `qr_tbl_spec` plus renderer
 options (for SVG).
+
+Bundle return contract (`qr_tbl_bundle`): `spec`, `tex`, `svg`, `data`, `render_error`.
+
+For most users, prefer `qr_tbl_svg(...)` over direct `render_qr_svg(...)`.
 
 QR callout labels are nudged vertically to align with their arrows. For 2x2
 inputs, the Q^T label uses a longer arrow to avoid overlapping the R label.
@@ -129,3 +142,9 @@ inputs, the Q^T label uses a longer arrow to avoid overlapping the R label.
 
 `eig_tbl_tex`, `eig_tbl_svg`, `svd_tbl_tex`, `svd_tbl_svg` accept `A` plus the
 corresponding spec parameters, along with renderer options (for SVG).
+
+Bundle return contract (`eig_tbl_bundle`, `svd_tbl_bundle`):
+`spec`, `tex`, `svg`, `data`, `render_error`.
+
+For most users, prefer `eig_tbl_svg(...)` / `svd_tbl_svg(...)` over direct
+`render_eig_svg(...)`.

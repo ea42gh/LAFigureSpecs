@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any
+from typing import Any, Dict, Optional
 
 
 def norm_str(x: Any) -> Any:
@@ -39,4 +39,39 @@ def norm_padding(padding: Any) -> Any:
     return tuple(seq)
 
 
-__all__ = ["norm_str", "norm_padding"]
+def resolve_output_dir(*, output_dir: Any = None, tmp_dir: Any = None) -> Any:
+    """Resolve output directory aliases.
+
+    ``output_dir`` is canonical. When omitted, ``tmp_dir`` is treated as a
+    synonym for backward compatibility.
+    """
+    return output_dir if output_dir is not None else tmp_dir
+
+
+def make_bundle(
+    *,
+    spec: Dict[str, Any],
+    tex: str,
+    svg: Optional[str],
+    data: Optional[Dict[str, Any]] = None,
+    render_error: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Create a standardized convenience bundle contract.
+
+    Canonical keys:
+    - ``spec``: render spec dict
+    - ``tex``: rendered TeX source
+    - ``svg``: rendered SVG string or ``None`` if unavailable
+    - ``data``: optional compute-time metadata/results
+    - ``render_error``: optional SVG-render error text
+    """
+    return {
+        "spec": spec,
+        "tex": tex,
+        "svg": svg,
+        "data": data or {},
+        "render_error": render_error,
+    }
+
+
+__all__ = ["norm_str", "norm_padding", "resolve_output_dir", "make_bundle"]

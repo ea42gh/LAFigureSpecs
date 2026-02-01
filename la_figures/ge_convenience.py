@@ -5,7 +5,7 @@ This module is intentionally thin: it ties together
 - :func:`la_figures.ge.ge_trace` (algorithmic trace)
 - :func:`la_figures.ge.decorate_ge` (data-only decorations)
 - :func:`la_figures.ge.trace_to_layer_matrices` (matrix stack)
-- :func:`matrixlayout.ge.grid_tex` / :func:`matrixlayout.ge.grid_svg` (layout/render)
+- :func:`matrixlayout.ge.render_ge_tex` / :func:`matrixlayout.ge.render_ge_svg` (layout/render)
 
 The TeX helpers do **not** call any toolchains.
 SVG helpers call the strict rendering boundary in :mod:`matrixlayout`.
@@ -20,6 +20,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify, make_decorator
+from .convenience_utils import make_bundle, resolve_output_dir
 
 
 def _matrix_shape(mat: Any) -> Tuple[int, int]:
@@ -732,7 +733,7 @@ def ge_tbl_spec(
     variable_colors: Sequence[str] = ("red", "black"),
     strict: Optional[bool] = None,
 ) -> Dict[str, Any]:
-    """Return a layout spec for :func:`matrixlayout.ge.grid_tex`.
+    """Return a layout spec for :func:`matrixlayout.ge.render_ge_tex`.
 
     The returned dict contains only primitives + nested lists.
     """
@@ -861,32 +862,11 @@ def ge(
     **render_opts: Any,
 ) -> str:
     """Convenience wrapper for the GE rendering surface."""
-
-    output_stem: Optional[str] = None
-    if keep_file:
-        import os
-        from pathlib import Path
-
-        p = Path(str(keep_file))
-        suffix = p.suffix.lower()
-        if suffix in (".tex", ".svg", ".pdf", ".dvi", ".xdv"):
-            output_stem = p.stem
-        else:
-            output_stem = p.name
-        if output_dir is None:
-            if p.is_absolute():
-                output_dir = str(p.parent)
-            else:
-                if str(p.parent) not in ("", "."):
-                    if tmp_dir:
-                        output_dir = str(Path(tmp_dir) / p.parent)
-                    else:
-                        output_dir = str(p.parent)
-                elif tmp_dir:
-                    output_dir = tmp_dir
-
-    if output_dir is None and tmp_dir:
-        output_dir = tmp_dir
+    output_dir, output_stem = _resolve_legacy_output_targets(
+        keep_file=keep_file,
+        tmp_dir=tmp_dir,
+        output_dir=output_dir,
+    )
 
     pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
     pivot_locs = (
@@ -895,139 +875,50 @@ def ge(
         else None
     )
 
-    codebefore: List[str] = []
-    needs_medium_nodes = False
-    if bg_for_entries:
-        needs_medium_nodes = True
-        specs = bg_for_entries
-        if isinstance(specs, list) and specs and all(isinstance(elem, list) for elem in specs):
-            if len(specs) == 5 and not any(isinstance(e, list) for e in specs[0:2]):
-                specs = [specs]
-        if not isinstance(specs, list):
-            specs = [specs]
-        for spec in specs:
-            if not isinstance(spec, (list, tuple)) or len(spec) < 3:
-                continue
-            gM, gN, entries = spec[0], spec[1], spec[2]
-            color = spec[3] if len(spec) > 3 else "red!15"
-            pt = spec[4] if len(spec) > 4 else 0
-            if not isinstance(entries, (list, tuple)):
-                entries = [entries]
-            for entry in entries:
-                if isinstance(entry, (list, tuple)) and len(entry) == 2 and all(isinstance(x, (list, tuple)) for x in entry):
-                    (i0, j0), (i1, j1) = entry
-                    c0 = _grid_cell_coord(matrices, gM=int(gM), gN=int(gN), i=int(i0), j=int(j0), index_base=1)
-                    c1 = _grid_cell_coord(matrices, gM=int(gM), gN=int(gN), i=int(i1), j=int(j1), index_base=1)
-                    fit = f"({c0[1:-1]}-medium) ({c1[1:-1]}-medium)"
-                else:
-                    i0, j0 = entry
-                    c0 = _grid_cell_coord(matrices, gM=int(gM), gN=int(gN), i=int(i0), j=int(j0), index_base=1)
-                    fit = f"({c0[1:-1]}-medium)"
-                codebefore.append(
-                    rf"\tikz \node [fill={color}, inner sep = {pt}pt, fit = {fit}] {{}} ;"
-                )
+    codebefore = _legacy_bg_for_entries_to_codebefore(matrices, bg_for_entries)
+    needs_medium_nodes = bool(codebefore)
 
-    txt_with_locs: List[Tuple[str, str, str]] = []
+    txt_with_locs = _legacy_comment_list_to_txt_with_locs(
+        matrices,
+        comment_list,
+        comment_shift_x_mm=comment_shift_x_mm,
+        comment_shift_y_mm=comment_shift_y_mm,
+        color="violet",
+    )
+
     variable_labels: Optional[List[Dict[str, Any]]] = None
-    if comment_list:
-        _, block_widths, row_starts, col_starts = _grid_offsets(matrices, index_base=1)
-        if block_widths and col_starts:
-            last_col_start = col_starts[-1]
-            last_col_width = block_widths[-1]
-            comment_col = last_col_start + max(last_col_width - 1, 0)
-            for g, txt in enumerate(comment_list):
-                if g >= len(row_starts):
-                    break
-                row = row_starts[g]
-                coord = f"({row}-{comment_col}.east)"
-                style = f"right,align=left,text=violet, xshift={comment_shift_x_mm}mm"
-                if comment_shift_y_mm:
-                    style += f", yshift={comment_shift_y_mm}mm"
-                txt_with_locs.append((coord, r"\qquad " + str(txt), style))
-
     if variable_summary:
         variable_labels = _variable_summary_label_rows(matrices, variable_summary, variable_colors)
 
-    rowechelon_paths: List[str] = []
-    if ref_path_list:
-        specs = ref_path_list if isinstance(ref_path_list, list) else [ref_path_list]
-        rowechelon_paths.extend(
-            _legacy_ref_path_list_to_rowechelon_paths(matrices, specs, legacy_submatrix_names=True)
-        )
+    rowechelon_paths: List[str] = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
 
-    callouts: List[Dict[str, Any]] = []
-    if array_names is not None:
-        explicit_names = array_names is not True
-        try:
-            lhs, rhs = array_names
-            rhs_list = list(rhs)
-        except Exception:
-            lhs, rhs_list = "E", ["A"]
-        rhs_list = [str(x) for x in rhs_list]
-        if not explicit_names:
-            rhs_list = _coerce_rhs_labels(rhs_list, Nrhs)
-        n_rows = len(matrices or [])
-        name_specs = _legacy_array_name_specs(n_rows, str(lhs), rhs_list, start_index=start_index)
-        callouts.extend(_legacy_name_specs_to_callouts(matrices, name_specs, color="blue"))
+    callouts = _legacy_array_name_callouts(
+        matrices,
+        array_names=array_names,
+        Nrhs=Nrhs,
+        start_index=start_index,
+    )
 
     if func is not None:
-        class _LegacyFuncAdapter:
-            def __init__(self):
-                self.codebefore = codebefore
-                self.txt_with_locs = txt_with_locs
-                self.rowechelon_paths = rowechelon_paths
+        def _mark_medium_nodes() -> None:
+            nonlocal needs_medium_nodes
+            needs_medium_nodes = True
 
-            def nm_background(self, gM, gN, loc_list, color="red!15", pt=0):
-                nonlocal needs_medium_nodes
-                needs_medium_nodes = True
-                specs = [(gM, gN, loc_list, color, pt)]
-                for spec in specs:
-                    gM, gN, entries, color, pt = spec
-                    if not isinstance(entries, (list, tuple)):
-                        entries = [entries]
-                    for entry in entries:
-                        if isinstance(entry, (list, tuple)) and len(entry) == 2 and all(isinstance(x, (list, tuple)) for x in entry):
-                            (i0, j0), (i1, j1) = entry
-                            c0 = _grid_cell_coord(matrices, gM=int(gM), gN=int(gN), i=int(i0), j=int(j0), index_base=1)
-                            c1 = _grid_cell_coord(matrices, gM=int(gM), gN=int(gN), i=int(i1), j=int(j1), index_base=1)
-                            fit = f"({c0[1:-1]}-medium) ({c1[1:-1]}-medium)"
-                        else:
-                            i0, j0 = entry
-                            c0 = _grid_cell_coord(matrices, gM=int(gM), gN=int(gN), i=int(i0), j=int(j0), index_base=1)
-                            fit = f"({c0[1:-1]}-medium)"
-                        self.codebefore.append(
-                            rf"\tikz \node [fill={color}, inner sep = {pt}pt, fit = {fit}] {{}} ;"
-                        )
+        func(
+            _LegacyFuncAdapter(
+                matrices=matrices,
+                codebefore=codebefore,
+                txt_with_locs=txt_with_locs,
+                rowechelon_paths=rowechelon_paths,
+                comment_shift_x_mm=comment_shift_x_mm,
+                comment_shift_y_mm=comment_shift_y_mm,
+                mark_medium_nodes=_mark_medium_nodes,
+            )
+        )
 
-            def nm_add_rowechelon_path(self, gM, gN, pivots, case="hh", color="blue,line width=0.4mm", adj=0.1):
-                specs = [(gM, gN, pivots, case, color, adj)]
-                self.rowechelon_paths.extend(
-                    _legacy_ref_path_list_to_rowechelon_paths(matrices, specs, legacy_submatrix_names=True)
-                )
+    from matrixlayout.ge import render_ge_svg
 
-            def nm_text(self, txt_list, color="violet"):
-                if not txt_list:
-                    return
-                _, block_widths, row_starts, col_starts = _grid_offsets(matrices, index_base=1)
-                if block_widths and col_starts:
-                    last_col_start = col_starts[-1]
-                    last_col_width = block_widths[-1]
-                    comment_col = last_col_start + max(last_col_width - 1, 0)
-                    for g, txt in enumerate(txt_list):
-                        if g >= len(row_starts):
-                            break
-                        row = row_starts[g]
-                        coord = f"({row}-{comment_col}.east)"
-                        style = f"right,align=left,text={color}, xshift={comment_shift_x_mm}mm"
-                        if comment_shift_y_mm:
-                            style += f", yshift={comment_shift_y_mm}mm"
-                        self.txt_with_locs.append((coord, r"\qquad " + str(txt), style))
-
-        func(_LegacyFuncAdapter())
-
-    from matrixlayout.ge import grid_svg
-
-    return grid_svg(
+    return render_ge_svg(
         matrices=matrices,
         Nrhs=Nrhs,
         formatter=formatter,
@@ -1050,6 +941,170 @@ def ge(
         frame=frame,
         **render_opts,
     )
+
+
+def _resolve_legacy_output_targets(
+    *,
+    keep_file: Optional[str],
+    tmp_dir: Optional[str],
+    output_dir: Optional[Any],
+) -> Tuple[Optional[Any], Optional[str]]:
+    output_stem: Optional[str] = None
+    if keep_file:
+        from pathlib import Path
+
+        p = Path(str(keep_file))
+        suffix = p.suffix.lower()
+        output_stem = p.stem if suffix in (".tex", ".svg", ".pdf", ".dvi", ".xdv") else p.name
+        if output_dir is None:
+            if p.is_absolute():
+                output_dir = str(p.parent)
+            elif str(p.parent) not in ("", "."):
+                output_dir = str(Path(tmp_dir) / p.parent) if tmp_dir else str(p.parent)
+            elif tmp_dir:
+                output_dir = tmp_dir
+    if output_dir is None and tmp_dir:
+        output_dir = tmp_dir
+    return output_dir, output_stem
+
+
+def _normalize_legacy_bg_specs(bg_for_entries: Any) -> List[Any]:
+    if bg_for_entries is None:
+        return []
+    specs = bg_for_entries
+    if isinstance(specs, list) and specs and all(isinstance(elem, list) for elem in specs):
+        if len(specs) == 5 and not any(isinstance(e, list) for e in specs[0:2]):
+            return [specs]
+        return specs
+    if isinstance(specs, list):
+        return specs
+    return [specs]
+
+
+def _legacy_bg_for_entries_to_codebefore(
+    matrices: Sequence[Sequence[Any]],
+    bg_for_entries: Any,
+) -> List[str]:
+    specs = _normalize_legacy_bg_specs(bg_for_entries)
+    if not specs:
+        return []
+    return _legacy_bg_list_to_codebefore(matrices, specs)
+
+
+def _legacy_comment_list_to_txt_with_locs(
+    matrices: Sequence[Sequence[Any]],
+    comment_list: Optional[Any],
+    *,
+    comment_shift_x_mm: float,
+    comment_shift_y_mm: float,
+    color: str,
+) -> List[Tuple[str, str, str]]:
+    if not comment_list:
+        return []
+    _, block_widths, row_starts, col_starts = _grid_offsets(matrices, index_base=1)
+    if not (block_widths and col_starts):
+        return []
+    last_col_start = col_starts[-1]
+    last_col_width = block_widths[-1]
+    comment_col = last_col_start + max(last_col_width - 1, 0)
+    out: List[Tuple[str, str, str]] = []
+    for g, txt in enumerate(comment_list):
+        if g >= len(row_starts):
+            break
+        row = row_starts[g]
+        coord = f"({row}-{comment_col}.east)"
+        style = f"right,align=left,text={color}, xshift={comment_shift_x_mm}mm"
+        if comment_shift_y_mm:
+            style += f", yshift={comment_shift_y_mm}mm"
+        out.append((coord, r"\qquad " + str(txt), style))
+    return out
+
+
+def _legacy_ref_paths_to_rowechelon_paths(
+    matrices: Sequence[Sequence[Any]],
+    ref_path_list: Optional[Any],
+) -> List[str]:
+    if not ref_path_list:
+        return []
+    specs = ref_path_list if isinstance(ref_path_list, list) else [ref_path_list]
+    return _legacy_ref_path_list_to_rowechelon_paths(matrices, specs, legacy_submatrix_names=True)
+
+
+def _legacy_array_name_callouts(
+    matrices: Sequence[Sequence[Any]],
+    *,
+    array_names: Optional[Any],
+    Nrhs: Any,
+    start_index: Optional[int],
+) -> List[Dict[str, Any]]:
+    if array_names is None:
+        return []
+    explicit_names = array_names is not True
+    try:
+        lhs, rhs = array_names
+        rhs_list = list(rhs)
+    except Exception:
+        lhs, rhs_list = "E", ["A"]
+    rhs_list = [str(x) for x in rhs_list]
+    if not explicit_names:
+        rhs_list = _coerce_rhs_labels(rhs_list, Nrhs)
+    n_rows = len(matrices or [])
+    name_specs = _legacy_array_name_specs(n_rows, str(lhs), rhs_list, start_index=start_index)
+    return _legacy_name_specs_to_callouts(matrices, name_specs, color="blue")
+
+
+class _LegacyFuncAdapter:
+    """Adapter exposing legacy mutator methods expected by old ``func=`` hooks."""
+
+    def __init__(
+        self,
+        *,
+        matrices: Sequence[Sequence[Any]],
+        codebefore: List[str],
+        txt_with_locs: List[Tuple[str, str, str]],
+        rowechelon_paths: List[str],
+        comment_shift_x_mm: float,
+        comment_shift_y_mm: float,
+        mark_medium_nodes: Any,
+    ) -> None:
+        self._matrices = matrices
+        self.codebefore = codebefore
+        self.txt_with_locs = txt_with_locs
+        self.rowechelon_paths = rowechelon_paths
+        self._comment_shift_x_mm = comment_shift_x_mm
+        self._comment_shift_y_mm = comment_shift_y_mm
+        self._mark_medium_nodes = mark_medium_nodes
+
+    def nm_background(self, gM: int, gN: int, loc_list: Any, color: str = "red!15", pt: int = 0) -> None:
+        self._mark_medium_nodes()
+        self.codebefore.extend(
+            _legacy_bg_for_entries_to_codebefore(self._matrices, [(gM, gN, loc_list, color, pt)])
+        )
+
+    def nm_add_rowechelon_path(
+        self,
+        gM: int,
+        gN: int,
+        pivots: Any,
+        case: str = "hh",
+        color: str = "blue,line width=0.4mm",
+        adj: float = 0.1,
+    ) -> None:
+        specs = [(gM, gN, pivots, case, color, adj)]
+        self.rowechelon_paths.extend(
+            _legacy_ref_path_list_to_rowechelon_paths(self._matrices, specs, legacy_submatrix_names=True)
+        )
+
+    def nm_text(self, txt_list: Any, color: str = "violet") -> None:
+        self.txt_with_locs.extend(
+            _legacy_comment_list_to_txt_with_locs(
+                self._matrices,
+                txt_list,
+                comment_shift_x_mm=self._comment_shift_x_mm,
+                comment_shift_y_mm=self._comment_shift_y_mm,
+                color=str(color),
+            )
+        )
 
 
 def show_ge(*args: Any, **kwargs: Any) -> Any:
@@ -1089,9 +1144,9 @@ def ge_tbl_bundle(
     variable_colors: Sequence[str] = ("red", "black"),
     strict: Optional[bool] = None,
 ) -> Dict[str, Any]:
-    """Return a bundle containing the trace, decorations, spec, and TeX."""
+    """Bundle: compute once, then return a standardized bundle contract."""
 
-    bundle = _build_ge_bundle(
+    computed = _build_ge_bundle(
         ref_A,
         ref_rhs,
         rhs=rhs,
@@ -1116,6 +1171,12 @@ def ge_tbl_bundle(
         strict=bool(strict) if strict is not None else False,
     )
 
+    spec = computed["spec"]
+    tex = ""
+    svg = None
+    render_error = None
+    submatrix_spans: List[Dict[str, Any]] = []
+
     # Prefer the notebook-oriented bundle API when available. This avoids
     # regex-parsing generated TeX to discover \SubMatrix names.
     from dataclasses import asdict
@@ -1123,9 +1184,9 @@ def ge_tbl_bundle(
     try:
         from matrixlayout.ge import grid_bundle
 
-        gb = grid_bundle(**bundle["spec"])
-        bundle["tex"] = gb.tex
-        bundle["submatrix_spans"] = [
+        gb = grid_bundle(**spec)
+        tex = gb.tex
+        submatrix_spans = [
             {
                 **asdict(s),
                 "left_delim_node": s.left_delim_node,
@@ -1137,11 +1198,28 @@ def ge_tbl_bundle(
         ]
     except ImportError:
         # Fall back to plain TeX generation for older matrixlayout versions.
-        from matrixlayout.ge import grid_tex
+        from matrixlayout.ge import render_ge_tex
 
-        tex = grid_tex(**bundle["spec"])
-        bundle["tex"] = tex
-    return bundle
+        tex = render_ge_tex(**spec)
+
+    try:
+        from matrixlayout.ge import render_ge_svg
+
+        svg = render_ge_svg(**spec)
+    except Exception as e:
+        svg = None
+        render_error = str(e)
+
+    data: Dict[str, Any] = {
+        "trace": computed["trace"],
+        "decor": computed["decor"],
+        "layers": computed["layers"],
+        "typed_layout": computed["typed_layout"],
+    }
+    if submatrix_spans:
+        data["submatrix_spans"] = submatrix_spans
+
+    return make_bundle(spec=spec, tex=tex, svg=svg, data=data, render_error=render_error)
 
 
 def ge_tbl_tex(
@@ -1170,7 +1248,7 @@ def ge_tbl_tex(
     variable_colors: Sequence[str] = ("red", "black"),
     strict: Optional[bool] = None,
 ) -> str:
-    """Compute a GE-table TeX document (no rendering)."""
+    """Compute + render: build GE data from reference inputs and return TeX."""
 
     return ge_tbl_bundle(
         ref_A,
@@ -1219,6 +1297,8 @@ def ge_tbl_svg(
     crop: Optional[str] = None,
     padding: Tuple[int, int, int, int] = (2, 2, 2, 2),
     frame: Any = None,
+    tmp_dir: Optional[Any] = None,
+    output_dir: Optional[Any] = None,
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
     decorators: Optional[Sequence[Any]] = None,
@@ -1227,7 +1307,7 @@ def ge_tbl_svg(
     variable_colors: Sequence[str] = ("red", "black"),
     strict: Optional[bool] = None,
 ) -> str:
-    """Render a GE-table to SVG via matrixlayout (strict rendering boundary)."""
+    """Compute + render: build GE data from reference inputs and return SVG."""
 
     spec = ge_tbl_spec(
         ref_A,
@@ -1254,6 +1334,13 @@ def ge_tbl_svg(
         strict=bool(strict) if strict is not None else False,
     )
 
-    from matrixlayout.ge import grid_svg
+    from matrixlayout.ge import render_ge_svg
 
-    return grid_svg(toolchain_name=toolchain_name, crop=crop, padding=padding, frame=frame, **spec)
+    return render_ge_svg(
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
+        frame=frame,
+        output_dir=resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir),
+        **spec,
+    )

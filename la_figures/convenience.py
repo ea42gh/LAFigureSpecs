@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Tuple, Union
 
 from .formatting import latexify
-from .convenience_utils import norm_str, norm_padding
+from .convenience_utils import make_bundle, norm_str, norm_padding, resolve_output_dir
 
 from .eig import eig_tbl_spec
 from .svd import svd_tbl_spec
@@ -33,26 +33,98 @@ def _filter_tex_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     return {k: v for k, v in kwargs.items() if k not in skip}
 
 
-def _import_eigproblem_tex():
+def _import_render_eig_tex():
     try:
-        from matrixlayout import eigproblem_tex  # type: ignore
+        from matrixlayout import render_eig_tex  # type: ignore
 
-        return eigproblem_tex
+        return render_eig_tex
     except Exception:
-        from matrixlayout.eigproblem import eigproblem_tex  # type: ignore
+        from matrixlayout.eigproblem import render_eig_tex  # type: ignore
 
-        return eigproblem_tex
+        return render_eig_tex
 
 
-def _import_eigproblem_svg():
+def _import_render_eig_svg():
     try:
-        from matrixlayout import eigproblem_svg  # type: ignore
+        from matrixlayout import render_eig_svg  # type: ignore
 
-        return eigproblem_svg
+        return render_eig_svg
     except Exception:
-        from matrixlayout.eigproblem import eigproblem_svg  # type: ignore
+        from matrixlayout.eigproblem import render_eig_svg  # type: ignore
 
-        return eigproblem_svg
+        return render_eig_svg
+
+
+def _render_eig_tex_from_spec(
+    spec: Dict[str, Any],
+    *,
+    case: Any,
+    formatter: Any,
+    color: Any,
+    mmLambda: int,
+    mmS: int,
+    fig_scale: Optional[Union[int, float]],
+    preamble: str,
+    sz: Optional[Tuple[int, int]],
+    decorators: Optional[Any],
+    strict: Optional[bool],
+) -> str:
+    render_eig_tex = _import_render_eig_tex()
+    return render_eig_tex(
+        spec,
+        case=norm_str(case),
+        formatter=formatter,
+        color=norm_str(color),
+        mmLambda=mmLambda,
+        mmS=mmS,
+        fig_scale=fig_scale,
+        preamble=preamble,
+        sz=sz,
+        decorators=decorators,
+        strict=bool(strict) if strict is not None else False,
+    )
+
+
+def _render_eig_svg_from_spec(
+    spec: Dict[str, Any],
+    *,
+    case: Any,
+    formatter: Any,
+    color: Any,
+    mmLambda: int,
+    mmS: int,
+    fig_scale: Optional[Union[int, float]],
+    preamble: str,
+    sz: Optional[Tuple[int, int]],
+    decorators: Optional[Any],
+    strict: Optional[bool],
+    toolchain_name: Optional[Any],
+    crop: Any,
+    padding: Any,
+    frame: Any,
+    tmp_dir: Optional[Any],
+    output_dir: Optional[Any],
+) -> str:
+    render_eig_svg = _import_render_eig_svg()
+    resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
+    return render_eig_svg(
+        spec,
+        case=norm_str(case),
+        formatter=formatter,
+        color=norm_str(color),
+        mmLambda=mmLambda,
+        mmS=mmS,
+        fig_scale=fig_scale,
+        preamble=preamble,
+        sz=sz,
+        decorators=decorators,
+        strict=bool(strict) if strict is not None else False,
+        toolchain_name=norm_str(toolchain_name),
+        crop=norm_str(crop),
+        padding=norm_padding(padding),
+        frame=frame,
+        output_dir=resolved_output_dir,
+    )
 
 
 def eig_tbl_tex(
@@ -72,9 +144,7 @@ def eig_tbl_tex(
     decorators: Optional[Any] = None,
     strict: Optional[bool] = None,
 ) -> str:
-    """Compute an eigen-table TeX document."""
-
-    eigproblem_tex = _import_eigproblem_tex()
+    """Compute + render: build an eigen spec from ``A`` and return TeX."""
 
     if case is None:
         case = "Q" if normal else "E"
@@ -87,17 +157,18 @@ def eig_tbl_tex(
         vec_digits=vec_digits,
     )
 
-    return eigproblem_tex(
+    return _render_eig_tex_from_spec(
         spec,
-        case=norm_str(case),
+        case=case,
         formatter=formatter,
-        color=norm_str(color),
+        color=color,
         mmLambda=mmLambda,
         mmS=mmS,
         fig_scale=fig_scale,
         preamble=preamble,
+        sz=None,
         decorators=decorators,
-        strict=bool(strict) if strict is not None else False,
+        strict=strict,
     )
 
 
@@ -125,9 +196,7 @@ def eig_tbl_svg(
     tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
 ) -> str:
-    """Compute an eigen-table SVG via :mod:`matrixlayout` and :mod:`jupyter_tikz`."""
-
-    eigproblem_svg = _import_eigproblem_svg()
+    """Compute + render: build an eigen spec from ``A`` and return SVG."""
 
     if case is None:
         case = "Q" if normal else "E"
@@ -140,24 +209,24 @@ def eig_tbl_svg(
         vec_digits=vec_digits,
     )
 
-    return eigproblem_svg(
+    return _render_eig_svg_from_spec(
         spec,
-        case=norm_str(case),
+        case=case,
         formatter=formatter,
-        color=norm_str(color),
+        color=color,
         mmLambda=mmLambda,
         mmS=mmS,
         fig_scale=fig_scale,
         preamble=preamble,
         sz=sz,
         decorators=decorators,
-        strict=bool(strict) if strict is not None else False,
-        toolchain_name=norm_str(toolchain_name),
-        crop=norm_str(crop),
-        padding=norm_padding(padding),
+        strict=strict,
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
         frame=frame,
-        output_dir=output_dir,
         tmp_dir=tmp_dir,
+        output_dir=output_dir,
     )
 
 
@@ -165,26 +234,62 @@ def eig_tbl_bundle(
     A: Any,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    """Return a dict with spec/tex/svg for the eigen-table."""
+    """Bundle: compute once, then return a standardized bundle contract."""
 
-    # Generate spec once.
+    case = kwargs.get("case")
+    normal = kwargs.get("normal", False)
+    if case is None:
+        case = "Q" if normal else "E"
+
     spec = eig_tbl_spec(
         A,
-        normal=kwargs.get("normal", False),
+        normal=normal,
         Ascale=kwargs.get("Ascale"),
         eig_digits=kwargs.get("eig_digits"),
         vec_digits=kwargs.get("vec_digits"),
     )
 
-    tex = eig_tbl_tex(A, **_filter_tex_kwargs(kwargs))
+    tex = _render_eig_tex_from_spec(
+        spec,
+        case=case,
+        formatter=kwargs.get("formatter", latexify),
+        color=kwargs.get("color", "blue"),
+        mmLambda=kwargs.get("mmLambda", 8),
+        mmS=kwargs.get("mmS", 4),
+        fig_scale=kwargs.get("fig_scale"),
+        preamble=kwargs.get("preamble", r" \NiceMatrixOptions{cell-space-limits = 1pt}" + "\n"),
+        sz=kwargs.get("sz"),
+        decorators=kwargs.get("decorators"),
+        strict=kwargs.get("strict"),
+    )
     svg = None
+    render_error = None
     try:
-        svg = eig_tbl_svg(A, **kwargs)
-    except Exception:
+        svg = _render_eig_svg_from_spec(
+            spec,
+            case=case,
+            formatter=kwargs.get("formatter", latexify),
+            color=kwargs.get("color", "blue"),
+            mmLambda=kwargs.get("mmLambda", 8),
+            mmS=kwargs.get("mmS", 4),
+            fig_scale=kwargs.get("fig_scale"),
+            preamble=kwargs.get("preamble", r" \NiceMatrixOptions{cell-space-limits = 1pt}" + "\n"),
+            sz=kwargs.get("sz"),
+            decorators=kwargs.get("decorators"),
+            strict=kwargs.get("strict"),
+            toolchain_name=kwargs.get("toolchain_name"),
+            crop=kwargs.get("crop", "tight"),
+            padding=kwargs.get("padding", (2, 2, 2, 2)),
+            frame=kwargs.get("frame"),
+            tmp_dir=kwargs.get("tmp_dir"),
+            output_dir=kwargs.get("output_dir"),
+        )
+    except Exception as e:
         # SVG rendering depends on external toolchains; keep bundle usable without them.
         svg = None
+        render_error = str(e)
 
-    return {"spec": spec, "tex": tex, "svg": svg}
+    return make_bundle(spec=spec, tex=tex, svg=svg, data={}, render_error=render_error)
 
 
 def svd_tbl_tex(
@@ -205,9 +310,7 @@ def svd_tbl_tex(
     decorators: Optional[Any] = None,
     strict: Optional[bool] = None,
 ) -> str:
-    """Compute an SVD-table TeX document."""
-
-    eigproblem_tex = _import_eigproblem_tex()
+    """Compute + render: build an SVD spec from ``A`` and return TeX."""
 
     spec = svd_tbl_spec(
         A,
@@ -220,18 +323,18 @@ def svd_tbl_tex(
     if sz is None:
         sz = spec.get("sz")
 
-    return eigproblem_tex(
+    return _render_eig_tex_from_spec(
         spec,
         case="SVD",
         formatter=formatter,
-        color=norm_str(color),
+        color=color,
         mmLambda=mmLambda,
         mmS=mmS,
         fig_scale=fig_scale,
         preamble=preamble,
         sz=sz,
         decorators=decorators,
-        strict=bool(strict) if strict is not None else False,
+        strict=strict,
     )
 
 
@@ -259,9 +362,7 @@ def svd_tbl_svg(
     tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
 ) -> str:
-    """Compute an SVD-table SVG via :mod:`matrixlayout` and :mod:`jupyter_tikz`."""
-
-    eigproblem_svg = _import_eigproblem_svg()
+    """Compute + render: build an SVD spec from ``A`` and return SVG."""
 
     spec = svd_tbl_spec(
         A,
@@ -274,29 +375,29 @@ def svd_tbl_svg(
     if sz is None:
         sz = spec.get("sz")
 
-    return eigproblem_svg(
+    return _render_eig_svg_from_spec(
         spec,
         case="SVD",
         formatter=formatter,
-        color=norm_str(color),
+        color=color,
         mmLambda=mmLambda,
         mmS=mmS,
         fig_scale=fig_scale,
         preamble=preamble,
         sz=sz,
         decorators=decorators,
-        strict=bool(strict) if strict is not None else False,
-        toolchain_name=norm_str(toolchain_name),
-        crop=norm_str(crop),
-        padding=norm_padding(padding),
+        strict=strict,
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
         frame=frame,
-        output_dir=output_dir,
         tmp_dir=tmp_dir,
+        output_dir=output_dir,
     )
 
 
 def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
-    """Return a dict with spec/tex/svg for the SVD table."""
+    """Bundle: compute once, then return a standardized bundle contract."""
 
     spec = svd_tbl_spec(
         A,
@@ -306,10 +407,43 @@ def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
         sigma_digits=kwargs.get("sigma_digits"),
         vec_digits=kwargs.get("vec_digits"),
     )
-    tex = svd_tbl_tex(A, **_filter_tex_kwargs(kwargs))
+    sz = kwargs.get("sz", spec.get("sz"))
+    tex = _render_eig_tex_from_spec(
+        spec,
+        case="SVD",
+        formatter=kwargs.get("formatter", latexify),
+        color=kwargs.get("color", "blue"),
+        mmLambda=kwargs.get("mmLambda", 8),
+        mmS=kwargs.get("mmS", 4),
+        fig_scale=kwargs.get("fig_scale"),
+        preamble=kwargs.get("preamble", r" \NiceMatrixOptions{cell-space-limits = 1pt}" + "\n"),
+        sz=sz,
+        decorators=kwargs.get("decorators"),
+        strict=kwargs.get("strict"),
+    )
     svg = None
+    render_error = None
     try:
-        svg = svd_tbl_svg(A, **kwargs)
-    except Exception:
+        svg = _render_eig_svg_from_spec(
+            spec,
+            case="SVD",
+            formatter=kwargs.get("formatter", latexify),
+            color=kwargs.get("color", "blue"),
+            mmLambda=kwargs.get("mmLambda", 8),
+            mmS=kwargs.get("mmS", 4),
+            fig_scale=kwargs.get("fig_scale"),
+            preamble=kwargs.get("preamble", r" \NiceMatrixOptions{cell-space-limits = 1pt}" + "\n"),
+            sz=sz,
+            decorators=kwargs.get("decorators"),
+            strict=kwargs.get("strict"),
+            toolchain_name=kwargs.get("toolchain_name"),
+            crop=kwargs.get("crop", "tight"),
+            padding=kwargs.get("padding", (2, 2, 2, 2)),
+            frame=kwargs.get("frame"),
+            tmp_dir=kwargs.get("tmp_dir"),
+            output_dir=kwargs.get("output_dir"),
+        )
+    except Exception as e:
         svg = None
-    return {"spec": spec, "tex": tex, "svg": svg}
+        render_error = str(e)
+    return make_bundle(spec=spec, tex=tex, svg=svg, data={}, render_error=render_error)

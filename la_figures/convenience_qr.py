@@ -5,8 +5,68 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from .formatting import latexify
-from .convenience_utils import norm_str, norm_padding
+from .convenience_utils import make_bundle, norm_str, norm_padding, resolve_output_dir
 from .qr import gram_schmidt_qr_matrices, qr_tbl_spec, qr_tbl_spec_from_matrices
+
+
+def _render_qr_tex_from_spec(
+    spec: Dict[str, Any],
+    *,
+    formatter: Any,
+    strict: Optional[bool],
+) -> str:
+    from matrixlayout.qr import render_qr_tex
+
+    return render_qr_tex(
+        matrices=spec["matrices"],
+        formatter=formatter,
+        array_names=spec["array_names"],
+        fig_scale=spec["fig_scale"],
+        preamble=spec["preamble"],
+        extension=spec["extension"],
+        nice_options=spec["nice_options"],
+        label_color=spec["label_color"],
+        label_text_color=spec["label_text_color"],
+        known_zero_color=spec["known_zero_color"],
+        decorators=spec.get("decorators"),
+        strict=spec.get("strict") if strict is None else strict,
+    )
+
+
+def _render_qr_svg_from_spec(
+    spec: Dict[str, Any],
+    *,
+    formatter: Any,
+    strict: Optional[bool],
+    toolchain_name: Optional[Any],
+    crop: Any,
+    padding: Any,
+    frame: Any,
+    output_dir: Optional[Any],
+    tmp_dir: Optional[Any],
+) -> str:
+    from matrixlayout.qr import render_qr_svg
+
+    resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
+    return render_qr_svg(
+        matrices=spec["matrices"],
+        formatter=formatter,
+        array_names=spec["array_names"],
+        fig_scale=spec["fig_scale"],
+        preamble=spec["preamble"],
+        extension=spec["extension"],
+        nice_options=spec["nice_options"],
+        label_color=spec["label_color"],
+        label_text_color=spec["label_text_color"],
+        known_zero_color=spec["known_zero_color"],
+        decorators=spec.get("decorators"),
+        strict=spec.get("strict") if strict is None else strict,
+        toolchain_name=norm_str(toolchain_name),
+        crop=norm_str(crop),
+        padding=norm_padding(padding),
+        frame=frame,
+        output_dir=resolved_output_dir,
+    )
 
 
 def qr_tbl_tex(
@@ -25,9 +85,7 @@ def qr_tbl_tex(
     decorators: Optional[Any] = None,
     strict: Optional[bool] = None,
 ) -> str:
-    """Compute a QR table TeX document."""
-
-    from matrixlayout.qr import qr_grid_tex
+    """Compute + render: build a QR spec from ``A, W`` and return TeX."""
 
     spec = qr_tbl_spec(
         A,
@@ -44,20 +102,7 @@ def qr_tbl_tex(
         strict=strict,
     )
 
-    return qr_grid_tex(
-        matrices=spec["matrices"],
-        formatter=formatter,
-        array_names=spec["array_names"],
-        fig_scale=spec["fig_scale"],
-        preamble=spec["preamble"],
-        extension=spec["extension"],
-        nice_options=spec["nice_options"],
-        label_color=spec["label_color"],
-        label_text_color=spec["label_text_color"],
-        known_zero_color=spec["known_zero_color"],
-        decorators=spec.get("decorators"),
-        strict=spec.get("strict") if strict is None else strict,
-    )
+    return _render_qr_tex_from_spec(spec, formatter=formatter, strict=strict)
 
 
 def qr_tbl_svg(
@@ -79,11 +124,10 @@ def qr_tbl_svg(
     crop: Any = "tight",
     padding: Any = (2, 2, 2, 2),
     frame: Any = None,
+    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
 ) -> str:
-    """Compute a QR table SVG."""
-
-    from matrixlayout.qr import qr_grid_svg
+    """Compute + render: build a QR spec from ``A, W`` and return SVG."""
 
     spec = qr_tbl_spec(
         A,
@@ -100,24 +144,16 @@ def qr_tbl_svg(
         strict=strict,
     )
 
-    return qr_grid_svg(
-        matrices=spec["matrices"],
+    return _render_qr_svg_from_spec(
+        spec,
         formatter=formatter,
-        array_names=spec["array_names"],
-        fig_scale=spec["fig_scale"],
-        preamble=spec["preamble"],
-        extension=spec["extension"],
-        nice_options=spec["nice_options"],
-        label_color=spec["label_color"],
-        label_text_color=spec["label_text_color"],
-        known_zero_color=spec["known_zero_color"],
-        decorators=spec.get("decorators"),
-        strict=spec.get("strict") if strict is None else strict,
-        toolchain_name=norm_str(toolchain_name),
-        crop=norm_str(crop),
-        padding=norm_padding(padding),
+        strict=strict,
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
         frame=frame,
         output_dir=output_dir,
+        tmp_dir=tmp_dir,
     )
 
 
@@ -126,16 +162,32 @@ def qr_tbl_bundle(
     W: Any,
     **kwargs: Any,
 ) -> Dict[str, Any]:
-    """Return a dict with spec/tex/svg for the QR table."""
+    """Bundle: compute once, then return a standardized bundle contract."""
 
     spec = qr_tbl_spec(A, W, **kwargs)
-    tex = qr_tbl_tex(A, W, **kwargs)
+    tex = _render_qr_tex_from_spec(
+        spec,
+        formatter=kwargs.get("formatter", latexify),
+        strict=kwargs.get("strict"),
+    )
     svg = None
+    render_error = None
     try:
-        svg = qr_tbl_svg(A, W, **kwargs)
-    except Exception:
+        svg = _render_qr_svg_from_spec(
+            spec,
+            formatter=kwargs.get("formatter", latexify),
+            strict=kwargs.get("strict"),
+            toolchain_name=kwargs.get("toolchain_name"),
+            crop=kwargs.get("crop", "tight"),
+            padding=kwargs.get("padding", (2, 2, 2, 2)),
+            frame=kwargs.get("frame"),
+            output_dir=kwargs.get("output_dir"),
+            tmp_dir=kwargs.get("tmp_dir"),
+        )
+    except Exception as e:
         svg = None
-    return {"spec": spec, "tex": tex, "svg": svg}
+        render_error = str(e)
+    return make_bundle(spec=spec, tex=tex, svg=svg, data={}, render_error=render_error)
 
 
 def qr(
@@ -156,11 +208,10 @@ def qr(
     crop: Any = "tight",
     padding: Any = (2, 2, 2, 2),
     frame: Any = None,
+    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
 ) -> str:
-    """Render a QR grid from a precomputed matrix stack."""
-
-    from matrixlayout.qr import qr_grid_svg
+    """Render-only wrapper: render SVG from a precomputed QR matrix stack."""
 
     spec = qr_tbl_spec_from_matrices(
         matrices,
@@ -176,24 +227,16 @@ def qr(
         strict=strict,
     )
 
-    return qr_grid_svg(
-        matrices=spec["matrices"],
+    return _render_qr_svg_from_spec(
+        spec,
         formatter=formatter,
-        array_names=spec["array_names"],
-        fig_scale=spec["fig_scale"],
-        preamble=spec["preamble"],
-        extension=spec["extension"],
-        nice_options=spec["nice_options"],
-        label_color=spec["label_color"],
-        label_text_color=spec["label_text_color"],
-        known_zero_color=spec["known_zero_color"],
-        decorators=spec.get("decorators"),
-        strict=spec.get("strict") if strict is None else strict,
-        toolchain_name=norm_str(toolchain_name),
-        crop=norm_str(crop),
-        padding=norm_padding(padding),
+        strict=strict,
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
         frame=frame,
         output_dir=output_dir,
+        tmp_dir=tmp_dir,
     )
 
 
@@ -218,11 +261,10 @@ def gram_schmidt_qr(
     crop: Any = "tight",
     padding: Any = (2, 2, 2, 2),
     frame: Any = None,
+    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
 ) -> str:
-    """Render a QR grid using Gram–Schmidt scaling."""
-
-    from matrixlayout.qr import qr_grid_svg
+    """Compute + render: build Gram–Schmidt QR matrices and return SVG."""
 
     matrices = gram_schmidt_qr_matrices(
         A,
@@ -244,22 +286,14 @@ def gram_schmidt_qr(
         strict=strict,
     )
 
-    return qr_grid_svg(
-        matrices=spec["matrices"],
+    return _render_qr_svg_from_spec(
+        spec,
         formatter=formatter,
-        array_names=spec["array_names"],
-        fig_scale=spec["fig_scale"],
-        preamble=spec["preamble"],
-        extension=spec["extension"],
-        nice_options=spec["nice_options"],
-        label_color=spec["label_color"],
-        label_text_color=spec["label_text_color"],
-        known_zero_color=spec["known_zero_color"],
-        decorators=spec.get("decorators"),
-        strict=spec.get("strict") if strict is None else strict,
-        toolchain_name=norm_str(toolchain_name),
-        crop=norm_str(crop),
-        padding=norm_padding(padding),
+        strict=strict,
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
         frame=frame,
         output_dir=output_dir,
+        tmp_dir=tmp_dir,
     )

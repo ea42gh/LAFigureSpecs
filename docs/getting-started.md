@@ -3,6 +3,22 @@
 Minimal examples for common entry points. Expected output: spec dictionaries
 ready for matrixlayout rendering.
 
+Use high-level wrappers by default:
+
+- `ge_tbl_svg`, `qr_tbl_svg`, `eig_tbl_svg`, `svd_tbl_svg`
+
+The `render_*` functions are low-level matrixlayout renderer re-exports.
+
+## Bundle contract
+
+All `*_tbl_bundle(...)` helpers return the same keys:
+
+- `spec`: render spec dictionary
+- `tex`: rendered TeX source
+- `svg`: rendered SVG string or `None` when rendering fails
+- `data`: compute-time metadata/results (GE includes trace/decor/layers)
+- `render_error`: error text when SVG rendering fails, else `None`
+
 Common defaults:
 
 - `ge_tbl_spec`: `pivoting="none"`, `gj=False`, `show_pivots=True`.
@@ -39,9 +55,9 @@ spec = la_figures.ge_tbl_spec(A)
 Minimal render from a spec:
 
 ```python
-from matrixlayout.ge import grid_svg
+from matrixlayout.ge import render_ge_svg
 
-svg = grid_svg(spec["matrices"], specs=spec["specs"])
+svg = render_ge_svg(spec["matrices"], specs=spec["specs"])
 ```
 
 ## QR spec
@@ -60,12 +76,12 @@ spec = la_figures.qr_tbl_spec(A, W)
 ```python
 import sympy as sym
 from la_figures import qr_tbl_spec
-from matrixlayout.qr import qr_grid_svg
+from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
 spec = qr_tbl_spec(A, W)
-svg = qr_grid_svg(spec["matrices"], specs=spec["specs"])
+svg = render_qr_svg(spec["matrices"], specs=spec["specs"])
 ```
 
 ## Eigen/SVD specs
@@ -76,7 +92,9 @@ import la_figures
 
 A = sym.Matrix([[4, 2], [0, 9]])
 eig_spec = la_figures.eig_tbl_spec(A)
+Λ, V = la_figures.eig_matrices_from_spec(eig_spec)
 svd_spec = la_figures.svd_tbl_spec(A)
+U, Σ, V, rank = la_figures.svd_matrices_from_spec(svd_spec)
 ```
 
 ## Backsubstitution blocks

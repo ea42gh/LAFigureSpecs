@@ -33,13 +33,13 @@ def test_ge_tbl_layout_spec_uses_typed_layout():
     pytest.importorskip("matrixlayout")
     from la_figures.ge_convenience import ge_tbl_layout_spec
     from matrixlayout.specs import GELayoutSpec
-    from matrixlayout.ge import grid_tex
+    from matrixlayout.ge import render_ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
     spec = ge_tbl_layout_spec(A, show_pivots=True)
 
     assert isinstance(spec["layout"], GELayoutSpec)
-    tex = grid_tex(**spec)
+    tex = render_ge_tex(**spec)
     assert "\\begin{NiceArray}" in tex
 
 
@@ -83,7 +83,7 @@ def test_ge_tbl_spec_layout_and_bundle_match_tex():
     pytest.importorskip("matrixlayout")
     import la_figures
     from la_figures.ge_convenience import ge_tbl_layout_spec
-    from matrixlayout.ge import grid_tex
+    from matrixlayout.ge import render_ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
@@ -92,25 +92,25 @@ def test_ge_tbl_spec_layout_and_bundle_match_tex():
     layout_spec = ge_tbl_layout_spec(A, ref_rhs=rhs, show_pivots=True)
     bundle = la_figures.ge_tbl_bundle(A, ref_rhs=rhs, show_pivots=True)
 
-    tex_spec = grid_tex(**spec)
-    tex_layout = grid_tex(**layout_spec)
-    tex_bundle = grid_tex(**bundle["spec"])
+    tex_spec = render_ge_tex(**spec)
+    tex_layout = render_ge_tex(**layout_spec)
+    tex_bundle = render_ge_tex(**bundle["spec"])
 
     assert tex_spec == tex_layout
     assert tex_spec == tex_bundle
 
 
-def test_ge_tbl_spec_dict_roundtrip_grid_svg_accepts_spec():
+def test_ge_tbl_spec_dict_roundtrip_render_ge_svg_accepts_spec():
     import pytest
 
     pytest.importorskip("matrixlayout")
     import la_figures
-    from matrixlayout.ge import grid_svg
+    from matrixlayout.ge import render_ge_svg
 
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
 
     spec = la_figures.ge_tbl_spec(A, ref_rhs=rhs, show_pivots=True, array_names=True)
-    svg = grid_svg(spec=spec, toolchain_name="pdftex_dvisvgm", crop="tight", padding=(1, 1, 1, 1))
+    svg = render_ge_svg(spec=spec, toolchain_name="pdftex_dvisvgm", crop="tight", padding=(1, 1, 1, 1))
     assert isinstance(svg, str)
     assert "<svg" in svg

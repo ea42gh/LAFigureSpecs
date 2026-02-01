@@ -22,3 +22,8 @@ nav:
       - Eigenproblems: notebooks/04_eigenproblems.ipynb
       - Algorithms overview: notebooks/05_algorithms_overview.ipynb
       - Julia interop: notebooks/06_julia_interop.ipynb
+      - GE top-level API: notebooks/07_ge_top_level_functions.ipynb
+      - QR top-level API: notebooks/08_qr_top_level_functions.ipynb
+      - Eigen/SVD top-level API: notebooks/09_eig_svd_top_level_functions.ipynb
+      - Backsubstitution top-level API: notebooks/10_backsubstitution_top_level_functions.ipynb
+      - Formatting + renderers API: notebooks/11_formatting_and_renderers.ipynb

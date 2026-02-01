@@ -14,8 +14,9 @@ def test_ge_tbl_bundle_includes_submatrix_spans_metadata():
     assert isinstance(bundle, dict)
     assert "tex" in bundle
     assert "spec" in bundle
+    assert "data" in bundle
 
-    spans = bundle.get("submatrix_spans")
+    spans = bundle["data"].get("submatrix_spans")
     assert isinstance(spans, list)
     assert spans, "expected at least one SubMatrix span"
 

@@ -2,7 +2,7 @@
 
 The functions in this module compute eigenvalues/eigenvectors and package them
 into a *description object* (a plain dictionary) suitable for
-``matrixlayout.eigproblem_tex``.
+``matrixlayout.render_eig_tex``.
 
 This module intentionally contains *algorithmic* logic (it may call SymPy
 decompositions). It does not render.
@@ -169,6 +169,37 @@ def eig_spec_from_eigenvects(
             eig["qvecs"].append(q_gram_schmidt(vecs2))
 
     return eig
+
+
+def eig_matrices_from_spec(
+    eig: Dict[str, Any],
+    *,
+    orthonormal: bool = True,
+) -> Tuple[sym.Matrix, sym.Matrix]:
+    """Assemble (Λ, V) from an eigen-table spec dictionary.
+
+    Parameters
+    ----------
+    eig:
+        Spec dict as returned by :func:`eig_tbl_spec` or :func:`eig_spec_from_eigenvects`.
+    orthonormal:
+        Use ``qvecs`` when present; otherwise fall back to ``evecs``.
+    """
+
+    lambdas = list(eig.get("lambda", []))
+    mas = [int(m) for m in eig.get("ma", [])]
+    vec_key = "qvecs" if orthonormal and eig.get("qvecs") is not None else "evecs"
+    groups = list(eig.get(vec_key, []))
+
+    cols: List[sym.Matrix] = []
+    full_lambda: List[Any] = []
+    for lam, m, vecs in zip(lambdas, mas, groups):
+        full_lambda.extend([lam] * m)
+        cols.extend([sym.Matrix(v) for v in vecs])
+
+    V = sym.Matrix.hstack(*cols) if cols else sym.Matrix([])
+    Λ = sym.diag(*full_lambda) if full_lambda else sym.Matrix([])
+    return Λ, V
 
 
 @dataclass(frozen=True)

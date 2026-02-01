@@ -26,14 +26,14 @@ matrices -> la_figures (trace/spec) -> matrixlayout (tex/svg)
 Example:
 
 ```
-A -> ge_tbl_spec(A) -> grid_svg(spec["matrices"], specs=spec["specs"])
+A -> ge_tbl_spec(A) -> render_ge_svg(spec["matrices"], specs=spec["specs"])
 ```
 
 ## Module map
 
 - GE: `ge_trace`, `ge_tbl_spec`, `ge_tbl_svg`.
 - QR: `compute_qr_matrices`, `qr_tbl_spec`, `qr_tbl_svg`.
-- Eigen/SVD: `eig_tbl_spec`, `svd_tbl_spec`.
+- Eigen/SVD: `eig_tbl_spec`, `eig_matrices_from_spec`, `svd_tbl_spec`, `svd_matrices_from_spec`.
 - Backsubstitution: `linear_system_tex`, `backsubstitution_tex`, `standard_solution_tex`.
 
 ## Pitfalls

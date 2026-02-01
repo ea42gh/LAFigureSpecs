@@ -1,7 +1,7 @@
 # Spec Recipes
 
 Compact examples for common tasks. Specs are passed directly to matrixlayout
-renderers (e.g., `grid_svg`, `qr_grid_svg`). You can also pass extra
+renderers (e.g., `render_ge_svg`, `render_qr_svg`). You can also pass extra
 label/callout specs via the `specs` argument to the matrixlayout QR/GE renderers.
 Use specs when you want consistent layout across TeX and SVG; use renderers when
 you only need the final output.
@@ -31,12 +31,12 @@ spec = la_figures.ge_tbl_spec(A, show_pivots=True)
 ```python
 import sympy as sym
 from la_figures import ge_trace, ge_tbl_spec
-from matrixlayout.ge import grid_svg
+from matrixlayout.ge import render_ge_svg
 
 A = sym.Matrix([[2, 1], [4, 3]])
 trace = ge_trace(A, show_pivots=True)
 spec = ge_tbl_spec(A, trace=trace)
-svg = grid_svg(spec["matrices"], specs=spec["specs"])
+svg = render_ge_svg(spec["matrices"], specs=spec["specs"])
 ```
 
 ## QR with labels
@@ -55,13 +55,13 @@ spec = la_figures.qr_tbl_spec(A, W, array_names=True)
 ```python
 import sympy as sym
 from la_figures import qr_tbl_spec
-from matrixlayout.qr import qr_grid_svg
+from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
 spec = qr_tbl_spec(A, W)
 spec["specs"].append({"grid": (0, 2), "side": "above", "labels": ["x_1", "x_2"]})
-svg = qr_grid_svg(spec["matrices"], specs=spec["specs"])
+svg = render_qr_svg(spec["matrices"], specs=spec["specs"])
 ```
 
 ## Eigen/SVD
@@ -72,7 +72,9 @@ import la_figures
 
 A = sym.Matrix([[2, 0], [0, 3]])
 eig_spec = la_figures.eig_tbl_spec(A)
+Λ, V = la_figures.eig_matrices_from_spec(eig_spec)
 svd_spec = la_figures.svd_tbl_spec(A)
+U, Σ, V, rank = la_figures.svd_matrices_from_spec(svd_spec)
 ```
 
 ## Backsubstitution blocks
@@ -118,4 +120,4 @@ tex = backsubst_tex(
 ```
 
 Debug tip:
-use `matrixlayout.ge.grid_tex` (or `qr_grid_tex`) to inspect TeX when layout is off.
+use `matrixlayout.ge.render_ge_tex` (or `render_qr_tex`) to inspect TeX when layout is off.
