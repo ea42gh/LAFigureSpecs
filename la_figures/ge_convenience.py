@@ -22,6 +22,8 @@ from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify, make_decorator
 from .convenience_utils import make_bundle, resolve_output_dir
 
+_UNSET = object()
+
 
 def _matrix_shape(mat: Any) -> Tuple[int, int]:
     if mat is None:
@@ -1294,11 +1296,13 @@ def ge_tbl_svg(
     outer_hspace_mm: int = 6,
     cell_align: str = "r",
     toolchain_name: Optional[str] = None,
-    crop: Optional[str] = None,
-    padding: Tuple[int, int, int, int] = (2, 2, 2, 2),
+    crop: Any = _UNSET,
+    padding: Any = _UNSET,
     frame: Any = None,
+    exact_bbox: Optional[bool] = None,
     tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
+    render_opts: Optional[Dict[str, Any]] = None,
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
     decorators: Optional[Sequence[Any]] = None,
@@ -1333,6 +1337,10 @@ def ge_tbl_svg(
         variable_colors=variable_colors,
         strict=bool(strict) if strict is not None else False,
     )
+    if crop is _UNSET:
+        crop = None if (render_opts and "crop" in render_opts) else None
+    if padding is _UNSET:
+        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
 
     from matrixlayout.ge import render_ge_svg
 
@@ -1341,6 +1349,8 @@ def ge_tbl_svg(
         crop=crop,
         padding=padding,
         frame=frame,
+        exact_bbox=exact_bbox,
         output_dir=resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir),
+        render_opts=render_opts,
         **spec,
     )

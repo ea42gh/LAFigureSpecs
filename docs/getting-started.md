@@ -123,6 +123,27 @@ A = sym.Matrix([[1, 2], [3, 4]])
 svg = la_figures.ge_tbl_svg(A, output_dir="./_out", output_stem="ge_min")
 ```
 
+### render_opts pass-through
+
+All high-level SVG helpers accept `render_opts`, which is forwarded to
+`jupyter_tikz.render_svg`. Explicit kwargs override keys in `render_opts`.
+
+```python
+import sympy as sym
+import la_figures
+
+A = sym.Matrix([[1, 2], [3, 4]])
+svg = la_figures.ge_tbl_svg(
+    A,
+    render_opts={
+        "toolchain_name": "pdftex_dvisvgm",
+        "crop": "tight",
+        "padding": (2, 2, 2, 2),
+        "frame": True,
+    },
+)
+```
+
 ## Troubleshooting
 
 - If SVG rendering fails, call the corresponding `*_tex` wrapper and inspect TeX.

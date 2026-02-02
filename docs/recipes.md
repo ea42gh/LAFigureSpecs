@@ -16,6 +16,10 @@ Quick render, no extra edits   | la_figures.*_svg wrappers              | Shorte
 Custom labels/callouts         | matrixlayout.*_svg with specs          | Avoid manual label rows/cols
 ```
 
+Note: all SVG renderers accept `render_opts`, which is forwarded to
+`jupyter_tikz.render_svg` (e.g., `crop`, `padding`, `toolchain_name`, `frame`).
+Explicit kwargs override keys in `render_opts`.
+
 ## GE with pivots
 
 ```python

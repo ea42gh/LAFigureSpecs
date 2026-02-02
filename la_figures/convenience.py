@@ -19,6 +19,7 @@ from .convenience_utils import make_bundle, norm_str, norm_padding, resolve_outp
 from .eig import eig_tbl_spec
 from .svd import svd_tbl_spec
 
+_UNSET = object()
 
 def _julia_str(x: Any) -> Any:
     """Alias for :func:`norm_str` used by Julia interop tests."""
@@ -29,7 +30,17 @@ def _julia_str(x: Any) -> Any:
 def _filter_tex_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     """Remove kwargs only used by SVG renderers."""
 
-    skip = {"output_dir", "tmp_dir", "toolchain_name", "crop", "padding", "frame"}
+    skip = {
+        "output_dir",
+        "output_stem",
+        "tmp_dir",
+        "toolchain_name",
+        "crop",
+        "padding",
+        "frame",
+        "exact_bbox",
+        "render_opts",
+    }
     return {k: v for k, v in kwargs.items() if k not in skip}
 
 
@@ -102,11 +113,26 @@ def _render_eig_svg_from_spec(
     crop: Any,
     padding: Any,
     frame: Any,
+    exact_bbox: Optional[bool],
     tmp_dir: Optional[Any],
     output_dir: Optional[Any],
+    render_opts: Optional[Dict[str, Any]],
 ) -> str:
     render_eig_svg = _import_render_eig_svg()
     resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
+    opts: Dict[str, Any] = dict(render_opts or {})
+    if toolchain_name is not None:
+        opts["toolchain_name"] = norm_str(toolchain_name)
+    if crop is not None:
+        opts["crop"] = norm_str(crop)
+    if padding is not None:
+        opts["padding"] = norm_padding(padding)
+    if frame is not None:
+        opts["frame"] = frame
+    if exact_bbox is not None:
+        opts["exact_bbox"] = exact_bbox
+    if resolved_output_dir is not None:
+        opts["output_dir"] = resolved_output_dir
     return render_eig_svg(
         spec,
         case=norm_str(case),
@@ -119,11 +145,7 @@ def _render_eig_svg_from_spec(
         sz=sz,
         decorators=decorators,
         strict=bool(strict) if strict is not None else False,
-        toolchain_name=norm_str(toolchain_name),
-        crop=norm_str(crop),
-        padding=norm_padding(padding),
-        frame=frame,
-        output_dir=resolved_output_dir,
+        **opts,
     )
 
 
@@ -190,11 +212,13 @@ def eig_tbl_svg(
     decorators: Optional[Any] = None,
     strict: Optional[bool] = None,
     toolchain_name: Optional[Any] = None,
-    crop: Any = "tight",
-    padding: Any = (2, 2, 2, 2),
+    crop: Any = _UNSET,
+    padding: Any = _UNSET,
     frame: Any = None,
+    exact_bbox: Optional[bool] = None,
     tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
+    render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Compute + render: build an eigen spec from ``A`` and return SVG."""
 
@@ -208,6 +232,10 @@ def eig_tbl_svg(
         eig_digits=eig_digits,
         vec_digits=vec_digits,
     )
+    if crop is _UNSET:
+        crop = None if (render_opts and "crop" in render_opts) else "tight"
+    if padding is _UNSET:
+        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
 
     return _render_eig_svg_from_spec(
         spec,
@@ -225,8 +253,10 @@ def eig_tbl_svg(
         crop=crop,
         padding=padding,
         frame=frame,
+        exact_bbox=exact_bbox,
         tmp_dir=tmp_dir,
         output_dir=output_dir,
+        render_opts=render_opts,
     )
 
 
@@ -265,6 +295,21 @@ def eig_tbl_bundle(
     svg = None
     render_error = None
     try:
+        render_opts = kwargs.get("render_opts")
+        has_crop = "crop" in kwargs
+        has_padding = "padding" in kwargs
+        crop = kwargs.get("crop") if has_crop else None
+        padding = kwargs.get("padding") if has_padding else None
+        if not has_crop:
+            if render_opts and "crop" in render_opts:
+                crop = None
+            else:
+                crop = "tight"
+        if not has_padding:
+            if render_opts and "padding" in render_opts:
+                padding = None
+            else:
+                padding = (2, 2, 2, 2)
         svg = _render_eig_svg_from_spec(
             spec,
             case=case,
@@ -278,11 +323,13 @@ def eig_tbl_bundle(
             decorators=kwargs.get("decorators"),
             strict=kwargs.get("strict"),
             toolchain_name=kwargs.get("toolchain_name"),
-            crop=kwargs.get("crop", "tight"),
-            padding=kwargs.get("padding", (2, 2, 2, 2)),
+            crop=crop,
+            padding=padding,
             frame=kwargs.get("frame"),
+            exact_bbox=kwargs.get("exact_bbox"),
             tmp_dir=kwargs.get("tmp_dir"),
             output_dir=kwargs.get("output_dir"),
+            render_opts=render_opts,
         )
     except Exception as e:
         # SVG rendering depends on external toolchains; keep bundle usable without them.
@@ -356,11 +403,13 @@ def svd_tbl_svg(
     decorators: Optional[Any] = None,
     strict: Optional[bool] = None,
     toolchain_name: Optional[Any] = None,
-    crop: Any = "tight",
-    padding: Any = (2, 2, 2, 2),
+    crop: Any = _UNSET,
+    padding: Any = _UNSET,
     frame: Any = None,
+    exact_bbox: Optional[bool] = None,
     tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
+    render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Compute + render: build an SVD spec from ``A`` and return SVG."""
 
@@ -374,6 +423,10 @@ def svd_tbl_svg(
     )
     if sz is None:
         sz = spec.get("sz")
+    if crop is _UNSET:
+        crop = None if (render_opts and "crop" in render_opts) else "tight"
+    if padding is _UNSET:
+        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
 
     return _render_eig_svg_from_spec(
         spec,
@@ -391,8 +444,10 @@ def svd_tbl_svg(
         crop=crop,
         padding=padding,
         frame=frame,
+        exact_bbox=exact_bbox,
         tmp_dir=tmp_dir,
         output_dir=output_dir,
+        render_opts=render_opts,
     )
 
 
@@ -424,6 +479,21 @@ def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
     svg = None
     render_error = None
     try:
+        render_opts = kwargs.get("render_opts")
+        has_crop = "crop" in kwargs
+        has_padding = "padding" in kwargs
+        crop = kwargs.get("crop") if has_crop else None
+        padding = kwargs.get("padding") if has_padding else None
+        if not has_crop:
+            if render_opts and "crop" in render_opts:
+                crop = None
+            else:
+                crop = "tight"
+        if not has_padding:
+            if render_opts and "padding" in render_opts:
+                padding = None
+            else:
+                padding = (2, 2, 2, 2)
         svg = _render_eig_svg_from_spec(
             spec,
             case="SVD",
@@ -437,11 +507,13 @@ def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
             decorators=kwargs.get("decorators"),
             strict=kwargs.get("strict"),
             toolchain_name=kwargs.get("toolchain_name"),
-            crop=kwargs.get("crop", "tight"),
-            padding=kwargs.get("padding", (2, 2, 2, 2)),
+            crop=crop,
+            padding=padding,
             frame=kwargs.get("frame"),
+            exact_bbox=kwargs.get("exact_bbox"),
             tmp_dir=kwargs.get("tmp_dir"),
             output_dir=kwargs.get("output_dir"),
+            render_opts=render_opts,
         )
     except Exception as e:
         svg = None
