@@ -16,6 +16,7 @@ so Julia can later compute traces/decorations and call the same renderer.
 
 from __future__ import annotations
 
+import os
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
@@ -285,11 +286,14 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             else:
                 x = f"{i + 1 + tlr}"
                 y = f"{j + 1 + tlc}"
-                p = f"({x}-{y})"
+                if case == "vh":
+                    p = f"({x}-{y}.west)"
+                else:
+                    p = f"({x}-{y})"
 
             if j == 0 and left_pad:
                 p = f"($ {p} + (-{left_pad:2},0) $)"
-            elif j != 0 and j < shape[1] and adj != 0:
+            elif j != 0 and j < shape[1] and adj != 0 and case != "vh":
                 p = f"($ {p} + ({adj:2},0) $)"
             return p
 
@@ -339,6 +343,11 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             i, j = ll[-1]
             p4 = f"\\p4 = {_safe_cell(i, j, anchor='.east')} in "
 
+        def _cell_anchor(i: int, j: int, anchor: str) -> str:
+            r = i + 1 + tlr
+            c = j + 1 + tlc
+            return f"({r}-{c}.{anchor})"
+
         # Build path points, inserting anchored corners at interior pivots.
         path_pts: List[str] = []
         for idx, (i, j) in enumerate(ll):
@@ -360,6 +369,21 @@ def _legacy_ref_path_list_to_rowechelon_paths(
                     path_pts.append(f"({r}-{c}.west)")
                     path_pts.append(f"({r}-{c}.south)")
                     continue
+            if case in ("vv", "vh", "hv", "hh") and j > 0 and i < shape[0] and j < shape[1]:
+                # Align vertical/horizontal segments to left and bottom borders.
+                if prev_pt and prev_pt[0] == i:
+                    path_pts.append(_cell_anchor(i, j, "south"))
+                    continue
+                if prev_pt and prev_pt[1] == j:
+                    path_pts.append(_cell_anchor(i, j, "west"))
+                    continue
+                if next_pt:
+                    if next_pt[0] == i:
+                        path_pts.append(_cell_anchor(i, j, "south"))
+                        continue
+                    if next_pt[1] == j:
+                        path_pts.append(_cell_anchor(i, j, "west"))
+                        continue
             path_pts.append(coords(i, j))
 
         cmd = "\\tikz \\draw[" + color + "] " + corners + p3 + p4 + " -- ".join(path_pts) + ";"
@@ -996,6 +1020,16 @@ def _resolve_legacy_output_targets(
                 output_dir = tmp_dir
     if output_dir is None and tmp_dir:
         output_dir = tmp_dir
+    # Avoid reusing stale artifacts: if output_dir points to an existing file, use its parent.
+    # If it's an existing directory and no keep_file is requested, create a fresh subdir.
+    if output_dir is not None:
+        from pathlib import Path
+        p = Path(str(output_dir))
+        if p.exists() and p.is_file():
+            output_dir = str(p.parent)
+        elif p.exists() and p.is_dir() and keep_file is None:
+            # keep artifacts for debugging, but avoid reusing stale PDFs
+            output_dir = str(Path(p, f"run_{os.getpid()}"))
     return output_dir, output_stem
 
 

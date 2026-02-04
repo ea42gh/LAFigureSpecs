@@ -49,3 +49,16 @@ def test_ref_path_hh_last_pivot_does_not_step_past_last_row():
     path = paths[0]
     # Last valid row index in 1-based NiceArray terms is 5; ensure no row 6.
     assert "6-" not in path
+
+
+def test_ref_path_vh_uses_left_border_for_nonzero_columns():
+    matrices = [[None, [[1, 2, 3, 4, 5, 6],
+                        [7, 8, 9, 10, 11, 12],
+                        [13, 14, 15, 16, 17, 18]]]]
+    pivots = [(0, 0), (1, 4), (2, 5)]
+    ref_path_list = [(0, 1, pivots, "vh")]
+    paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
+    assert paths
+    path = paths[0]
+    assert ".west" in path
+    assert ".south" in path
