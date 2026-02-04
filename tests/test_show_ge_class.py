@@ -55,3 +55,21 @@ def test_show_ge_show_ref_alias():
     show = la_figures.ShowGE(A, b)
     show.show_ref(gj=True, pivoting=None)
     assert show.trace() is not None
+
+
+def test_show_ge_normal_eq_layers_include_at_and_ata():
+    import la_figures
+    import sympy as sym
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    b = sym.Matrix([[5], [6]])
+    show = la_figures.ShowGE(A, b, normal_eq=True)
+    show.ref()
+    mats = show.matrices()
+    assert mats
+    A_aug = A.row_join(b)
+    At = A.T
+    AtA_aug = (At * A).row_join(At * b)
+    assert mats[0][1] == A_aug
+    assert mats[1][0] == At
+    assert mats[1][1] == AtA_aug

@@ -23,6 +23,7 @@ class ShowGE:
 
     A: Any
     rhs: Any = None
+    normal_eq: bool = False
     pivoting: str = "none"
     gj: bool = False
     show_pivots: Optional[bool] = True
@@ -54,8 +55,31 @@ class ShowGE:
             self.gj = bool(gj)
         if pivoting is not None:
             self.pivoting = str(pivoting)
-        self._trace = ge_trace(self.A, self.rhs, pivoting=self.pivoting, gj=self.gj)
-        self._layers = trace_to_layer_matrices(self._trace, augmented=True)
+        if self.normal_eq:
+            A = to_sympy_matrix(self.A)
+            b = to_sympy_col(self.rhs)
+            if A is None:
+                raise ValueError("A must not be None")
+            At = A.T
+            if b is None:
+                A_aug = A
+                AtA_aug = At * A
+                Nrhs = 0
+            else:
+                A_aug = A.row_join(b)
+                AtA = At * A
+                Atb = At * b
+                AtA_aug = AtA.row_join(Atb)
+                Nrhs = Atb.shape[1]
+            self._trace = ge_trace(AtA, Atb if b is not None else None, pivoting=self.pivoting, gj=self.gj)
+            base_layers = trace_to_layer_matrices(self._trace, augmented=True)
+            mats = [[None, A_aug], [At, AtA_aug]] + list(base_layers.get("matrices") or [])[1:]
+            self._layers = dict(base_layers)
+            self._layers["matrices"] = mats
+            self._layers["Nrhs"] = Nrhs
+        else:
+            self._trace = ge_trace(self.A, self.rhs, pivoting=self.pivoting, gj=self.gj)
+            self._layers = trace_to_layer_matrices(self._trace, augmented=True)
         self._solution_cache.clear()
         return self
 
@@ -165,31 +189,63 @@ class ShowGE:
         return self.solve(gj=gj)["homogeneous"]
 
     def show_layout(self, **render_opts: Any):
-        svg = ge_tbl_svg(
-            self.A,
-            self.rhs,
-            pivoting=self.pivoting,
-            gj=self.gj,
-            show_pivots=self.show_pivots,
-            index_base=self.index_base,
-            pivot_style=self.pivot_style,
-            pivot_text_color=self.pivot_text_color,
-            preamble=self.preamble,
-            extension=self.extension,
-            row_stretch=self.row_stretch,
-            nice_options=self.nice_options,
-            outer_delims=self.outer_delims,
-            outer_hspace_mm=self.outer_hspace_mm,
-            cell_align=self.cell_align,
-            callouts=self.callouts,
-            array_names=self.array_names,
-            decorators=self.decorators,
-            fig_scale=self.fig_scale,
-            variable_summary=self.variable_summary,
-            variable_colors=self.variable_colors,
-            strict=self.strict,
-            **render_opts,
-        )
+        if self.normal_eq:
+            from .ge import decorate_ge
+            from .ge_convenience import ge as legacy_ge
+
+            trace = self._get_trace()
+            layers = self._get_layers()
+            decor = decorate_ge(trace, index_base=self.index_base)
+            var_summary = self.variable_summary
+            if var_summary is None:
+                var_summary = decor.get("basic_var")
+            elif isinstance(var_summary, bool):
+                var_summary = decor.get("basic_var") if var_summary else None
+            svg = legacy_ge(
+                layers.get("matrices"),
+                Nrhs=layers.get("Nrhs") or 0,
+                pivot_list=decor.get("pivot_list") if self.show_pivots else None,
+                bg_for_entries=decor.get("bg_for_entries"),
+                ref_path_list=decor.get("ref_path_list"),
+                variable_summary=var_summary,
+                variable_colors=self.variable_colors,
+                array_names=self.array_names,
+                fig_scale=self.fig_scale,
+                preamble=self.preamble,
+                extension=self.extension,
+                nice_options=self.nice_options,
+                outer_hspace_mm=self.outer_hspace_mm,
+                cell_align=self.cell_align,
+                decorators=self.decorators,
+                strict=self.strict,
+                **render_opts,
+            )
+        else:
+            svg = ge_tbl_svg(
+                self.A,
+                self.rhs,
+                pivoting=self.pivoting,
+                gj=self.gj,
+                show_pivots=self.show_pivots,
+                index_base=self.index_base,
+                pivot_style=self.pivot_style,
+                pivot_text_color=self.pivot_text_color,
+                preamble=self.preamble,
+                extension=self.extension,
+                row_stretch=self.row_stretch,
+                nice_options=self.nice_options,
+                outer_delims=self.outer_delims,
+                outer_hspace_mm=self.outer_hspace_mm,
+                cell_align=self.cell_align,
+                callouts=self.callouts,
+                array_names=self.array_names,
+                decorators=self.decorators,
+                fig_scale=self.fig_scale,
+                variable_summary=self.variable_summary,
+                variable_colors=self.variable_colors,
+                strict=self.strict,
+                **render_opts,
+            )
         return _show_svg(svg)
 
     def show_system(self, *, var_name: str = "x", **render_opts: Any):
