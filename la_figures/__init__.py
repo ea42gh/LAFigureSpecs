@@ -40,7 +40,7 @@ from .backsub import (
     linear_system_tex,
     standard_solution_tex,
 )
-from .ge import ge_trace, trace_to_layer_matrices
+from .ge import ge_trace, trace_to_layer_matrices, decorate_ge
 from .ge_convenience import show_ge
 from .convenience_ge import ge as ge, ge_tbl_bundle, ge_tbl_layout_spec, ge_tbl_spec, ge_tbl_tex, ge_tbl_svg
 from matrixlayout.ge import render_ge_svg, render_ge_tex
@@ -104,6 +104,7 @@ __all__ = [
     "standard_solution_tex",
     "ge_trace",
     "trace_to_layer_matrices",
+    "decorate_ge",
     "ge_tbl_spec",
     "ge_tbl_layout_spec",
     "ge_tbl_tex",

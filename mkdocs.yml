@@ -16,7 +16,6 @@ nav:
   - API: api.md
   - Notebooks:
       - Overview: notebooks/README.md
-      - Stack of matrices: notebooks/01_stack_of_matrices.ipynb
       - Gaussian elimination: notebooks/02_gaussian_elimination.ipynb
       - QR: notebooks/03_qr.ipynb
       - Eigenproblems: notebooks/04_eigenproblems.ipynb
