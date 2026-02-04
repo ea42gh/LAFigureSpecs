@@ -286,14 +286,11 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             else:
                 x = f"{i + 1 + tlr}"
                 y = f"{j + 1 + tlc}"
-                if case == "vh":
-                    p = f"({x}-{y}.west)"
-                else:
-                    p = f"({x}-{y})"
+                p = f"({x}-|{y})"
 
             if j == 0 and left_pad:
                 p = f"($ {p} + (-{left_pad:2},0) $)"
-            elif j != 0 and j < shape[1] and adj != 0 and case != "vh":
+            elif j != 0 and j < shape[1] and adj != 0:
                 p = f"($ {p} + ({adj:2},0) $)"
             return p
 
@@ -326,67 +323,21 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             f"\\p2 = ({name}.south east), "
         )
 
-        def _safe_cell(i: int, j: int, *, anchor: str = "") -> str:
-            ii = min(max(i, 0), shape[0] - 1)
-            jj = min(max(j, 0), shape[1] - 1)
-            return f"({ii + tlr + 1}-{jj + tlc + 1}{anchor})"
-
         if (case == "vv") or (case == "vh"):
-            p3 = f"\\p3 = {_safe_cell(ll[1][0], ll[1][1])}, "
+            p3 = f"\\p3 = ({ll[1][0] + tlr + 1}-|{ll[1][1] + tlc + 1}), "
         else:
-            p3 = f"\\p3 = {_safe_cell(ll[0][0], ll[0][1])}, "
+            p3 = f"\\p3 = ({ll[0][0] + tlr + 1}-|{ll[0][1] + tlc + 1}), "
 
         if (case == "vh") or (case == "hh"):
             i, j = ll[-2]
-            p4 = f"\\p4 = {_safe_cell(i, j, anchor='.east')} in "
+            p4 = f"\\p4 = ({i + tlr + 1}-|{j + tlc + 1}) in "
         else:
             i, j = ll[-1]
-            p4 = f"\\p4 = {_safe_cell(i, j, anchor='.east')} in "
+            p4 = f"\\p4 = ({i + tlr + 1}-|{j + tlc + 1}) in "
 
-        def _cell_anchor(i: int, j: int, anchor: str) -> str:
-            r = i + 1 + tlr
-            c = j + 1 + tlc
-            return f"({r}-{c}.{anchor})"
-
-        # Build path points, inserting anchored corners at interior pivots.
-        path_pts: List[str] = []
-        for idx, (i, j) in enumerate(ll):
-            prev_pt = ll[idx - 1] if idx > 0 else None
-            next_pt = ll[idx + 1] if idx + 1 < len(ll) else None
-            is_interior = 0 < i < shape[0] and 0 < j < shape[1]
-            if is_interior and prev_pt and next_pt:
-                if (prev_pt[0] != i and prev_pt[1] == j) and (next_pt[0] == i and next_pt[1] != j):
-                    # Vertical then horizontal: left border, then bottom border.
-                    r = i + 1 + tlr
-                    c = j + 1 + tlc
-                    path_pts.append(f"({r}-{c}.west)")
-                    path_pts.append(f"({r}-{c}.south)")
-                    continue
-                if (prev_pt[0] == i and prev_pt[1] != j) and (next_pt[0] != i and next_pt[1] == j):
-                    # Horizontal then vertical: left border, then bottom border (keep order).
-                    r = i + 1 + tlr
-                    c = j + 1 + tlc
-                    path_pts.append(f"({r}-{c}.west)")
-                    path_pts.append(f"({r}-{c}.south)")
-                    continue
-            if case in ("vv", "vh", "hv", "hh") and j > 0 and i < shape[0] and j < shape[1]:
-                # Align vertical/horizontal segments to left and bottom borders.
-                if prev_pt and prev_pt[0] == i:
-                    path_pts.append(_cell_anchor(i, j, "south"))
-                    continue
-                if prev_pt and prev_pt[1] == j:
-                    path_pts.append(_cell_anchor(i, j, "west"))
-                    continue
-                if next_pt:
-                    if next_pt[0] == i:
-                        path_pts.append(_cell_anchor(i, j, "south"))
-                        continue
-                    if next_pt[1] == j:
-                        path_pts.append(_cell_anchor(i, j, "west"))
-                        continue
-            path_pts.append(coords(i, j))
-
-        cmd = "\\tikz \\draw[" + color + "] " + corners + p3 + p4 + " -- ".join(path_pts) + ";"
+        cmd = "\\tikz \\draw[" + color + "] " + corners + p3 + p4 + " -- ".join(
+            [coords(*p) for p in ll]
+        ) + ";"
         out.append(cmd)
     return out
 
