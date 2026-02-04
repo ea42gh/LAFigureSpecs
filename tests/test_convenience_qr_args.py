@@ -1,5 +1,9 @@
 from typing import Any, Dict
 
+import sympy as sym
+
+import la_figures
+
 
 def test_qr_tbl_svg_normalizes_svg_args(monkeypatch):
     import la_figures.convenience_qr as convenience_qr
@@ -25,3 +29,11 @@ def test_qr_tbl_svg_normalizes_svg_args(monkeypatch):
     assert captured["toolchain_name"] == "pdftex_dvisvgm"
     assert captured["crop"] == "tight"
     assert captured["padding"] == (1, 2, 3, 4)
+
+
+def test_qr_tbl_spec_sets_create_extra_nodes_for_array_names():
+    A = sym.Matrix([[1, 2], [3, 4]])
+    W = sym.Matrix([[1, 0], [0, 1]])
+
+    spec = la_figures.qr_tbl_spec(A, W, array_names=True)
+    assert spec.get("create_extra_nodes") is True

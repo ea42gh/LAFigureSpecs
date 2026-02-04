@@ -160,6 +160,7 @@ def qr_tbl_spec(
         "known_zero_color": known_zero_color,
         "decorators": decorators,
         "strict": strict,
+        "create_extra_nodes": True if array_names else None,
     }
 
 

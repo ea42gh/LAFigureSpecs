@@ -57,12 +57,12 @@ def test_ge_tbl_spec_variable_summary_labels():
     assert labels
     rows = labels[0]["rows"]
     assert rows[0] == [
-        r"$\textcolor{blue}{\Uparrow}$",
-        r"$\textcolor{orange}{\uparrow}$",
+        r"\textcolor{blue}{\ensuremath{\Uparrow}}",
+        r"\textcolor{orange}{\ensuremath{\uparrow}}",
     ]
     assert rows[1] == [
-        r"$\textcolor{blue}{x_{1}}$",
-        r"$\textcolor{orange}{x_{2}}$",
+        r"\textcolor{blue}{\ensuremath{x_{1}}}",
+        r"\textcolor{orange}{\ensuremath{x_{2}}}",
     ]
 
 
@@ -114,3 +114,13 @@ def test_ge_tbl_spec_dict_roundtrip_render_ge_svg_accepts_spec():
     svg = render_ge_svg(spec=spec, toolchain_name="pdftex_dvisvgm", crop="tight", padding=(1, 1, 1, 1))
     assert isinstance(svg, str)
     assert "<svg" in svg
+
+
+def test_ge_tbl_spec_sets_create_extra_nodes_for_array_names():
+    import la_figures
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    rhs = sym.Matrix([[5], [6]])
+
+    spec = la_figures.ge_tbl_spec(A, ref_rhs=rhs, show_pivots=True, array_names=True)
+    assert spec.get("create_extra_nodes") is True

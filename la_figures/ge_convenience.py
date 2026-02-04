@@ -686,6 +686,7 @@ def _build_ge_bundle(
         codebefore=codebefore,
         create_cell_nodes=True if rowechelon_paths else None,
         create_medium_nodes=True if codebefore else None,
+        create_extra_nodes=True if callouts else None,
     )
 
     typed_layout = _build_typed_layout_spec(
