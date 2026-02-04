@@ -42,6 +42,7 @@ from .backsub import (
 )
 from .ge import ge_trace, trace_to_layer_matrices, decorate_ge
 from .ge_convenience import show_ge
+from .show_ge import ShowGE
 from .convenience_ge import ge as ge, ge_tbl_bundle, ge_tbl_layout_spec, ge_tbl_spec, ge_tbl_tex, ge_tbl_svg
 from matrixlayout.ge import render_ge_svg, render_ge_tex
 from matrixlayout.qr import render_qr_svg, render_qr_tex
@@ -110,6 +111,7 @@ __all__ = [
     "ge_tbl_tex",
     "ge_tbl_svg",
     "show_ge",
+    "ShowGE",
     "ge_tbl_bundle",
     "ge",
     "render_ge_svg",

@@ -329,12 +329,35 @@ def _legacy_ref_path_list_to_rowechelon_paths(
 
         if (case == "vh") or (case == "hh"):
             i, j = ll[-2]
-            p4 = f"\\p4 = ({i + tlr + 1}-{j + tlc + 1}) in "
+            p4 = f"\\p4 = ({i + tlr + 1}-{j + tlc + 1}.east) in "
         else:
             i, j = ll[-1]
-            p4 = f"\\p4 = ({i + tlr + 1}-{j + tlc + 1}) in "
+            p4 = f"\\p4 = ({i + tlr + 1}-{j + tlc + 1}.east) in "
 
-        cmd = "\\tikz \\draw[" + color + "] " + corners + p3 + p4 + " -- ".join([coords(*p) for p in ll]) + ";"
+        # Build path points, inserting anchored corners at interior pivots.
+        path_pts: List[str] = []
+        for idx, (i, j) in enumerate(ll):
+            prev_pt = ll[idx - 1] if idx > 0 else None
+            next_pt = ll[idx + 1] if idx + 1 < len(ll) else None
+            is_interior = 0 < i < shape[0] and 0 < j < shape[1]
+            if is_interior and prev_pt and next_pt:
+                if (prev_pt[0] != i and prev_pt[1] == j) and (next_pt[0] == i and next_pt[1] != j):
+                    # Vertical then horizontal: left border, then bottom border.
+                    r = i + 1 + tlr
+                    c = j + 1 + tlc
+                    path_pts.append(f"({r}-{c}.west)")
+                    path_pts.append(f"({r}-{c}.south)")
+                    continue
+                if (prev_pt[0] == i and prev_pt[1] != j) and (next_pt[0] != i and next_pt[1] == j):
+                    # Horizontal then vertical: left border, then bottom border (keep order).
+                    r = i + 1 + tlr
+                    c = j + 1 + tlc
+                    path_pts.append(f"({r}-{c}.west)")
+                    path_pts.append(f"({r}-{c}.south)")
+                    continue
+            path_pts.append(coords(i, j))
+
+        cmd = "\\tikz \\draw[" + color + "] " + corners + p3 + p4 + " -- ".join(path_pts) + ";"
         out.append(cmd)
     return out
 

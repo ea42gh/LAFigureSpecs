@@ -60,6 +60,22 @@ from matrixlayout.ge import render_ge_svg
 svg = render_ge_svg(spec["matrices"], specs=spec["specs"])
 ```
 
+## Stateful GE helper (ShowGE)
+
+```python
+import sympy as sym
+import la_figures as lf
+
+A = sym.Matrix([[1, 2], [3, 4]])
+b = sym.Matrix([[5], [6]])
+
+show = lf.ShowGE(A, b, gj=True)
+show.ref(pivoting="partial")
+show.show_layout()
+show.show_backsubstitution()
+show.show_solution()
+```
+
 ## QR spec
 
 ```python

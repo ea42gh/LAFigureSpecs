@@ -10,6 +10,7 @@ Top-level API by problem type
 - `09_eig_svd_top_level_functions.ipynb` — Eigen/SVD top-level API (`eig_tbl_*`, `svd_tbl_*`)
 - `10_backsubstitution_top_level_functions.ipynb` — system/backsub text helpers
 - `11_formatting_and_renderers.ipynb` — formatting selectors + low-level `render_*` entrypoints
+- `12_show_ge_class.ipynb` — stateful `ShowGE` helper (REF/RREF + solutions)
 
 Guidelines
 ----------

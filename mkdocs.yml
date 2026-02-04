@@ -26,3 +26,4 @@ nav:
       - Eigen/SVD top-level API: notebooks/09_eig_svd_top_level_functions.ipynb
       - Backsubstitution top-level API: notebooks/10_backsubstitution_top_level_functions.ipynb
       - Formatting + renderers API: notebooks/11_formatting_and_renderers.ipynb
+      - ShowGE class: notebooks/12_show_ge_class.ipynb

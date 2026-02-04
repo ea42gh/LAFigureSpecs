@@ -24,6 +24,7 @@ rendered output.
 
 - `la_figures.ge_trace(A, **opts)`: generate a GE trace with pivots and steps. Inputs: matrix-like `A`. Returns: trace dict. Use when you need step-by-step elimination.
 - `la_figures.trace_to_layer_matrices(trace)`: convert a trace to matrix layers. Inputs: trace dict. Returns: list of grid matrices.
+- `la_figures.ShowGE(A, b, **opts)`: stateful helper mirroring Julia `ShowGe`. Use `show.ref(gj=..., pivoting=...)` to compute REF/RREF once, then call `show.show_layout()`, `show.show_system()`, `show.show_backsubstitution()`, `show.show_solution()`. Access `show.matrices()`, `show.particular_solution()`, `show.homogeneous_solution()`, or `show.solve()`.
 - `la_figures.ge_tbl_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
 - `la_figures.ge_tbl_layout_spec(A, **opts)`: build a typed GE layout spec. Inputs: matrix-like `A`. Returns: typed spec.
 - `la_figures.ge_tbl_bundle(A, **opts)`: build a GE bundle. Returns standardized bundle; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).

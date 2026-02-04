@@ -1,0 +1,236 @@
+from __future__ import annotations
+
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional, Sequence, Tuple
+
+from .ge import ge_trace, trace_to_layer_matrices
+from .backsub import backsubstitution_tex, linear_system_tex, standard_solution_tex
+from .ge_convenience import ge_tbl_svg
+from ._sympy_utils import to_sympy_col, to_sympy_matrix
+
+
+def _show_svg(svg: str):
+    try:
+        from IPython.display import SVG, display  # type: ignore
+    except Exception:
+        return svg
+    return display(SVG(svg))
+
+
+@dataclass
+class ShowGE:
+    """Notebook-friendly Gaussian-elimination helper (Python analogue of Julia ShowGe)."""
+
+    A: Any
+    rhs: Any = None
+    pivoting: str = "none"
+    gj: bool = False
+    show_pivots: Optional[bool] = True
+    index_base: int = 0
+    pivot_style: str = ""
+    pivot_text_color: str = "red"
+    preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n"
+    extension: str = ""
+    row_stretch: Optional[float] = None
+    nice_options: str = ""
+    outer_delims: bool = False
+    outer_hspace_mm: int = 6
+    cell_align: str = "r"
+    callouts: Optional[Any] = None
+    array_names: Optional[Any] = None
+    decorators: Optional[Sequence[Any]] = None
+    fig_scale: Optional[Any] = None
+    variable_summary: Optional[Any] = None
+    variable_colors: Sequence[str] = ("red", "black")
+    strict: Optional[bool] = None
+
+    _trace: Any = field(default=None, init=False, repr=False)
+    _layers: Any = field(default=None, init=False, repr=False)
+    _solution_cache: Dict[bool, Dict[str, Any]] = field(default_factory=dict, init=False, repr=False)
+
+    def ref(self, *, gj: Optional[bool] = None, pivoting: Optional[str] = None):
+        """Compute and cache the GE trace/layers (REF or RREF)."""
+        if gj is not None:
+            self.gj = bool(gj)
+        if pivoting is not None:
+            self.pivoting = str(pivoting)
+        self._trace = ge_trace(self.A, self.rhs, pivoting=self.pivoting, gj=self.gj)
+        self._layers = trace_to_layer_matrices(self._trace, augmented=True)
+        self._solution_cache.clear()
+        return self
+
+    def show_ref(self, *, gj: Optional[bool] = None, pivoting: Optional[str] = None):
+        """Alias for ref (Julia-style naming)."""
+        return self.ref(gj=gj, pivoting=pivoting)
+
+    def _get_trace(self):
+        if self._trace is None:
+            self.ref()
+        return self._trace
+
+    def _get_layers(self):
+        if self._layers is None:
+            self.ref()
+        return self._layers
+
+    def _final_ref_mats(self) -> Tuple[Any, Any]:
+        layers = self._get_layers()
+        mats = layers.get("matrices") or []
+        if not mats:
+            return self.A, self.rhs
+        last = mats[-1][1]
+        nrhs = int(layers.get("Nrhs") or 0)
+        if nrhs <= 0:
+            return last, None
+        return last[:, :-nrhs], last[:, -nrhs:]
+
+    def trace(self) -> Any:
+        """Return (and cache) the GE trace."""
+        return self._get_trace()
+
+    def matrices(self) -> List[List[Any]]:
+        """Return the GE layer matrices (augmented)."""
+        return list(self._get_layers().get("matrices") or [])
+
+    def solve(self, *, gj: Optional[bool] = None) -> Dict[str, Any]:
+        """Solve the system and return pivot/free/solution data."""
+        if gj is not None and bool(gj) != bool(self.gj):
+            self.ref(gj=gj)
+        gj = self.gj
+        if gj in self._solution_cache:
+            return self._solution_cache[gj]
+
+        A = to_sympy_matrix(self.A)
+        b = to_sympy_col(self.rhs)
+        if A is None:
+            raise ValueError("A must not be None")
+
+        if b is None:
+            rref_A, pivot_cols = A.rref()
+            rref_b = None
+        else:
+            Ab = A.row_join(b)
+            rref_Ab, pivot_cols_ab = Ab.rref()
+            rref_A = rref_Ab[:, 0:-1]
+            rref_b = rref_Ab[:, -1]
+            if pivot_cols_ab and pivot_cols_ab[-1] == rref_A.shape[1]:
+                pivot_cols = pivot_cols_ab[:-1]
+            else:
+                pivot_cols = pivot_cols_ab
+
+        n = rref_A.shape[1]
+        free_cols = [i for i in range(n) if i not in pivot_cols]
+
+        # Particular solution (free vars = 0).
+        import sympy as sym
+
+        particular = sym.zeros(n, 1)
+        if rref_b is not None:
+            for i, pc in enumerate(pivot_cols):
+                t = rref_b[i]
+                for j in range(pc + 1, n):
+                    t = t - rref_A[i, j] * particular[j, 0]
+                particular[pc, 0] = t
+
+        # Homogeneous basis.
+        homogeneous: List[Any] = []
+        for free in free_cols:
+            vec = sym.zeros(n, 1)
+            vec[free, 0] = sym.Integer(1)
+            for i, pc in enumerate(pivot_cols):
+                t = sym.Integer(0)
+                for j in range(pc + 1, n):
+                    t = t - rref_A[i, j] * vec[j, 0]
+                vec[pc, 0] = t
+            homogeneous.append(vec)
+
+        result = {
+            "gj": gj,
+            "rref_A": rref_A,
+            "rref_b": rref_b,
+            "pivot_cols": list(pivot_cols),
+            "free_cols": list(free_cols),
+            "particular": particular,
+            "homogeneous": homogeneous,
+        }
+        self._solution_cache[gj] = result
+        return result
+
+    def particular_solution(self, *, gj: Optional[bool] = None):
+        """Return a particular solution (free vars = 0)."""
+        return self.solve(gj=gj)["particular"]
+
+    def homogeneous_solution(self, *, gj: Optional[bool] = None):
+        """Return a list of homogeneous basis vectors."""
+        return self.solve(gj=gj)["homogeneous"]
+
+    def show_layout(self, **render_opts: Any):
+        svg = ge_tbl_svg(
+            self.A,
+            self.rhs,
+            pivoting=self.pivoting,
+            gj=self.gj,
+            show_pivots=self.show_pivots,
+            index_base=self.index_base,
+            pivot_style=self.pivot_style,
+            pivot_text_color=self.pivot_text_color,
+            preamble=self.preamble,
+            extension=self.extension,
+            row_stretch=self.row_stretch,
+            nice_options=self.nice_options,
+            outer_delims=self.outer_delims,
+            outer_hspace_mm=self.outer_hspace_mm,
+            cell_align=self.cell_align,
+            callouts=self.callouts,
+            array_names=self.array_names,
+            decorators=self.decorators,
+            fig_scale=self.fig_scale,
+            variable_summary=self.variable_summary,
+            variable_colors=self.variable_colors,
+            strict=self.strict,
+            **render_opts,
+        )
+        return _show_svg(svg)
+
+    def show_system(self, *, var_name: str = "x", **render_opts: Any):
+        system_txt = linear_system_tex(self.A, self.rhs, var_name=var_name)
+        from matrixlayout.backsubst import backsubst_svg
+
+        svg = backsubst_svg(
+            system_txt=system_txt,
+            show_system=True,
+            show_cascade=False,
+            show_solution=False,
+            **render_opts,
+        )
+        return _show_svg(svg)
+
+    def show_backsubstitution(self, *, var_name: str = "x", param_name: str = r"\alpha", **render_opts: Any):
+        ref_A, ref_rhs = self._final_ref_mats()
+        cascade_txt = backsubstitution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
+        from matrixlayout.backsubst import backsubst_svg
+
+        svg = backsubst_svg(
+            cascade_txt=cascade_txt,
+            show_system=False,
+            show_cascade=True,
+            show_solution=False,
+            **render_opts,
+        )
+        return _show_svg(svg)
+
+    def show_solution(self, *, var_name: str = "x", param_name: str = r"\alpha", **render_opts: Any):
+        ref_A, ref_rhs = self._final_ref_mats()
+        if ref_rhs is None:
+            raise ValueError("show_solution requires a RHS.")
+        solution_txt = standard_solution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
+        from matrixlayout.backsubst import backsubst_svg
+
+        svg = backsubst_svg(
+            solution_txt=solution_txt,
+            show_system=False,
+            show_cascade=False,
+            show_solution=True,
+            **render_opts,
+        )
+        return _show_svg(svg)
