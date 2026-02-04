@@ -322,17 +322,22 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             f"\\p2 = ({name}.south east), "
         )
 
+        def _safe_cell(i: int, j: int, *, anchor: str = "") -> str:
+            ii = min(max(i, 0), shape[0] - 1)
+            jj = min(max(j, 0), shape[1] - 1)
+            return f"({ii + tlr + 1}-{jj + tlc + 1}{anchor})"
+
         if (case == "vv") or (case == "vh"):
-            p3 = f"\\p3 = ({ll[1][0] + tlr + 1}-{ll[1][1] + tlc + 1}), "
+            p3 = f"\\p3 = {_safe_cell(ll[1][0], ll[1][1])}, "
         else:
-            p3 = f"\\p3 = ({ll[0][0] + tlr + 1}-{ll[0][1] + tlc + 1}), "
+            p3 = f"\\p3 = {_safe_cell(ll[0][0], ll[0][1])}, "
 
         if (case == "vh") or (case == "hh"):
             i, j = ll[-2]
-            p4 = f"\\p4 = ({i + tlr + 1}-{j + tlc + 1}.east) in "
+            p4 = f"\\p4 = {_safe_cell(i, j, anchor='.east')} in "
         else:
             i, j = ll[-1]
-            p4 = f"\\p4 = ({i + tlr + 1}-{j + tlc + 1}.east) in "
+            p4 = f"\\p4 = {_safe_cell(i, j, anchor='.east')} in "
 
         # Build path points, inserting anchored corners at interior pivots.
         path_pts: List[str] = []
