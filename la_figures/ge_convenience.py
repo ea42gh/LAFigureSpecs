@@ -285,7 +285,7 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             else:
                 x = f"{i + 1 + tlr}"
                 y = f"{j + 1 + tlc}"
-                p = f"({x}-|{y})"
+                p = f"({x}-{y})"
 
             if j == 0 and left_pad:
                 p = f"($ {p} + (-{left_pad:2},0) $)"
@@ -323,16 +323,16 @@ def _legacy_ref_path_list_to_rowechelon_paths(
         )
 
         if (case == "vv") or (case == "vh"):
-            p3 = f"\\p3 = ({ll[1][0] + tlr + 1}-|{ll[1][1] + tlc + 1}), "
+            p3 = f"\\p3 = ({ll[1][0] + tlr + 1}-{ll[1][1] + tlc + 1}), "
         else:
-            p3 = f"\\p3 = ({ll[0][0] + tlr + 1}-|{ll[0][1] + tlc + 1}), "
+            p3 = f"\\p3 = ({ll[0][0] + tlr + 1}-{ll[0][1] + tlc + 1}), "
 
         if (case == "vh") or (case == "hh"):
             i, j = ll[-2]
-            p4 = f"\\p4 = ({i + tlr + 1}-|{j + tlc + 1}) in "
+            p4 = f"\\p4 = ({i + tlr + 1}-{j + tlc + 1}) in "
         else:
             i, j = ll[-1]
-            p4 = f"\\p4 = ({i + tlr + 1}-|{j + tlc + 1}) in "
+            p4 = f"\\p4 = ({i + tlr + 1}-{j + tlc + 1}) in "
 
         cmd = "\\tikz \\draw[" + color + "] " + corners + p3 + p4 + " -- ".join([coords(*p) for p in ll]) + ";"
         out.append(cmd)
@@ -443,8 +443,8 @@ def _variable_summary_label_rows(
             break
         arrow = r"\Uparrow" if basic is True else r"\uparrow"
         color = variable_colors[0] if basic is True else variable_colors[1]
-        arrows.append(rf"$\textcolor{{{color}}}{{{arrow}}}$")
-        labels.append(rf"$\textcolor{{{color}}}{{x_{{{j+1}}}}}$")
+        arrows.append(rf"\textcolor{{{color}}}{{\ensuremath{{{arrow}}}}}")
+        labels.append(rf"\textcolor{{{color}}}{{\ensuremath{{x_{{{j+1}}}}}}}")
     if not arrows:
         return []
     return [
