@@ -90,7 +90,7 @@ vertical lines only appear in the matrix rows.
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `A` | matrix | required | Input matrix. |
-| `W` | matrix | required | Orthogonal columns spanning the column space of `A`. |
+| `W` | matrix | required | Computed internally via naive Gram–Schmidt (LCD-scaled, no normalization). |
 | `array_names` | bool/list | True | Enable labels or custom list. |
 | `fig_scale` | float | None | Figure scale. |
 | `preamble` | str | nicematrix opts | Body preamble. |
@@ -107,7 +107,7 @@ vertical lines only appear in the matrix rows.
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `A` | matrix | required | Input matrix. |
-| `W` | matrix | required | Orthogonal basis. |
+| `W` | matrix | required | Computed internally via naive Gram–Schmidt (LCD-scaled, no normalization). |
 | `array_names` | bool/list | True | Labels. |
 | `decorators` | list | None | Entry decorators. |
 

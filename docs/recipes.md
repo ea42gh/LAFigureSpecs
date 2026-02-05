@@ -51,7 +51,7 @@ import la_figures
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
-spec = la_figures.qr_tbl_spec(A, W, array_names=True)
+spec = la_figures.qr_tbl_spec(A, array_names=True)
 ```
 
 ## QR with custom specs
@@ -63,7 +63,7 @@ from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
-spec = qr_tbl_spec(A, W)
+spec = qr_tbl_spec(A)
 spec["specs"].append({"grid": (0, 2), "side": "above", "labels": ["x_1", "x_2"]})
 svg = render_qr_svg(spec["matrices"], specs=spec["specs"])
 ```

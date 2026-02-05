@@ -26,11 +26,9 @@ def test_qr_tbl_svg_smoke():
     import la_figures
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    W = sym.Matrix([[1, 0], [0, 1]])
 
     svg = la_figures.qr_tbl_svg(
         A,
-        W,
         crop="tight",
         padding=(2, 2, 2, 2),
         toolchain_name=_pick_toolchain_name_or_skip(),

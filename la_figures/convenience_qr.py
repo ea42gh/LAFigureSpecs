@@ -84,7 +84,6 @@ def _render_qr_svg_from_spec(
 
 def qr_tbl_tex(
     A: Any,
-    W: Any,
     *,
     array_names: Any = True,
     formatter: Any = latexify,
@@ -98,11 +97,10 @@ def qr_tbl_tex(
     decorators: Optional[Any] = None,
     strict: Optional[bool] = None,
 ) -> str:
-    """Compute + render: build a QR spec from ``A, W`` and return TeX."""
+    """Compute + render: build a QR spec from ``A`` and return TeX."""
 
     spec = qr_tbl_spec(
         A,
-        W,
         array_names=array_names,
         fig_scale=fig_scale,
         preamble=preamble,
@@ -120,7 +118,6 @@ def qr_tbl_tex(
 
 def qr_tbl_svg(
     A: Any,
-    W: Any,
     *,
     array_names: Any = True,
     formatter: Any = latexify,
@@ -142,11 +139,10 @@ def qr_tbl_svg(
     output_dir: Optional[Any] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
-    """Compute + render: build a QR spec from ``A, W`` and return SVG."""
+    """Compute + render: build a QR spec from ``A`` and return SVG."""
 
     spec = qr_tbl_spec(
         A,
-        W,
         array_names=array_names,
         fig_scale=fig_scale,
         preamble=preamble,
@@ -180,12 +176,11 @@ def qr_tbl_svg(
 
 def qr_tbl_bundle(
     A: Any,
-    W: Any,
     **kwargs: Any,
 ) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
 
-    spec = qr_tbl_spec(A, W, **kwargs)
+    spec = qr_tbl_spec(A, **kwargs)
     tex = _render_qr_tex_from_spec(
         spec,
         formatter=kwargs.get("formatter", latexify),
@@ -288,7 +283,6 @@ def qr(
 
 def gram_schmidt_qr(
     A: Any,
-    W: Any,
     *,
     formatter: Any = latexify,
     array_names: Any = True,
@@ -316,7 +310,6 @@ def gram_schmidt_qr(
 
     matrices = gram_schmidt_qr_matrices(
         A,
-        W,
         allow_rank_deficient=allow_rank_deficient,
         rank_deficient=rank_deficient,
     )

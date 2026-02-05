@@ -41,7 +41,7 @@ def test_qr_tbl_svg_uses_tmp_dir_as_output_dir(monkeypatch):
         return "<svg/>"
 
     monkeypatch.setattr("matrixlayout.qr.render_qr_svg", fake_render_qr_svg)
-    svg = la_figures.qr_tbl_svg([[1, 0], [0, 1]], [[1, 0], [0, 1]], tmp_dir="tmp-out")
+    svg = la_figures.qr_tbl_svg([[1, 0], [0, 1]], tmp_dir="tmp-out")
     assert svg == "<svg/>"
     assert captured["output_dir"] == "tmp-out"
 
@@ -56,7 +56,7 @@ def test_qr_tbl_svg_prefers_output_dir_over_tmp_dir(monkeypatch):
         return "<svg/>"
 
     monkeypatch.setattr("matrixlayout.qr.render_qr_svg", fake_render_qr_svg)
-    svg = la_figures.qr_tbl_svg([[1, 0], [0, 1]], [[1, 0], [0, 1]], tmp_dir="tmp-out", output_dir="out")
+    svg = la_figures.qr_tbl_svg([[1, 0], [0, 1]], tmp_dir="tmp-out", output_dir="out")
     assert svg == "<svg/>"
     assert captured["output_dir"] == "out"
 

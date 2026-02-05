@@ -29,5 +29,5 @@ def test_bundle_return_contracts_have_spec_tex_svg_keys():
     svd_bundle = la_figures.svd_tbl_bundle([[1, 0], [0, 1]])
     assert set(["spec", "tex", "svg", "data", "render_error"]).issubset(svd_bundle.keys())
 
-    qr_bundle = la_figures.qr_tbl_bundle([[1, 0], [0, 1]], [[1, 0], [0, 1]])
+    qr_bundle = la_figures.qr_tbl_bundle([[1, 0], [0, 1]])
     assert set(["spec", "tex", "svg", "data", "render_error"]).issubset(qr_bundle.keys())

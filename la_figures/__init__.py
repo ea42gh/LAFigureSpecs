@@ -29,6 +29,8 @@ from .convenience import (
 from .qr import (
     compute_qr_matrices,
     gram_schmidt_qr_matrices,
+    naive_gram_schmidt_w,
+    naive_qr,
     qr_tbl_layout_spec,
     qr_tbl_spec,
     qr_tbl_spec_from_matrices,
@@ -92,6 +94,8 @@ __all__ = [
     "svd_tbl_bundle",
     "compute_qr_matrices",
     "gram_schmidt_qr_matrices",
+    "naive_gram_schmidt_w",
+    "naive_qr",
     "qr_tbl_spec",
     "qr_tbl_spec_from_matrices",
     "qr_matrices_from_grid",

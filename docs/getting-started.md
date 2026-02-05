@@ -84,7 +84,7 @@ import la_figures
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.Matrix([[1,-3],[3,1]])
-spec = la_figures.qr_tbl_spec(A, W)
+spec = la_figures.qr_tbl_spec(A)
 ```
 
 ## QR end-to-end render
@@ -96,7 +96,7 @@ from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
-spec = qr_tbl_spec(A, W)
+spec = qr_tbl_spec(A)
 svg = render_qr_svg(spec["matrices"], specs=spec["specs"])
 ```
 

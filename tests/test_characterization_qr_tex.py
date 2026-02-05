@@ -106,8 +106,7 @@ def test_qr_tex_matches_legacy_for_2x2():
     from matrixlayout.qr import render_qr_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    W = sym.Matrix([[1, 0], [0, 1]])
-    matrices = compute_qr_matrices(A, W)
+    matrices = compute_qr_matrices(A)
 
     new = render_qr_tex(matrices=matrices, formatter=str)
     _assert_qr_tex_has_markers(new)
@@ -120,8 +119,7 @@ def test_qr_tex_matches_legacy_for_3x2():
     from matrixlayout.qr import render_qr_tex
 
     A = sym.Matrix([[1, 2], [3, 4], [5, 6]])
-    W = sym.Matrix([[1, 0], [0, 1], [0, 0]])
-    matrices = compute_qr_matrices(A, W)
+    matrices = compute_qr_matrices(A)
 
     new = render_qr_tex(matrices=matrices, formatter=str)
     _assert_qr_tex_has_markers(new)
@@ -134,8 +132,7 @@ def test_qr_tex_matches_legacy_for_rank_deficient():
     from matrixlayout.qr import render_qr_tex
 
     A = sym.Matrix([[1, 2], [2, 4]])
-    W = sym.Matrix([[1, 2], [2, 4]])
-    matrices = compute_qr_matrices(A, W)
+    matrices = compute_qr_matrices(A)
 
     new = render_qr_tex(matrices=matrices, formatter=str)
     _assert_qr_tex_has_markers(new)

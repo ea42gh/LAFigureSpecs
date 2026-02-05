@@ -144,18 +144,18 @@ def _count_nonempty_blocks(matrices):
 
 
 @pytest.mark.parametrize(
-    ("A", "W"),
+    "A",
     [
-        (sym.Matrix([[1, 2], [3, 4]]), sym.Matrix([[1, 0], [0, 1]])),
-        (sym.Matrix([[1, 2], [3, 4], [5, 6]]), sym.Matrix([[1, 0], [0, 1], [0, 0]])),
-        (sym.Matrix([[1, 2], [2, 4]]), sym.Matrix([[1, 2], [2, 4]])),
+        sym.Matrix([[1, 2], [3, 4]]),
+        sym.Matrix([[1, 2], [3, 4], [5, 6]]),
+        sym.Matrix([[1, 2], [2, 4]]),
     ],
 )
-def test_qr_layout_matches_legacy(A, W):
+def test_qr_layout_matches_legacy(A):
     import la_figures
     from matrixlayout.qr import render_qr_tex
 
-    matrices = la_figures.compute_qr_matrices(A, W)
+    matrices = la_figures.compute_qr_matrices(A)
     new = render_qr_tex(matrices=matrices, formatter=str)
 
     assert _extract_mat_format(new)

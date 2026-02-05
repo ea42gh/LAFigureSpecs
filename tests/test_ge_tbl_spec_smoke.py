@@ -124,3 +124,13 @@ def test_ge_tbl_spec_sets_create_extra_nodes_for_array_names():
 
     spec = la_figures.ge_tbl_spec(A, ref_rhs=rhs, show_pivots=True, array_names=True)
     assert spec.get("create_extra_nodes") is True
+
+
+def test_ge_tbl_spec_rowechelon_paths_per_layer():
+    import la_figures
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    spec = la_figures.ge_tbl_spec(A, show_pivots=True)
+
+    rowechelon_paths = spec.get("rowechelon_paths") or []
+    assert rowechelon_paths

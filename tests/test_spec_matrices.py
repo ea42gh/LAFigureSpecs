@@ -25,9 +25,22 @@ def test_svd_matrices_from_spec_reduced_rank():
 
 def test_qr_matrices_from_grid():
     A = sym.Matrix([[1, 0], [0, 1]])
-    W = sym.Matrix([[1, 0], [0, 1]])
-    mats = la_figures.gram_schmidt_qr_matrices(A, W)
+    mats = la_figures.gram_schmidt_qr_matrices(A)
     out = la_figures.qr_matrices_from_grid(mats)
     assert out["A"] == A
-    assert out["W"] == W
     assert out["R"] == sym.Matrix([[1, 0], [0, 1]])
+
+
+def test_qr_factorization_rational_3x3():
+    A = sym.Matrix(
+        [
+            [sym.Rational(1, 2), sym.Rational(2, 3), sym.Rational(3, 4)],
+            [sym.Rational(4, 5), sym.Rational(5, 6), sym.Rational(6, 7)],
+            [sym.Rational(7, 8), sym.Rational(8, 9), sym.Rational(9, 10)],
+        ]
+    )
+    mats = la_figures.gram_schmidt_qr_matrices(A, allow_rank_deficient=True)
+    out = la_figures.qr_matrices_from_grid(mats)
+    Q = out["Q"]
+    R = out["R"]
+    assert A.equals(Q * R)

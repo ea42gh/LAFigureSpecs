@@ -37,19 +37,19 @@ Example options:
 
 ## QR
 
-- `la_figures.compute_qr_matrices(A, W)`: compute the QR matrix grid. Returns: list of grid matrices. Use when you already have `W`.
+- `la_figures.compute_qr_matrices(A)`: compute the QR matrix grid. Returns: list of grid matrices. Computed internally via naive Gram-Schmidt (LCD-scaled, no normalization).
 - `la_figures.gram_schmidt_qr_matrices(A, **opts)`: compute QR grid with rank-deficient handling. Returns: list of grid matrices.
-- `la_figures.qr_tbl_spec(A, W, **opts)`: build a QR spec for matrixlayout. Returns: spec dict.
-- `la_figures.qr_tbl_layout_spec(A, W, **opts)`: build a typed QR layout spec. Returns: typed spec.
-- `la_figures.qr_matrices_from_grid(mats)`: extract `(A, W, WtA, WtW, S, Qt, Q, R)` from the QR grid.
-- `la_figures.qr_tbl_tex(A, W, **opts)`: render QR TeX from the spec path.
-- `la_figures.qr_tbl_svg(A, W, **opts)`: render QR SVG from the spec path.
-- `la_figures.qr_tbl_bundle(A, W, **opts)`: return standardized bundle.
+- `la_figures.qr_tbl_spec(A, **opts)`: build a QR spec for matrixlayout. Returns: spec dict.
+- `la_figures.qr_tbl_layout_spec(A, **opts)`: build a typed QR layout spec. Returns: typed spec.
+- `la_figures.qr_matrices_from_grid(mats)`: extract `(AtAtW, S, Qt, Q, R)` from the QR grid.
+- `la_figures.qr_tbl_tex(A, **opts)`: render QR TeX from the spec path.
+- `la_figures.qr_tbl_svg(A, **opts)`: render QR SVG from the spec path.
+- `la_figures.qr_tbl_bundle(A, **opts)`: return standardized bundle.
 - `la_figures.qr(matrices, **opts)`: render QR SVG from a precomputed matrix stack.
-- `la_figures.gram_schmidt_qr(A, W, **opts)`: compute Gram-Schmidt matrices and render QR SVG.
+- `la_figures.gram_schmidt_qr(A, **opts)`: compute Gram-Schmidt matrices and render QR SVG.
 
 Example options:
-`qr_tbl_spec(A, W, array_names=True, rank_deficient=True)`
+`qr_tbl_spec(A, array_names=True, rank_deficient=True)`
 
 ## Eigen/SVD
 

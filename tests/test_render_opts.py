@@ -50,7 +50,6 @@ def test_qr_tbl_svg_passes_render_opts(monkeypatch):
 
     svg = lf_qr.qr_tbl_svg(
         [[1, 0], [0, 1]],
-        [[1, 0], [0, 1]],
         render_opts={"crop": "page", "padding": (1, 1, 1, 1)},
         crop="tight",
         padding=(2, 2, 2, 2),

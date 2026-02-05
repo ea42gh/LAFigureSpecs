@@ -61,7 +61,7 @@ def test_qr_tbl_bundle_builds_spec_once(monkeypatch):
     monkeypatch.setattr(conv, "_render_qr_tex_from_spec", lambda *a, **k: "tex")
     monkeypatch.setattr(conv, "_render_qr_svg_from_spec", lambda *a, **k: "<svg/>")
 
-    out = conv.qr_tbl_bundle([[1]], [[1]])
+    out = conv.qr_tbl_bundle([[1]])
     assert out["tex"] == "tex"
     assert out["svg"] == "<svg/>"
     assert calls["n"] == 1
