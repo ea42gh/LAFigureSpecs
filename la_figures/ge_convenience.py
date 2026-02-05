@@ -430,6 +430,7 @@ def _variable_summary_label_rows(
     matrices: Sequence[Sequence[Any]],
     variable_summary: Sequence[Any],
     variable_colors: Sequence[str],
+    rhs_status: Optional[Sequence[Any]] = None,
 ) -> List[Dict[str, Any]]:
     _, block_widths, row_starts, _ = _grid_offsets(matrices, index_base=1)
     if not (block_widths and row_starts):
@@ -448,6 +449,21 @@ def _variable_summary_label_rows(
         color = variable_colors[0] if basic is True else variable_colors[1]
         arrows.append(rf"\textcolor{{{color}}}{{\ensuremath{{{arrow}}}}}")
         labels.append(rf"\textcolor{{{color}}}{{\ensuremath{{x_{{{j+1}}}}}}}")
+    rhs_count = max(0, last_col_width - len(arrows))
+    if rhs_count > 0:
+        rhs_marks: List[str] = []
+        rhs_labels: List[str] = []
+        for idx in range(rhs_count):
+            status = None
+            if rhs_status is not None and idx < len(rhs_status):
+                status = rhs_status[idx]
+            if status == "inconsistent" or status is True:
+                rhs_marks.append(r"\textcolor{red}{\ensuremath{x}}")
+            else:
+                rhs_marks.append("")
+            rhs_labels.append("")
+        arrows.extend(rhs_marks)
+        labels.extend(rhs_labels)
     if not arrows:
         return []
     return [
@@ -526,6 +542,7 @@ def _build_ge_bundle(
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
     variable_colors: Sequence[str] = ("red", "black"),
+    rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
 ) -> Dict[str, Any]:
     # Julia interop typically passes the RHS as a keyword named `rhs`.
@@ -650,6 +667,7 @@ def _build_ge_bundle(
             layers["matrices"],
             eff_variable_summary,
             variable_colors,
+            rhs_status=rhs_status,
         )
 
     decorations: List[Dict[str, Any]] = []
@@ -737,6 +755,7 @@ def ge_tbl_spec(
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
     variable_colors: Sequence[str] = ("red", "black"),
+    rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
 ) -> Dict[str, Any]:
     """Return a layout spec for :func:`matrixlayout.ge.render_ge_tex`.
@@ -767,6 +786,7 @@ def ge_tbl_spec(
         fig_scale=fig_scale,
         variable_summary=variable_summary,
         variable_colors=variable_colors,
+        rhs_status=rhs_status,
         strict=bool(strict) if strict is not None else False,
     )["spec"]
 
@@ -795,6 +815,7 @@ def ge_tbl_layout_spec(
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
     variable_colors: Sequence[str] = ("red", "black"),
+    rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
 ) -> Dict[str, Any]:
     """Return a layout spec using :class:`matrixlayout.specs.GELayoutSpec`."""
@@ -821,6 +842,7 @@ def ge_tbl_layout_spec(
         fig_scale=fig_scale,
         variable_summary=variable_summary,
         variable_colors=variable_colors,
+        rhs_status=rhs_status,
         strict=bool(strict) if strict is not None else False,
     )
 
@@ -1159,6 +1181,7 @@ def ge_tbl_bundle(
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
     variable_colors: Sequence[str] = ("red", "black"),
+    rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
 ) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
@@ -1172,6 +1195,7 @@ def ge_tbl_bundle(
         show_pivots=show_pivots,
         index_base=index_base,
         pivot_style=pivot_style,
+        pivot_text_color=pivot_text_color,
         preamble=preamble,
         extension=extension,
         row_stretch=row_stretch,
@@ -1185,6 +1209,7 @@ def ge_tbl_bundle(
         fig_scale=fig_scale,
         variable_summary=variable_summary,
         variable_colors=variable_colors,
+        rhs_status=rhs_status,
         strict=bool(strict) if strict is not None else False,
     )
 
@@ -1263,6 +1288,7 @@ def ge_tbl_tex(
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
     variable_colors: Sequence[str] = ("red", "black"),
+    rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
 ) -> str:
     """Compute + render: build GE data from reference inputs and return TeX."""
@@ -1289,6 +1315,7 @@ def ge_tbl_tex(
         fig_scale=fig_scale,
         variable_summary=variable_summary,
         variable_colors=variable_colors,
+        rhs_status=rhs_status,
         strict=bool(strict) if strict is not None else False,
     )["tex"]
 
@@ -1325,6 +1352,7 @@ def ge_tbl_svg(
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
     variable_colors: Sequence[str] = ("red", "black"),
+    rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
 ) -> str:
     """Compute + render: build GE data from reference inputs and return SVG."""
@@ -1352,6 +1380,7 @@ def ge_tbl_svg(
         fig_scale=fig_scale,
         variable_summary=variable_summary,
         variable_colors=variable_colors,
+        rhs_status=rhs_status,
         strict=bool(strict) if strict is not None else False,
     )
     if crop is _UNSET:

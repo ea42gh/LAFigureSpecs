@@ -44,6 +44,9 @@ class ShowGE:
     variable_summary: Optional[Any] = None
     variable_colors: Sequence[str] = ("red", "black")
     strict: Optional[bool] = None
+    status: str = "unknown"
+    rhs_status: List[str] = field(default_factory=list)
+    rhs_inconsistent_vals: List[Any] = field(default_factory=list)
 
     _trace: Any = field(default=None, init=False, repr=False)
     _layers: Any = field(default=None, init=False, repr=False)
@@ -80,6 +83,7 @@ class ShowGE:
         else:
             self._trace = ge_trace(self.A, self.rhs, pivoting=self.pivoting, gj=self.gj)
             self._layers = trace_to_layer_matrices(self._trace, augmented=True)
+        self._update_rhs_status()
         self._solution_cache.clear()
         return self
 
@@ -108,6 +112,50 @@ class ShowGE:
             return last, None
         return last[:, :-nrhs], last[:, -nrhs:]
 
+    def _update_rhs_status(self) -> None:
+        ref_A, ref_rhs = self._final_ref_mats()
+        if ref_rhs is None:
+            self.status = "none"
+            self.rhs_status = []
+            self.rhs_inconsistent_vals = []
+            return
+        A = to_sympy_matrix(ref_A)
+        b = to_sympy_matrix(ref_rhs)
+        if A is None or b is None:
+            self.status = "unknown"
+            self.rhs_status = []
+            self.rhs_inconsistent_vals = []
+            return
+        if b.cols == 1:
+            rhs_cols = 1
+        else:
+            rhs_cols = b.cols
+        rhs_status: List[str] = []
+        rhs_vals: List[Any] = []
+        for col in range(rhs_cols):
+            inconsistent = False
+            val = None
+            for i in range(A.rows):
+                row_zero = True
+                for j in range(A.cols):
+                    if A[i, j] != 0:
+                        row_zero = False
+                        break
+                if row_zero and b[i, col] != 0:
+                    inconsistent = True
+                    val = b[i, col]
+                    break
+            rhs_status.append("inconsistent" if inconsistent else "consistent")
+            rhs_vals.append(val)
+        self.rhs_status = rhs_status
+        self.rhs_inconsistent_vals = rhs_vals
+        if all(s == "consistent" for s in rhs_status):
+            self.status = "consistent"
+        elif all(s == "inconsistent" for s in rhs_status):
+            self.status = "inconsistent"
+        else:
+            self.status = "mixed"
+
     def trace(self) -> Any:
         """Return (and cache) the GE trace."""
         return self._get_trace()
@@ -132,15 +180,14 @@ class ShowGE:
         if b is None:
             rref_A, pivot_cols = A.rref()
             rref_b = None
+            rhs_cols = 0
         else:
             Ab = A.row_join(b)
             rref_Ab, pivot_cols_ab = Ab.rref()
-            rref_A = rref_Ab[:, 0:-1]
-            rref_b = rref_Ab[:, -1]
-            if pivot_cols_ab and pivot_cols_ab[-1] == rref_A.shape[1]:
-                pivot_cols = pivot_cols_ab[:-1]
-            else:
-                pivot_cols = pivot_cols_ab
+            rref_A = rref_Ab[:, 0 : A.shape[1]]
+            rref_b = rref_Ab[:, A.shape[1] :]
+            rhs_cols = rref_b.shape[1]
+            pivot_cols = [c for c in pivot_cols_ab if c < rref_A.shape[1]]
 
         n = rref_A.shape[1]
         free_cols = [i for i in range(n) if i not in pivot_cols]
@@ -148,13 +195,14 @@ class ShowGE:
         # Particular solution (free vars = 0).
         import sympy as sym
 
-        particular = sym.zeros(n, 1)
+        particular = sym.zeros(n, max(rhs_cols, 1))
         if rref_b is not None:
-            for i, pc in enumerate(pivot_cols):
-                t = rref_b[i]
-                for j in range(pc + 1, n):
-                    t = t - rref_A[i, j] * particular[j, 0]
-                particular[pc, 0] = t
+            for col in range(rhs_cols):
+                for i, pc in enumerate(pivot_cols):
+                    t = rref_b[i, col]
+                    for j in range(pc + 1, n):
+                        t = t - rref_A[i, j] * particular[j, col]
+                    particular[pc, col] = t
 
         # Homogeneous basis.
         homogeneous: List[Any] = []
@@ -176,6 +224,8 @@ class ShowGE:
             "free_cols": list(free_cols),
             "particular": particular,
             "homogeneous": homogeneous,
+            "rhs_status": list(self.rhs_status),
+            "status": self.status,
         }
         self._solution_cache[gj] = result
         return result
@@ -243,6 +293,7 @@ class ShowGE:
                 fig_scale=self.fig_scale,
                 variable_summary=self.variable_summary,
                 variable_colors=self.variable_colors,
+                rhs_status=self.rhs_status,
                 strict=self.strict,
                 **render_opts,
             )
@@ -263,7 +314,16 @@ class ShowGE:
 
     def show_backsubstitution(self, *, var_name: str = "x", param_name: str = r"\alpha", **render_opts: Any):
         ref_A, ref_rhs = self._final_ref_mats()
-        cascade_txt = backsubstitution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
+        if self.rhs_status and any(s == "inconsistent" for s in self.rhs_status):
+            val = None
+            for s, v in zip(self.rhs_status, self.rhs_inconsistent_vals):
+                if s == "inconsistent":
+                    val = v
+                    break
+            rhs_txt = str(val) if val is not None else "?"
+            cascade_txt = [rf"0 = {rhs_txt}", r"\text{No Solution}"]
+        else:
+            cascade_txt = backsubstitution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
         from matrixlayout.backsubst import backsubst_svg
 
         svg = backsubst_svg(
@@ -279,6 +339,8 @@ class ShowGE:
         ref_A, ref_rhs = self._final_ref_mats()
         if ref_rhs is None:
             raise ValueError("show_solution requires a RHS.")
+        if self.rhs_status and any(s == "inconsistent" for s in self.rhs_status):
+            return []
         solution_txt = standard_solution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
         from matrixlayout.backsubst import backsubst_svg
 

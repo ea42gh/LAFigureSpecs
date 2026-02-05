@@ -76,6 +76,11 @@ show.show_backsubstitution()
 show.show_solution()
 ```
 
+If the system is inconsistent, `ShowGE` marks the offending RHS columns with a
+red **x** in the variable-summary row, `show_backsubstitution()` reduces the
+cascade to `0 = rhs` with **No Solution**, and `show_solution()` returns an
+empty list.
+
 ## QR spec
 
 ```python
@@ -83,7 +88,6 @@ import sympy as sym
 import la_figures
 
 A = sym.Matrix([[1, 2], [3, 4]])
-W = sym.Matrix([[1,-3],[3,1]])
 spec = la_figures.qr_tbl_spec(A)
 ```
 
@@ -95,7 +99,6 @@ from la_figures import qr_tbl_spec
 from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
-W = sym.eye(2)
 spec = qr_tbl_spec(A)
 svg = render_qr_svg(spec["matrices"], specs=spec["specs"])
 ```
