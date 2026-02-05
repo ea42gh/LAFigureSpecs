@@ -303,12 +303,17 @@ class ShowGE:
         system_txt = linear_system_tex(self.A, self.rhs, var_name=var_name)
         from matrixlayout.backsubst import backsubst_svg
 
+        opts = dict(render_opts)
+        if "show_system" not in opts:
+            opts["show_system"] = True
+        if "show_cascade" not in opts:
+            opts["show_cascade"] = False
+        if "show_solution" not in opts:
+            opts["show_solution"] = False
+
         svg = backsubst_svg(
             system_txt=system_txt,
-            show_system=True,
-            show_cascade=False,
-            show_solution=False,
-            **render_opts,
+            **opts,
         )
         return _show_svg(svg)
 
@@ -326,12 +331,17 @@ class ShowGE:
             cascade_txt = backsubstitution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
         from matrixlayout.backsubst import backsubst_svg
 
+        opts = dict(render_opts)
+        if "show_system" not in opts:
+            opts["show_system"] = False
+        if "show_cascade" not in opts:
+            opts["show_cascade"] = True
+        if "show_solution" not in opts:
+            opts["show_solution"] = False
+
         svg = backsubst_svg(
             cascade_txt=cascade_txt,
-            show_system=False,
-            show_cascade=True,
-            show_solution=False,
-            **render_opts,
+            **opts,
         )
         return _show_svg(svg)
 
@@ -344,11 +354,16 @@ class ShowGE:
         solution_txt = standard_solution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
         from matrixlayout.backsubst import backsubst_svg
 
+        opts = dict(render_opts)
+        if "show_system" not in opts:
+            opts["show_system"] = False
+        if "show_cascade" not in opts:
+            opts["show_cascade"] = False
+        if "show_solution" not in opts:
+            opts["show_solution"] = True
+
         svg = backsubst_svg(
             solution_txt=solution_txt,
-            show_system=False,
-            show_cascade=False,
-            show_solution=True,
-            **render_opts,
+            **opts,
         )
         return _show_svg(svg)

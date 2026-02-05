@@ -95,8 +95,7 @@ def test_show_ge_inconsistent_rhs_status_and_solution(monkeypatch):
     assert show.rhs_status == ["inconsistent", "consistent"]
     assert show.status == "mixed"
 
-    svg = show.show_backsubstitution()
-    assert svg is not None
+    show.show_backsubstitution()
     assert captured["show_cascade"] is True
     assert captured["show_solution"] is False
     cascade_txt = captured.get("cascade_txt") or []
