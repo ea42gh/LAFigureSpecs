@@ -73,3 +73,35 @@ def test_show_ge_normal_eq_layers_include_at_and_ata():
     assert mats[0][1] == A_aug
     assert mats[1][0] == At
     assert mats[1][1] == AtA_aug
+
+
+def test_show_ge_inconsistent_rhs_status_and_solution(monkeypatch):
+    import la_figures
+    import sympy as sym
+
+    captured = {}
+
+    def fake_backsubst_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr("matrixlayout.backsubst.backsubst_svg", fake_backsubst_svg)
+
+    A = sym.Matrix([[1, 0], [0, 0]])
+    b = sym.Matrix([[1, 0], [1, 0]])
+    show = la_figures.ShowGE(A, b, gj=True)
+    show.ref()
+
+    assert show.rhs_status == ["inconsistent", "consistent"]
+    assert show.status == "mixed"
+
+    svg = show.show_backsubstitution()
+    assert svg is not None
+    assert captured["show_cascade"] is True
+    assert captured["show_solution"] is False
+    cascade_txt = captured.get("cascade_txt") or []
+    assert cascade_txt
+    assert "0 =" in cascade_txt[0]
+    assert "No Solution" in cascade_txt[1]
+
+    assert show.show_solution() == []
