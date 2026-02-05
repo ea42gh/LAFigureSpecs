@@ -74,10 +74,14 @@ show.ref(pivoting="partial")
 show.show_layout()
 show.show_backsubstitution()
 show.show_solution()
+rhs = show.rhs_block()
 ```
 
+By default, la_figures renders to a subdirectory under `/tmp/la` unless you
+pass `output_dir` or `tmp_dir`.
+
 If the system is inconsistent, `ShowGE` marks the offending RHS columns with a
-red **x** in the variable-summary row, `show_backsubstitution()` reduces the
+red **×** in the variable-summary row, `show_backsubstitution()` reduces the
 cascade to `0 = rhs` with **No Solution**, and `show_solution()` returns an
 empty list.
 

@@ -17,6 +17,35 @@ def _show_svg(svg: str):
     return display(SVG(svg))
 
 
+def _format_rhs_label(labels: Sequence[str]) -> str:
+    if not labels:
+        return ""
+    if len(labels) > 1:
+        return r"\left( " + r" \mid ".join(labels) + r" \right)"
+    return labels[0]
+
+
+def _normal_eq_name_specs(n_rows: int, rhs_labels: Sequence[str]) -> List[Tuple[Tuple[int, int], str, str]]:
+    specs: List[Tuple[Tuple[int, int], str, str]] = []
+    if n_rows <= 0:
+        return specs
+    rhs0 = _format_rhs_label(list(rhs_labels))
+    specs.append(((0, 1), "ar", f"$\\mathbf{{ {rhs0} }}$"))
+    if n_rows <= 1:
+        return specs
+    rhs1_labels = [rf"A^T {lbl}" for lbl in rhs_labels]
+    rhs1 = _format_rhs_label(rhs1_labels)
+    specs.append(((1, 0), "al", r"$\mathbf{ A^T }$"))
+    specs.append(((1, 1), "ar", f"$\\mathbf{{ {rhs1} }}$"))
+    for i in range(2, n_rows):
+        prod = " ".join([f"E_{k}" for k in range(i - 1, 0, -1)])
+        rhs_i_labels = [f"{prod} {lbl}" if prod else lbl for lbl in rhs1_labels]
+        rhs_i = _format_rhs_label(rhs_i_labels)
+        specs.append(((i, 0), "al", f"$\\mathbf{{ E_{i - 1} }}$"))
+        specs.append(((i, 1), "ar", f"$\\mathbf{{ {rhs_i} }}$"))
+    return specs
+
+
 @dataclass
 class ShowGE:
     """Notebook-friendly Gaussian-elimination helper (Python analogue of Julia ShowGe)."""
@@ -46,7 +75,7 @@ class ShowGE:
     strict: Optional[bool] = None
     status: str = "unknown"
     rhs_status: List[str] = field(default_factory=list)
-    rhs_inconsistent_vals: List[Any] = field(default_factory=list)
+    rhs_consistent: List[bool] = field(default_factory=list)
 
     _trace: Any = field(default=None, init=False, repr=False)
     _layers: Any = field(default=None, init=False, repr=False)
@@ -117,24 +146,23 @@ class ShowGE:
         if ref_rhs is None:
             self.status = "none"
             self.rhs_status = []
-            self.rhs_inconsistent_vals = []
+            self.rhs_consistent = []
             return
         A = to_sympy_matrix(ref_A)
         b = to_sympy_matrix(ref_rhs)
         if A is None or b is None:
             self.status = "unknown"
             self.rhs_status = []
-            self.rhs_inconsistent_vals = []
+            self.rhs_consistent = []
             return
         if b.cols == 1:
             rhs_cols = 1
         else:
             rhs_cols = b.cols
         rhs_status: List[str] = []
-        rhs_vals: List[Any] = []
+        rhs_consistent: List[bool] = []
         for col in range(rhs_cols):
             inconsistent = False
-            val = None
             for i in range(A.rows):
                 row_zero = True
                 for j in range(A.cols):
@@ -143,12 +171,10 @@ class ShowGE:
                         break
                 if row_zero and b[i, col] != 0:
                     inconsistent = True
-                    val = b[i, col]
                     break
             rhs_status.append("inconsistent" if inconsistent else "consistent")
-            rhs_vals.append(val)
         self.rhs_status = rhs_status
-        self.rhs_inconsistent_vals = rhs_vals
+        self.rhs_consistent = [s == "consistent" for s in rhs_status]
         if all(s == "consistent" for s in rhs_status):
             self.status = "consistent"
         elif all(s == "inconsistent" for s in rhs_status):
@@ -163,6 +189,24 @@ class ShowGE:
     def matrices(self) -> List[List[Any]]:
         """Return the GE layer matrices (augmented)."""
         return list(self._get_layers().get("matrices") or [])
+
+    def rhs_block(self, *, step: Any = "final", b_col: Optional[int] = None):
+        """Return the RHS block from a GE stack (optionally a single column)."""
+        layers = self._get_layers()
+        mats = layers.get("matrices") or []
+        if not mats:
+            return None
+        idx = len(mats) - 1 if step in ("final", None) else int(step)
+        if idx < 0 or idx >= len(mats):
+            raise IndexError("step out of range for GE stack")
+        Ab = mats[idx][1]
+        nrhs = int(layers.get("Nrhs") or 0)
+        if nrhs <= 0:
+            return None
+        rhs = Ab[:, -nrhs:]
+        if b_col is None:
+            return rhs
+        return rhs[:, int(b_col)]
 
     def solve(self, *, gj: Optional[bool] = None) -> Dict[str, Any]:
         """Solve the system and return pivot/free/solution data."""
@@ -225,6 +269,7 @@ class ShowGE:
             "particular": particular,
             "homogeneous": homogeneous,
             "rhs_status": list(self.rhs_status),
+            "rhs_consistent": list(self.rhs_consistent),
             "status": self.status,
         }
         self._solution_cache[gj] = result
@@ -239,6 +284,17 @@ class ShowGE:
         return self.solve(gj=gj)["homogeneous"]
 
     def show_layout(self, **render_opts: Any):
+        array_names = self.array_names
+        if array_names is None:
+            rhs = to_sympy_matrix(self.rhs)
+            if rhs is None:
+                array_names = ["E", "A"]
+            else:
+                rhs_cols = rhs.shape[1] if hasattr(rhs, "shape") else 1
+                if rhs_cols == 1:
+                    array_names = ["E", ["A", "b"]]
+                else:
+                    array_names = ["E", ["A", "B"]]
         if self.normal_eq:
             from .ge import decorate_ge
             from .ge_convenience import ge as legacy_ge
@@ -251,6 +307,14 @@ class ShowGE:
                 var_summary = decor.get("basic_var")
             elif isinstance(var_summary, bool):
                 var_summary = decor.get("basic_var") if var_summary else None
+            if not isinstance(array_names, dict):
+                try:
+                    _, rhs = array_names
+                    rhs_labels = [str(x) for x in rhs]
+                except Exception:
+                    rhs_labels = ["A"]
+                name_specs = _normal_eq_name_specs(len(layers.get("matrices") or []), rhs_labels)
+                array_names = {"name_specs": name_specs}
             svg = legacy_ge(
                 layers.get("matrices"),
                 Nrhs=layers.get("Nrhs") or 0,
@@ -259,7 +323,7 @@ class ShowGE:
                 ref_path_list=decor.get("ref_path_list"),
                 variable_summary=var_summary,
                 variable_colors=self.variable_colors,
-                array_names=self.array_names,
+                array_names=array_names,
                 fig_scale=self.fig_scale,
                 preamble=self.preamble,
                 extension=self.extension,
@@ -288,7 +352,7 @@ class ShowGE:
                 outer_hspace_mm=self.outer_hspace_mm,
                 cell_align=self.cell_align,
                 callouts=self.callouts,
-                array_names=self.array_names,
+                array_names=array_names,
                 decorators=self.decorators,
                 fig_scale=self.fig_scale,
                 variable_summary=self.variable_summary,
@@ -321,10 +385,24 @@ class ShowGE:
         ref_A, ref_rhs = self._final_ref_mats()
         if self.rhs_status and any(s == "inconsistent" for s in self.rhs_status):
             val = None
-            for s, v in zip(self.rhs_status, self.rhs_inconsistent_vals):
-                if s == "inconsistent":
-                    val = v
-                    break
+            if ref_rhs is not None:
+                A = to_sympy_matrix(ref_A)
+                b = to_sympy_matrix(ref_rhs)
+                if A is not None and b is not None:
+                    for col, s in enumerate(self.rhs_status):
+                        if s != "inconsistent":
+                            continue
+                        for i in range(A.rows):
+                            row_zero = True
+                            for j in range(A.cols):
+                                if A[i, j] != 0:
+                                    row_zero = False
+                                    break
+                            if row_zero and b[i, col] != 0:
+                                val = b[i, col]
+                                break
+                        if val is not None:
+                            break
             rhs_txt = str(val) if val is not None else "?"
             cascade_txt = [rf"0 = {rhs_txt}", r"\text{No Solution}"]
         else:

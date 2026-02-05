@@ -45,7 +45,11 @@ def resolve_output_dir(*, output_dir: Any = None, tmp_dir: Any = None) -> Any:
     ``output_dir`` is canonical. When omitted, ``tmp_dir`` is treated as a
     synonym for backward compatibility.
     """
-    return output_dir if output_dir is not None else tmp_dir
+    if output_dir is not None:
+        return output_dir
+    if tmp_dir is not None:
+        return tmp_dir
+    return "/tmp/la/run"
 
 
 def make_bundle(

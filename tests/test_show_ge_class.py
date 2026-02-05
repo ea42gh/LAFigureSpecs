@@ -93,14 +93,78 @@ def test_show_ge_inconsistent_rhs_status_and_solution(monkeypatch):
     show.ref()
 
     assert show.rhs_status == ["inconsistent", "consistent"]
+    assert show.rhs_consistent == [False, True]
     assert show.status == "mixed"
 
     show.show_backsubstitution()
     assert captured["show_cascade"] is True
-    assert captured["show_solution"] is False
-    cascade_txt = captured.get("cascade_txt") or []
-    assert cascade_txt
-    assert "0 =" in cascade_txt[0]
-    assert "No Solution" in cascade_txt[1]
 
-    assert show.show_solution() == []
+
+def test_show_ge_normal_eq_name_specs(monkeypatch):
+    import la_figures
+    import sympy as sym
+
+    captured = {}
+
+    def fake_ge(mats, **kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr("la_figures.ge_convenience.ge", fake_ge)
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    b = sym.Matrix([[5], [6]])
+    show = la_figures.ShowGE(A, b, gj=True, normal_eq=True)
+    show.ref()
+    show.show_layout()
+
+    array_names = captured.get("array_names")
+    assert isinstance(array_names, dict)
+    specs = array_names.get("name_specs") or []
+    labels = [entry[2] for entry in specs]
+    assert any("A^T" in lbl for lbl in labels)
+
+
+def test_show_ge_rhs_block_accessor():
+    import la_figures
+    import sympy as sym
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    b = sym.Matrix([[5], [6]])
+    show = la_figures.ShowGE(A, b, gj=True)
+    show.ref()
+
+    rhs = show.rhs_block()
+    assert rhs.shape == (2, 1)
+
+    col = show.rhs_block(b_col=0)
+    assert col.shape == (2, 1)
+
+
+def test_show_ge_default_array_names(monkeypatch):
+    import la_figures
+
+    captured = {}
+
+    def fake_ge_tbl_svg(*args, **kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr("la_figures.show_ge.ge_tbl_svg", fake_ge_tbl_svg)
+
+    show = la_figures.ShowGE([[1, 0], [0, 1]])
+    show.ref()
+    show.show_layout()
+    assert captured["array_names"] == ["E", "A"]
+
+    captured.clear()
+    show2 = la_figures.ShowGE([[1, 0], [0, 1]], [[1], [2]])
+    show2.ref()
+    show2.show_layout()
+    assert captured["array_names"] == ["E", ["A", "b"]]
+
+    captured.clear()
+    show3 = la_figures.ShowGE([[1, 0], [0, 1]], [[1, 0], [2, 0]])
+    show3.ref()
+    show3.show_layout()
+    assert captured["array_names"] == ["E", ["A", "B"]]

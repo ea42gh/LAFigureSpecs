@@ -25,7 +25,7 @@ def test_norm_padding_passthrough_none():
 def test_resolve_output_dir_alias_rules():
     assert resolve_output_dir(output_dir="out", tmp_dir="tmp") == "out"
     assert resolve_output_dir(output_dir=None, tmp_dir="tmp") == "tmp"
-    assert resolve_output_dir(output_dir=None, tmp_dir=None) is None
+    assert resolve_output_dir(output_dir=None, tmp_dir=None) == "/tmp/la/run"
 
 
 def test_make_bundle_contract_defaults():

@@ -458,7 +458,7 @@ def _variable_summary_label_rows(
             if rhs_status is not None and idx < len(rhs_status):
                 status = rhs_status[idx]
             if status == "inconsistent" or status is True:
-                rhs_marks.append(r"\textcolor{red}{\ensuremath{x}}")
+                rhs_marks.append(r"\textcolor{red}{\ensuremath{\times}}")
             else:
                 rhs_marks.append("")
             rhs_labels.append("")
@@ -1078,6 +1078,9 @@ def _legacy_array_name_callouts(
 ) -> List[Dict[str, Any]]:
     if array_names is None:
         return []
+    if isinstance(array_names, dict) and "name_specs" in array_names:
+        name_specs = array_names.get("name_specs") or []
+        return _legacy_name_specs_to_callouts(matrices, name_specs, color="blue")
     explicit_names = array_names is not True
     try:
         lhs, rhs = array_names
