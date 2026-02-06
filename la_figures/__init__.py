@@ -10,6 +10,8 @@ The core rule is strict layering:
 - matrixlayout does **not** do linear algebra; it only formats and lays out.
 """
 
+from .__about__ import __version__, __build__
+
 from .eig import (
     EigenDecomposition,
     eig_spec_from_eigenvects,
@@ -90,6 +92,8 @@ def px_to_mm(px: float) -> float:
     return float(px) * 25.4 / 96.0
 
 __all__ = [
+    "__version__",
+    "__build__",
     "EigenDecomposition",
     "eigendecomposition",
     "eig_spec_from_eigenvects",
