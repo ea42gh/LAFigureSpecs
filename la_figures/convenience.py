@@ -169,7 +169,7 @@ def eig_tbl_tex(
     """Compute + render: build an eigen spec from ``A`` and return TeX."""
 
     if case is None:
-        case = "Q" if normal else "E"
+        case = "Q" if normal else "S"
 
     spec = eig_tbl_spec(
         A,
@@ -223,7 +223,7 @@ def eig_tbl_svg(
     """Compute + render: build an eigen spec from ``A`` and return SVG."""
 
     if case is None:
-        case = "Q" if normal else "E"
+        case = "Q" if normal else "S"
 
     spec = eig_tbl_spec(
         A,
@@ -269,7 +269,7 @@ def eig_tbl_bundle(
     case = kwargs.get("case")
     normal = kwargs.get("normal", False)
     if case is None:
-        case = "Q" if normal else "E"
+        case = "Q" if normal else "S"
 
     spec = eig_tbl_spec(
         A,

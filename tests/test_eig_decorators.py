@@ -48,3 +48,30 @@ def test_eig_tbl_spec_as_scale_inference_matches_explicit():
 
     assert spec_inferred["lambda"] == spec_explicit["lambda"]
     assert spec_inferred["evecs"] == spec_explicit["evecs"]
+
+
+def test_eig_tbl_tex_default_case_includes_S_matrix():
+    from la_figures import eig_tbl_tex
+
+    A = sym.Matrix([[1, 0], [0, 2]])
+    tex = eig_tbl_tex(A, preamble="")
+    assert "S" in tex
+
+
+def test_eig_tbl_tex_includes_lambda_and_S_labels():
+    from la_figures import eig_tbl_tex
+
+    A = sym.Matrix([[1, 0], [0, 2]])
+    tex = eig_tbl_tex(A, preamble="")
+    assert r"\Lambda" in tex
+    assert r"S" in tex
+
+
+def test_svd_tbl_tex_includes_sigma_v_u_labels():
+    from la_figures import svd_tbl_tex
+
+    A = sym.Matrix([[1, 0], [0, 2]])
+    tex = svd_tbl_tex(A, preamble="")
+    assert r"\Sigma" in tex
+    assert r"V" in tex
+    assert r"U" in tex
