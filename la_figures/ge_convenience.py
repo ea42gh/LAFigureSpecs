@@ -1023,6 +1023,7 @@ def ge(
     comment_shift_x_mm: float = 50.0,
     comment_shift_y_mm: float = 0.0,
     variable_summary: Optional[Any] = None,
+    rhs_status: Optional[Sequence[Any]] = None,
     array_names: Optional[Any] = None,
     start_index: Optional[int] = 1,
     func: Optional[Any] = None,
@@ -1078,7 +1079,12 @@ def ge(
 
     variable_labels: Optional[List[Dict[str, Any]]] = None
     if variable_summary:
-        variable_labels = _variable_summary_label_rows(matrices, variable_summary, variable_colors)
+        variable_labels = _variable_summary_label_rows(
+            matrices,
+            variable_summary,
+            variable_colors,
+            rhs_status=rhs_status,
+        )
 
     rowechelon_paths: List[str] = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
 
@@ -1139,6 +1145,7 @@ def _resolve_legacy_output_targets(
     tmp_dir: Optional[str],
     output_dir: Optional[Any],
 ) -> Tuple[Optional[Any], Optional[str]]:
+    explicit_output_dir = output_dir is not None
     output_stem: Optional[str] = None
     if keep_file:
         from pathlib import Path
@@ -1164,6 +1171,9 @@ def _resolve_legacy_output_targets(
             output_dir = str(p.parent)
         elif p.exists() and p.is_dir() and keep_file is None:
             # keep artifacts for debugging, but avoid reusing stale PDFs
+            output_dir = str(Path(p, f"run_{os.getpid()}"))
+        elif (not explicit_output_dir) and keep_file is None:
+            # tmp_dir-derived output path: isolate per-process to avoid collisions
             output_dir = str(Path(p, f"run_{os.getpid()}"))
     return output_dir, output_stem
 
