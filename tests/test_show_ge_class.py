@@ -125,6 +125,33 @@ def test_show_ge_normal_eq_name_specs(monkeypatch):
     assert any("A^T" in lbl for lbl in labels)
 
 
+def test_show_ge_layout_uses_full_stack(monkeypatch):
+    import la_figures
+    import sympy as sym
+
+    captured = {"legacy": 0}
+
+    def fake_ge(mats, **kwargs):
+        captured["legacy"] += 1
+        captured["mats_len"] = len(mats)
+        return "<svg/>"
+
+    def fail_ge_tbl_svg(*args, **kwargs):
+        raise RuntimeError("ge_tbl_svg should not be called when full stack is available")
+
+    monkeypatch.setattr("la_figures.ge_convenience.ge", fake_ge)
+    monkeypatch.setattr("la_figures.show_ge.ge_tbl_svg", fail_ge_tbl_svg)
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    b = sym.Matrix([[5], [6]])
+    show = la_figures.ShowGE(A, b, gj=True)
+    show.ref()
+    show.show_layout()
+
+    assert captured["legacy"] == 1
+    assert captured["mats_len"] > 1
+
+
 def test_show_ge_rhs_block_accessor():
     import la_figures
     import sympy as sym
@@ -139,6 +166,20 @@ def test_show_ge_rhs_block_accessor():
 
     col = show.rhs_block(b_col=0)
     assert col.shape == (2, 1)
+
+
+def test_show_ge_homogeneous_returns_zero_vector_when_full_rank():
+    import la_figures
+    import sympy as sym
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    b = sym.Matrix([[5], [6]])
+    show = la_figures.ShowGE(A, b, gj=True)
+    sol = show.solve()
+
+    homog = sol["homogeneous"]
+    assert len(homog) == 1
+    assert homog[0] == sym.zeros(A.shape[1], 1)
 
 
 def test_show_ge_default_array_names(monkeypatch):

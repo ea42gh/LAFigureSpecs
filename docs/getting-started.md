@@ -150,6 +150,8 @@ svg = la_figures.ge_tbl_svg(A, output_dir="./_out", output_stem="ge_min")
 
 All high-level SVG helpers accept `render_opts`, which is forwarded to
 `jupyter_tikz.render_svg`. Explicit kwargs override keys in `render_opts`.
+Padding tuples use the order `(left, right, top, bottom)` in SVG units; use
+`la_figures.mm_to_px` to convert millimeters.
 
 ```python
 import sympy as sym

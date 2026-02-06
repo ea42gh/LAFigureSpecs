@@ -259,6 +259,8 @@ class ShowGE:
                     t = t - rref_A[i, j] * vec[j, 0]
                 vec[pc, 0] = t
             homogeneous.append(vec)
+        if not homogeneous:
+            homogeneous = [sym.zeros(n, 1)]
 
         result = {
             "gj": gj,
@@ -335,32 +337,65 @@ class ShowGE:
                 **render_opts,
             )
         else:
-            svg = ge_tbl_svg(
-                self.A,
-                self.rhs,
-                pivoting=self.pivoting,
-                gj=self.gj,
-                show_pivots=self.show_pivots,
-                index_base=self.index_base,
-                pivot_style=self.pivot_style,
-                pivot_text_color=self.pivot_text_color,
-                preamble=self.preamble,
-                extension=self.extension,
-                row_stretch=self.row_stretch,
-                nice_options=self.nice_options,
-                outer_delims=self.outer_delims,
-                outer_hspace_mm=self.outer_hspace_mm,
-                cell_align=self.cell_align,
-                callouts=self.callouts,
-                array_names=array_names,
-                decorators=self.decorators,
-                fig_scale=self.fig_scale,
-                variable_summary=self.variable_summary,
-                variable_colors=self.variable_colors,
-                rhs_status=self.rhs_status,
-                strict=self.strict,
-                **render_opts,
-            )
+            layers = self._get_layers()
+            mats = layers.get("matrices") or []
+            if len(mats) > 1:
+                from .ge import decorate_ge
+                from .ge_convenience import ge as legacy_ge
+
+                trace = self._get_trace()
+                decor = decorate_ge(trace, index_base=self.index_base)
+                var_summary = self.variable_summary
+                if var_summary is None:
+                    var_summary = decor.get("basic_var")
+                elif isinstance(var_summary, bool):
+                    var_summary = decor.get("basic_var") if var_summary else None
+                svg = legacy_ge(
+                    mats,
+                    Nrhs=layers.get("Nrhs") or 0,
+                    pivot_list=decor.get("pivot_list") if self.show_pivots else None,
+                    bg_for_entries=decor.get("bg_for_entries"),
+                    ref_path_list=decor.get("ref_path_list"),
+                    variable_summary=var_summary,
+                    variable_colors=self.variable_colors,
+                    array_names=array_names,
+                    fig_scale=self.fig_scale,
+                    preamble=self.preamble,
+                    extension=self.extension,
+                    nice_options=self.nice_options,
+                    outer_hspace_mm=self.outer_hspace_mm,
+                    cell_align=self.cell_align,
+                    decorators=self.decorators,
+                    strict=self.strict,
+                    **render_opts,
+                )
+            else:
+                svg = ge_tbl_svg(
+                    self.A,
+                    self.rhs,
+                    pivoting=self.pivoting,
+                    gj=self.gj,
+                    show_pivots=self.show_pivots,
+                    index_base=self.index_base,
+                    pivot_style=self.pivot_style,
+                    pivot_text_color=self.pivot_text_color,
+                    preamble=self.preamble,
+                    extension=self.extension,
+                    row_stretch=self.row_stretch,
+                    nice_options=self.nice_options,
+                    outer_delims=self.outer_delims,
+                    outer_hspace_mm=self.outer_hspace_mm,
+                    cell_align=self.cell_align,
+                    callouts=self.callouts,
+                    array_names=array_names,
+                    decorators=self.decorators,
+                    fig_scale=self.fig_scale,
+                    variable_summary=self.variable_summary,
+                    variable_colors=self.variable_colors,
+                    rhs_status=self.rhs_status,
+                    strict=self.strict,
+                    **render_opts,
+                )
         return _show_svg(svg)
 
     def show_system(self, *, var_name: str = "x", **render_opts: Any):

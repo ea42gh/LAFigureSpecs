@@ -77,6 +77,16 @@ def show_svg(svg: str):
         return svg
     return display(SVG(svg))
 
+
+def mm_to_px(mm: float) -> float:
+    """Convert millimeters to px-equivalent SVG units (96 px per inch)."""
+    return float(mm) * 96.0 / 25.4
+
+
+def px_to_mm(px: float) -> float:
+    """Convert px-equivalent SVG units to millimeters (96 px per inch)."""
+    return float(px) * 25.4 / 96.0
+
 __all__ = [
     "EigenDecomposition",
     "eigendecomposition",
@@ -142,4 +152,6 @@ __all__ = [
     "sel_vec",
     "sel_vec_range",
     "show_svg",
+    "mm_to_px",
+    "px_to_mm",
 ]
