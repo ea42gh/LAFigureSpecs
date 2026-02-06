@@ -1,4 +1,11 @@
-from la_figures.convenience_utils import make_bundle, norm_padding, norm_str, resolve_output_dir
+from la_figures.convenience_utils import (
+    bundle_summary,
+    make_bundle,
+    merge_render_opts,
+    norm_padding,
+    norm_str,
+    resolve_output_dir,
+)
 
 
 def test_norm_str_handles_symbols_and_colons():
@@ -35,3 +42,26 @@ def test_make_bundle_contract_defaults():
     assert out["svg"] is None
     assert out["data"] == {}
     assert out["render_error"] is None
+
+
+def test_merge_render_opts_prefers_explicit_kwargs():
+    opts = merge_render_opts(
+        toolchain_name="pdftex_dvisvgm",
+        crop="tight",
+        padding=(1, 2, 3, 4),
+        output_dir="/tmp/x",
+        render_opts={"crop": "page"},
+    )
+    assert opts["crop"] == "tight"
+    assert opts["toolchain_name"] == "pdftex_dvisvgm"
+    assert opts["padding"] == (1, 2, 3, 4)
+    assert opts["output_dir"] == "/tmp/x"
+
+
+def test_bundle_summary_contract():
+    out = make_bundle(spec={"a": 1}, tex="% tex", svg=None, data={"x": 1}, render_error="oops")
+    summary = bundle_summary(out)
+    assert summary["has_svg"] is False
+    assert summary["has_error"] is True
+    assert "a" in summary["spec_keys"]
+    assert "x" in summary["data_keys"]

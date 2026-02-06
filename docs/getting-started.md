@@ -169,6 +169,15 @@ svg = la_figures.ge_tbl_svg(
 )
 ```
 
+### Bundle summaries
+
+For a quick status-only view (without dumping SVG/TeX), use `bundle_summary`:
+
+```python
+bundle = la_figures.ge_tbl_bundle(A)
+print(la_figures.bundle_summary(bundle))
+```
+
 ## Troubleshooting
 
 - If SVG rendering fails, call the corresponding `*_tex` wrapper and inspect TeX.

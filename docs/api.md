@@ -17,6 +17,7 @@ rendered output.
   - `*_tbl_bundle` (returns standardized bundle:
     `{"spec", "tex", "svg", "data", "render_error"}`)
   - Access GE intermediates via `bundle["data"]["..."]` (not top-level keys).
+  - Use `bundle_summary(bundle)` for a quick status-only view.
 - If you already have prepared matrices/specs and want low-level renderer control:
   - `render_ge_*`, `render_qr_*`, `render_eig_*` (re-exported matrixlayout functions)
 
@@ -41,7 +42,8 @@ Example options:
 - `la_figures.gram_schmidt_qr_matrices(A, **opts)`: compute QR grid with rank-deficient handling. Returns: list of grid matrices.
 - `la_figures.qr_tbl_spec(A, **opts)`: build a QR spec for matrixlayout. Returns: spec dict.
 - `la_figures.qr_tbl_layout_spec(A, **opts)`: build a typed QR layout spec. Returns: typed spec.
-- `la_figures.qr_matrices_from_grid(mats)`: extract `(AtAtW, S, Qt, Q, R)` from the QR grid.
+- `la_figures.qr_matrices_from_grid(mats)`: extract `(A, W, WtA, WtW, S, Qt, Q, R)` from the QR grid.
+  Returns a dict-like object; access via `qr["Q"]` or tuple-unpack.
 - `la_figures.qr_tbl_tex(A, **opts)`: render QR TeX from the spec path.
 - `la_figures.qr_tbl_svg(A, **opts)`: render QR SVG from the spec path.
 - `la_figures.qr_tbl_bundle(A, **opts)`: return standardized bundle.

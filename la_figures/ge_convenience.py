@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify, make_decorator
-from .convenience_utils import make_bundle, resolve_output_dir
+from .convenience_utils import make_bundle, merge_render_opts, resolve_output_dir
 
 _UNSET = object()
 
@@ -1393,13 +1393,14 @@ def ge_tbl_svg(
 
     from matrixlayout.ge import render_ge_svg
 
-    return render_ge_svg(
+    resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
+    opts = merge_render_opts(
         toolchain_name=toolchain_name,
         crop=crop,
         padding=padding,
         frame=frame,
         exact_bbox=exact_bbox,
-        output_dir=resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir),
+        output_dir=resolved_output_dir,
         render_opts=render_opts,
-        **spec,
     )
+    return render_ge_svg(**spec, **opts)

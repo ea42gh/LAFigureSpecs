@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from .formatting import latexify
-from .convenience_utils import make_bundle, norm_str, norm_padding, resolve_output_dir
+from .convenience_utils import make_bundle, merge_render_opts, resolve_output_dir
 from .qr import gram_schmidt_qr_matrices, qr_tbl_spec, qr_tbl_spec_from_matrices
 
 _UNSET = object()
@@ -52,19 +52,15 @@ def _render_qr_svg_from_spec(
     from matrixlayout.qr import render_qr_svg
 
     resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
-    opts: Dict[str, Any] = dict(render_opts or {})
-    if toolchain_name is not None:
-        opts["toolchain_name"] = norm_str(toolchain_name)
-    if crop is not None:
-        opts["crop"] = norm_str(crop)
-    if padding is not None:
-        opts["padding"] = norm_padding(padding)
-    if frame is not None:
-        opts["frame"] = frame
-    if exact_bbox is not None:
-        opts["exact_bbox"] = exact_bbox
-    if resolved_output_dir is not None:
-        opts["output_dir"] = resolved_output_dir
+    opts = merge_render_opts(
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
+        frame=frame,
+        exact_bbox=exact_bbox,
+        output_dir=resolved_output_dir,
+        render_opts=render_opts,
+    )
     return render_qr_svg(
         matrices=spec["matrices"],
         formatter=formatter,

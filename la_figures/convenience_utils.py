@@ -52,6 +52,33 @@ def resolve_output_dir(*, output_dir: Any = None, tmp_dir: Any = None) -> Any:
     return "/tmp/la/run"
 
 
+def merge_render_opts(
+    *,
+    toolchain_name: Any = None,
+    crop: Any = None,
+    padding: Any = None,
+    frame: Any = None,
+    exact_bbox: Any = None,
+    output_dir: Any = None,
+    render_opts: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Merge render options with explicit keyword overrides."""
+    opts: Dict[str, Any] = dict(render_opts or {})
+    if toolchain_name is not None:
+        opts["toolchain_name"] = norm_str(toolchain_name)
+    if crop is not None:
+        opts["crop"] = norm_str(crop)
+    if padding is not None:
+        opts["padding"] = norm_padding(padding)
+    if frame is not None:
+        opts["frame"] = frame
+    if exact_bbox is not None:
+        opts["exact_bbox"] = exact_bbox
+    if output_dir is not None:
+        opts["output_dir"] = output_dir
+    return opts
+
+
 def make_bundle(
     *,
     spec: Dict[str, Any],
@@ -78,4 +105,21 @@ def make_bundle(
     }
 
 
-__all__ = ["norm_str", "norm_padding", "resolve_output_dir", "make_bundle"]
+def bundle_summary(bundle: Dict[str, Any]) -> Dict[str, Any]:
+    """Summarize a bundle without dumping full SVG/TeX payloads."""
+    return {
+        "has_svg": bundle.get("svg") is not None,
+        "has_error": bundle.get("render_error") is not None,
+        "spec_keys": sorted((bundle.get("spec") or {}).keys()),
+        "data_keys": sorted((bundle.get("data") or {}).keys()),
+    }
+
+
+__all__ = [
+    "norm_str",
+    "norm_padding",
+    "resolve_output_dir",
+    "merge_render_opts",
+    "make_bundle",
+    "bundle_summary",
+]
