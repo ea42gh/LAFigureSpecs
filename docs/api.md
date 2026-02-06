@@ -33,7 +33,7 @@ Use these when you want a lightweight preflight before rendering:
 - `la_figures.trace_to_layer_matrices(trace)`: convert a trace to matrix layers. Inputs: trace dict. Returns: list of grid matrices.
 - `la_figures.ShowGE(A, b, **opts)`: stateful helper mirroring Julia `ShowGE`. Use `show.ref(gj=..., pivoting=...)` to compute REF/RREF once, then call `show.show_layout()`, `show.show_system()`, `show.show_backsubstitution()`, `show.show_solution()`. Access `show.matrices()`, `show.rhs_block(step="final", b_col=None)`, `show.particular_solution()`, `show.homogeneous_solution()`, or `show.solve()`. For inconsistent RHS columns, `ShowGE` records `show.rhs_status`, adds a red **×** in the variable-summary row, renders `0 = rhs` in backsubstitution, and returns empty solutions for those columns.
 - `la_figures.ge_tbl_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
-- `la_figures.ge_tbl_layout_spec(A, **opts)`: build a typed GE layout spec. Inputs: matrix-like `A`. Returns: typed spec.
+- `la_figures.ge_tbl_layout_spec(A, **opts)`: build a typed `GEGridSpec` layout spec. Inputs: matrix-like `A`. Returns: typed spec.
 - `la_figures.ge_tbl_bundle(A, **opts)`: build a GE bundle. Returns standardized bundle; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
 - `la_figures.ge_tbl_tex(A, **opts)`: render GE TeX from the spec path.
 - `la_figures.ge_tbl_svg(A, **opts)`: render GE SVG from the spec path.

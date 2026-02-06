@@ -87,6 +87,90 @@ def _grid_offsets(
     return block_heights, block_widths, row_starts, col_starts
 
 
+def _block_pad_left(width: int, actual: int, block_align: Optional[str]) -> int:
+    if actual <= 0 or width <= actual:
+        return 0
+    mode = (block_align or "auto").strip().lower()
+    if mode in ("left", "l", "none"):
+        return 0
+    if mode in ("center", "centre", "c"):
+        return (width - actual) // 2
+    if mode in ("right", "r", "auto"):
+        return width - actual
+    raise ValueError(f"Invalid block_align: {block_align!r} (expected left/right/center/auto)")
+
+
+def _block_pad_top(height: int, actual: int, block_valign: Optional[str]) -> int:
+    if actual <= 0 or height <= actual:
+        return 0
+    mode = (block_valign or "bottom").strip().lower()
+    if mode in ("top", "t", "none"):
+        return 0
+    if mode in ("center", "centre", "c"):
+        return (height - actual) // 2
+    if mode in ("bottom", "b", "auto"):
+        return height - actual
+    raise ValueError(f"Invalid block_valign: {block_valign!r} (expected top/bottom/center/auto)")
+
+
+def _grid_block_padding(
+    matrices: Sequence[Sequence[Any]],
+    *,
+    block_align: Optional[str] = None,
+    block_valign: Optional[str] = None,
+    index_base: int = 1,
+) -> Tuple[List[int], List[int], List[int], List[int], List[List[int]], List[List[int]], List[List[int]], List[List[int]]]:
+    grid: List[List[Any]] = [list(r) for r in (matrices or [])]
+    if not grid:
+        return ([], [], [], [], [], [], [], [])
+    n_block_rows = len(grid)
+    n_block_cols = max((len(r) for r in grid), default=0)
+    for r in range(n_block_rows):
+        if len(grid[r]) < n_block_cols:
+            grid[r].extend([None] * (n_block_cols - len(grid[r])))
+
+    block_heights = [0] * n_block_rows
+    block_widths = [0] * n_block_cols
+    cell_heights: List[List[int]] = [[0] * n_block_cols for _ in range(n_block_rows)]
+    cell_widths: List[List[int]] = [[0] * n_block_cols for _ in range(n_block_rows)]
+    for br in range(n_block_rows):
+        for bc in range(n_block_cols):
+            h, w = _matrix_shape(grid[br][bc])
+            cell_heights[br][bc] = h
+            cell_widths[br][bc] = w
+            block_heights[br] = max(block_heights[br], h)
+            block_widths[bc] = max(block_widths[bc], w)
+
+    max_h = max(block_heights) if block_heights else 0
+    for bc in range(n_block_cols):
+        if block_widths[bc] == 0 and max_h > 0:
+            block_widths[bc] = max_h
+
+    row_starts: List[int] = []
+    acc = int(index_base)
+    for h in block_heights:
+        row_starts.append(acc)
+        acc += h
+    col_starts: List[int] = []
+    acc = int(index_base)
+    for w in block_widths:
+        col_starts.append(acc)
+        acc += w
+
+    pad_left: List[List[int]] = [[0] * n_block_cols for _ in range(n_block_rows)]
+    pad_top: List[List[int]] = [[0] * n_block_cols for _ in range(n_block_rows)]
+    for br in range(n_block_rows):
+        for bc in range(n_block_cols):
+            h = cell_heights[br][bc]
+            w = cell_widths[br][bc]
+            if h == 0 or w == 0:
+                continue
+            pad_left[br][bc] = _block_pad_left(block_widths[bc], w, block_align)
+            pad_top[br][bc] = _block_pad_top(block_heights[br], h, block_valign)
+
+    return block_heights, block_widths, row_starts, col_starts, pad_left, pad_top, cell_heights, cell_widths
+
+
 def _grid_cell_coord(
     matrices: Sequence[Sequence[Any]],
     *,
@@ -95,16 +179,34 @@ def _grid_cell_coord(
     i: int,
     j: int,
     index_base: int = 1,
+    block_align: Optional[str] = None,
+    block_valign: Optional[str] = None,
 ) -> str:
-    block_heights, block_widths, row_starts, col_starts = _grid_offsets(matrices, index_base=index_base)
+    (
+        block_heights,
+        block_widths,
+        row_starts,
+        col_starts,
+        pad_left,
+        pad_top,
+        cell_heights,
+        cell_widths,
+    ) = _grid_block_padding(
+        matrices,
+        block_align=block_align,
+        block_valign=block_valign,
+        index_base=index_base,
+    )
     if gM >= len(row_starts) or gN >= len(col_starts):
         raise ValueError("grid position out of range")
-    rr = row_starts[gM] + int(i)
-    cc = col_starts[gN] + int(j)
-    if block_heights and (int(i) >= block_heights[gM]):
-        rr = row_starts[gM] + block_heights[gM] - 1
-    if block_widths and (int(j) >= block_widths[gN]):
-        cc = col_starts[gN] + block_widths[gN] - 1
+    rr = row_starts[gM] + pad_top[gM][gN] + int(i)
+    cc = col_starts[gN] + pad_left[gM][gN] + int(j)
+    max_h = cell_heights[gM][gN] or block_heights[gM]
+    max_w = cell_widths[gM][gN] or block_widths[gN]
+    if max_h and int(i) >= max_h:
+        rr = row_starts[gM] + pad_top[gM][gN] + max_h - 1
+    if max_w and int(j) >= max_w:
+        cc = col_starts[gN] + pad_left[gM][gN] + max_w - 1
     return f"({rr}-{cc})"
 
 
@@ -348,6 +450,8 @@ def _legacy_pivot_list_to_pivot_locs(
     *,
     index_base: int = 1,
     pivot_style: str = "",
+    block_align: Optional[str] = None,
+    block_valign: Optional[str] = None,
 ) -> List[Tuple[str, str]]:
     _, _, row_starts, col_starts = _grid_offsets(matrices, index_base=index_base)
 
@@ -364,7 +468,16 @@ def _legacy_pivot_list_to_pivot_locs(
         if gM >= len(row_starts) or gN >= len(col_starts):
             continue
         for (i, j) in pivots:
-            coord = _grid_cell_coord(matrices, gM=gM, gN=gN, i=int(i), j=int(j), index_base=index_base)
+            coord = _grid_cell_coord(
+                matrices,
+                gM=gM,
+                gN=gN,
+                i=int(i),
+                j=int(j),
+                index_base=index_base,
+                block_align=block_align,
+                block_valign=block_valign,
+            )
             out.append((f"{coord}{coord}", pivot_style))
     return out
 
@@ -392,6 +505,9 @@ def _pivot_list_to_decorators(
 def _legacy_bg_list_to_codebefore(
     matrices: Sequence[Sequence[Any]],
     bg_list: Sequence[Any],
+    *,
+    block_align: Optional[str] = None,
+    block_valign: Optional[str] = None,
 ) -> List[str]:
     codebefore: List[str] = []
 
@@ -408,12 +524,39 @@ def _legacy_bg_list_to_codebefore(
             cmd_1 = rf"\tikz \node [fill={color}, inner sep = {pt}pt, fit = "
             if isinstance(entry, (list, tuple)) and len(entry) == 2 and all(isinstance(x, (list, tuple)) for x in entry):
                 (i0, j0), (i1, j1) = entry
-                c0 = _grid_cell_coord(matrices, gM=gM, gN=gN, i=int(i0), j=int(j0), index_base=1)
-                c1 = _grid_cell_coord(matrices, gM=gM, gN=gN, i=int(i1), j=int(j1), index_base=1)
+                c0 = _grid_cell_coord(
+                    matrices,
+                    gM=gM,
+                    gN=gN,
+                    i=int(i0),
+                    j=int(j0),
+                    index_base=1,
+                    block_align=block_align,
+                    block_valign=block_valign,
+                )
+                c1 = _grid_cell_coord(
+                    matrices,
+                    gM=gM,
+                    gN=gN,
+                    i=int(i1),
+                    j=int(j1),
+                    index_base=1,
+                    block_align=block_align,
+                    block_valign=block_valign,
+                )
                 cmd_2 = f"({c0[1:-1]}-medium) ({c1[1:-1]}-medium)"
             else:
                 i0, j0 = entry
-                c0 = _grid_cell_coord(matrices, gM=gM, gN=gN, i=int(i0), j=int(j0), index_base=1)
+                c0 = _grid_cell_coord(
+                    matrices,
+                    gM=gM,
+                    gN=gN,
+                    i=int(i0),
+                    j=int(j0),
+                    index_base=1,
+                    block_align=block_align,
+                    block_valign=block_valign,
+                )
                 cmd_2 = f"({c0[1:-1]}-medium)"
             codebefore.append(cmd_1 + cmd_2 + " ] {} ;")
 
@@ -817,8 +960,8 @@ def ge_tbl_layout_spec(
     variable_colors: Sequence[str] = ("red", "black"),
     rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
-) -> Dict[str, Any]:
-    """Return a layout spec using :class:`matrixlayout.specs.GELayoutSpec`."""
+) -> Any:
+    """Return a typed GE grid spec (``GEGridSpec``) for matrixlayout."""
 
     bundle = _build_ge_bundle(
         ref_A,
@@ -846,7 +989,7 @@ def ge_tbl_layout_spec(
         strict=bool(strict) if strict is not None else False,
     )
 
-    return {
+    spec = {
         "matrices": bundle["layers"]["matrices"],
         "Nrhs": int(bundle["trace"].Nrhs or 0),
         "layout": bundle["typed_layout"],
@@ -861,6 +1004,9 @@ def ge_tbl_layout_spec(
         "decorations": bundle["spec"].get("decorations"),
         "format_nrhs": bundle["spec"].get("format_nrhs"),
     }
+    from matrixlayout.specs import GEGridSpec
+
+    return GEGridSpec.from_dict(spec, allow_extra=True)
 
 
 def ge(
@@ -897,14 +1043,29 @@ def ge(
         output_dir=output_dir,
     )
 
+    block_align = render_opts.get("block_align")
+    block_valign = render_opts.get("block_valign")
+
     pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
     pivot_locs = (
-        _legacy_pivot_list_to_pivot_locs(matrices, pivot_list, index_base=1, pivot_style=pivot_style)
+        _legacy_pivot_list_to_pivot_locs(
+            matrices,
+            pivot_list,
+            index_base=1,
+            pivot_style=pivot_style,
+            block_align=block_align,
+            block_valign=block_valign,
+        )
         if pivot_list
         else None
     )
 
-    codebefore = _legacy_bg_for_entries_to_codebefore(matrices, bg_for_entries)
+    codebefore = _legacy_bg_for_entries_to_codebefore(
+        matrices,
+        bg_for_entries,
+        block_align=block_align,
+        block_valign=block_valign,
+    )
     needs_medium_nodes = bool(codebefore)
 
     txt_with_locs = _legacy_comment_list_to_txt_with_locs(
@@ -1023,11 +1184,19 @@ def _normalize_legacy_bg_specs(bg_for_entries: Any) -> List[Any]:
 def _legacy_bg_for_entries_to_codebefore(
     matrices: Sequence[Sequence[Any]],
     bg_for_entries: Any,
+    *,
+    block_align: Optional[str] = None,
+    block_valign: Optional[str] = None,
 ) -> List[str]:
     specs = _normalize_legacy_bg_specs(bg_for_entries)
     if not specs:
         return []
-    return _legacy_bg_list_to_codebefore(matrices, specs)
+    return _legacy_bg_list_to_codebefore(
+        matrices,
+        specs,
+        block_align=block_align,
+        block_valign=block_valign,
+    )
 
 
 def _legacy_comment_list_to_txt_with_locs(

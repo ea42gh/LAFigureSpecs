@@ -32,14 +32,15 @@ def test_ge_tbl_layout_spec_uses_typed_layout():
 
     pytest.importorskip("matrixlayout")
     from la_figures.ge_convenience import ge_tbl_layout_spec
-    from matrixlayout.specs import GELayoutSpec
+    from matrixlayout.specs import GEGridSpec, GELayoutSpec
     from matrixlayout.ge import render_ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
     spec = ge_tbl_layout_spec(A, show_pivots=True)
 
-    assert isinstance(spec["layout"], GELayoutSpec)
-    tex = render_ge_tex(**spec)
+    assert isinstance(spec, GEGridSpec)
+    assert isinstance(spec.layout, GELayoutSpec)
+    tex = render_ge_tex(spec=spec)
     assert "\\begin{NiceArray}" in tex
 
 
@@ -93,7 +94,7 @@ def test_ge_tbl_spec_layout_and_bundle_match_tex():
     bundle = la_figures.ge_tbl_bundle(A, ref_rhs=rhs, show_pivots=True)
 
     tex_spec = render_ge_tex(**spec)
-    tex_layout = render_ge_tex(**layout_spec)
+    tex_layout = render_ge_tex(spec=layout_spec)
     tex_bundle = render_ge_tex(**bundle["spec"])
 
     assert tex_spec == tex_layout
