@@ -1,6 +1,7 @@
 # Specs
 
-la_figures returns dictionaries suitable for matrixlayout.
+`*_spec` functions return plain dictionaries suitable for matrixlayout.
+`*_layout_spec` functions return typed layout objects (use `.to_dict()` for dict access).
 
 Selectors and decorators use 0-based entry indices within each matrix block.
 Grid positions are addressed by (row, column) in the outer list.

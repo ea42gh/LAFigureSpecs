@@ -35,6 +35,7 @@ from .qr import (
     qr_tbl_spec,
     qr_tbl_spec_from_matrices,
     qr_matrices_from_grid,
+    qr_matrices_dict_from_grid,
 )
 from .convenience_qr import qr, qr_tbl_bundle as qr_tbl_bundle, qr_tbl_tex, qr_tbl_svg, gram_schmidt_qr
 from .backsub import (
@@ -110,6 +111,7 @@ __all__ = [
     "qr_tbl_spec",
     "qr_tbl_spec_from_matrices",
     "qr_matrices_from_grid",
+    "qr_matrices_dict_from_grid",
     "qr_tbl_layout_spec",
     "qr_tbl_tex",
     "qr_tbl_svg",

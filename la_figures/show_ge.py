@@ -48,7 +48,7 @@ def _normal_eq_name_specs(n_rows: int, rhs_labels: Sequence[str]) -> List[Tuple[
 
 @dataclass
 class ShowGE:
-    """Notebook-friendly Gaussian-elimination helper (Python analogue of Julia ShowGe)."""
+    """Notebook-friendly Gaussian-elimination helper (Python analogue of Julia ShowGE)."""
 
     A: Any
     rhs: Any = None

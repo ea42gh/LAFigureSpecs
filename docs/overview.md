@@ -10,6 +10,16 @@ wrappers that delegate to *matrixlayout* and *jupyter_tikz*.
 - *matrixlayout*: formatting, layout, TeX emission, SVG rendering.
 - *jupyter_tikz*: toolchain execution and SVG conversion.
 
+## Compatibility matrix
+
+| Component | Minimum | Notes |
+| --- | --- | --- |
+| Python | 3.9 | Tested with 3.9–3.12. |
+| SymPy | 1.10 | Required for exact arithmetic. |
+| matrixlayout | 0.4 | Spec/render backend. |
+| jupyter_tikz | itikz_port | TeX toolchains + SVG. |
+| TeX toolchain | TeX Live 2022+ | Needed for SVG rendering. |
+
 ## Package boundary
 
 - Use `la_figures` when you want algorithmic outputs (traces, specs).

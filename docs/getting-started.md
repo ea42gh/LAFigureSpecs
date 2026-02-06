@@ -152,6 +152,8 @@ All high-level SVG helpers accept `render_opts`, which is forwarded to
 `jupyter_tikz.render_svg`. Explicit kwargs override keys in `render_opts`.
 Padding tuples use the order `(left, right, top, bottom)` in SVG units; use
 `la_figures.mm_to_px` to convert millimeters.
+`output_dir` is the canonical way to persist artifacts; `tmp_dir` is accepted as
+a legacy alias.
 
 ```python
 import sympy as sym
@@ -177,6 +179,16 @@ For a quick status-only view (without dumping SVG/TeX), use `bundle_summary`:
 bundle = la_figures.ge_tbl_bundle(A)
 print(la_figures.bundle_summary(bundle))
 ```
+
+### Smoke render helper
+
+If you need a quick toolchain sanity check, run:
+
+```
+python render_smoke.py
+```
+
+Set `LA_FIGURES_SMOKE_OUT` to control the output directory.
 
 ## Troubleshooting
 

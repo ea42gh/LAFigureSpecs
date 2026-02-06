@@ -21,6 +21,9 @@ class QRGridMatrices(dict):
     def as_tuple(self) -> tuple:
         return tuple(self.get(k) for k in self._order)
 
+    def as_dict(self) -> Dict[str, Any]:
+        return {k: self.get(k) for k in self._order}
+
 def compute_qr_matrices(A: Any) -> Sequence[Sequence[sym.Matrix]]:
     """Return the matrix grid used by the QR layout.
 
@@ -146,6 +149,11 @@ def qr_matrices_from_grid(mats: Sequence[Sequence[sym.Matrix]]) -> Dict[str, Any
     R = row3[2]
     Q = Qt.T if Qt is not None else None
     return QRGridMatrices(A=A, W=W, WtA=WtA, WtW=WtW, S=S, Qt=Qt, Q=Q, R=R)
+
+
+def qr_matrices_dict_from_grid(mats: Sequence[Sequence[sym.Matrix]]) -> Dict[str, Any]:
+    """Return QR matrices as a plain dict for JSON-friendly usage."""
+    return qr_matrices_from_grid(mats).as_dict()
 
 
 def naive_gram_schmidt_w(A: Any, *, scale_lcd: bool = True) -> sym.Matrix:

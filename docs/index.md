@@ -16,3 +16,13 @@ la_figures provides linear algebra algorithms that produce layout specs for the
 - See `specs.md` for the spec fields and parameters.
 - See `interop.md` for Julia usage.
 - See `notebooks/` for problem-type walkthroughs and top-level API notebooks.
+
+## CLI quick checks
+
+Run a smoke render to validate toolchains:
+
+```
+python render_smoke.py
+```
+
+Set `LA_FIGURES_SMOKE_OUT` to control the output directory.

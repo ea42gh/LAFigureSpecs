@@ -29,6 +29,8 @@ def test_qr_matrices_from_grid():
     out = la_figures.qr_matrices_from_grid(mats)
     assert out["A"] == A
     assert out["R"] == sym.Matrix([[1, 0], [0, 1]])
+    out_dict = la_figures.qr_matrices_dict_from_grid(mats)
+    assert out_dict["A"] == A
 
 
 def test_qr_factorization_rational_3x3():

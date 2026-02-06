@@ -21,11 +21,17 @@ rendered output.
 - If you already have prepared matrices/specs and want low-level renderer control:
   - `render_ge_*`, `render_qr_*`, `render_eig_*` (re-exported matrixlayout functions)
 
+## Spec validation
+
+Use these when you want a lightweight preflight before rendering:
+
+- `matrixlayout.validate_ge_spec`, `matrixlayout.validate_qr_spec`
+
 ## GE
 
 - `la_figures.ge_trace(A, **opts)`: generate a GE trace with pivots and steps. Inputs: matrix-like `A`. Returns: trace dict. Use when you need step-by-step elimination.
 - `la_figures.trace_to_layer_matrices(trace)`: convert a trace to matrix layers. Inputs: trace dict. Returns: list of grid matrices.
-- `la_figures.ShowGE(A, b, **opts)`: stateful helper mirroring Julia `ShowGe`. Use `show.ref(gj=..., pivoting=...)` to compute REF/RREF once, then call `show.show_layout()`, `show.show_system()`, `show.show_backsubstitution()`, `show.show_solution()`. Access `show.matrices()`, `show.rhs_block(step="final", b_col=None)`, `show.particular_solution()`, `show.homogeneous_solution()`, or `show.solve()`. For inconsistent RHS columns, `ShowGE` records `show.rhs_status`, adds a red **×** in the variable-summary row, renders `0 = rhs` in backsubstitution, and returns empty solutions for those columns.
+- `la_figures.ShowGE(A, b, **opts)`: stateful helper mirroring Julia `ShowGE`. Use `show.ref(gj=..., pivoting=...)` to compute REF/RREF once, then call `show.show_layout()`, `show.show_system()`, `show.show_backsubstitution()`, `show.show_solution()`. Access `show.matrices()`, `show.rhs_block(step="final", b_col=None)`, `show.particular_solution()`, `show.homogeneous_solution()`, or `show.solve()`. For inconsistent RHS columns, `ShowGE` records `show.rhs_status`, adds a red **×** in the variable-summary row, renders `0 = rhs` in backsubstitution, and returns empty solutions for those columns.
 - `la_figures.ge_tbl_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
 - `la_figures.ge_tbl_layout_spec(A, **opts)`: build a typed GE layout spec. Inputs: matrix-like `A`. Returns: typed spec.
 - `la_figures.ge_tbl_bundle(A, **opts)`: build a GE bundle. Returns standardized bundle; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
@@ -43,7 +49,8 @@ Example options:
 - `la_figures.qr_tbl_spec(A, **opts)`: build a QR spec for matrixlayout. Returns: spec dict.
 - `la_figures.qr_tbl_layout_spec(A, **opts)`: build a typed QR layout spec. Returns: typed spec.
 - `la_figures.qr_matrices_from_grid(mats)`: extract `(A, W, WtA, WtW, S, Qt, Q, R)` from the QR grid.
-  Returns a dict-like object; access via `qr["Q"]` or tuple-unpack.
+  Returns a dict-like object; access via `qr["Q"]`, `qr.as_tuple()`, or `qr.as_dict()`.
+- `la_figures.qr_matrices_dict_from_grid(mats)`: same as above, but returns a plain dict.
 - `la_figures.qr_tbl_tex(A, **opts)`: render QR TeX from the spec path.
 - `la_figures.qr_tbl_svg(A, **opts)`: render QR SVG from the spec path.
 - `la_figures.qr_tbl_bundle(A, **opts)`: return standardized bundle.
