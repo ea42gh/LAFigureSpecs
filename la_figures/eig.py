@@ -47,6 +47,28 @@ def _maybe_round_vectors(vecs: List[sym.Matrix], digits: Optional[int]) -> List[
     return out
 
 
+def _factor_out_denominator(A: sym.Matrix) -> tuple[Any, sym.Matrix]:
+    denoms: List[int] = []
+    for entry in A:
+        den = sym.denom(sym.simplify(entry))
+        if isinstance(den, sym.Integer):
+            denoms.append(int(den))
+        elif getattr(den, "is_integer", False):
+            try:
+                denoms.append(int(den))
+            except Exception:
+                return sym.Integer(1), A
+        else:
+            return sym.Integer(1), A
+    if not denoms:
+        return sym.Integer(1), A
+    if len(denoms) == 1:
+        d = sym.Integer(denoms[0])
+    else:
+        d = sym.ilcm(*denoms)
+    return d, sym.simplify(d * A)
+
+
 def eig_tbl_spec(
     A: Any,
     *,
@@ -81,6 +103,11 @@ def eig_tbl_spec(
     A = to_sympy_matrix(A)
     if A is None:
         raise ValueError("A must not be None")
+
+    d, Aint = _factor_out_denominator(A)
+    A = Aint
+    if Ascale is None:
+        Ascale = d
 
     if A.rows != A.cols:
         raise ValueError(f"eig_tbl_spec requires a square matrix; got shape {A.shape}")
@@ -242,6 +269,10 @@ def eigendecomposition(
     A2 = to_sympy_matrix(A)
     if A2 is None:
         raise ValueError("A must not be None")
+    d, Aint = _factor_out_denominator(A2)
+    A2 = Aint
+    if Ascale is None:
+        Ascale = d
     if A2.rows != A2.cols:
         raise ValueError(f"eigendecomposition requires a square matrix; got shape {A2.shape}")
 

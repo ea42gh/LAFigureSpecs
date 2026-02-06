@@ -35,3 +35,16 @@ def test_svd_tbl_tex_decorates_sigma_matrix_entry():
     )
 
     assert r"\boxed" in tex
+
+
+def test_eig_tbl_spec_as_scale_inference_matches_explicit():
+    from la_figures.eig import eig_tbl_spec, _factor_out_denominator
+
+    A = sym.Matrix([[sym.Rational(1, 2), 0], [0, sym.Rational(3, 4)]])
+    d, _ = _factor_out_denominator(A)
+
+    spec_inferred = eig_tbl_spec(A, Ascale=None)
+    spec_explicit = eig_tbl_spec(A, Ascale=d)
+
+    assert spec_inferred["lambda"] == spec_explicit["lambda"]
+    assert spec_inferred["evecs"] == spec_explicit["evecs"]
