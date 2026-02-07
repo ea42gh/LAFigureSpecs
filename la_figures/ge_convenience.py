@@ -1038,6 +1038,14 @@ def ge(
     **render_opts: Any,
 ) -> str:
     """Convenience wrapper for the GE rendering surface."""
+    # Allow a single matrix input by wrapping into a 1x2 grid: [None, A].
+    # This preserves legacy expectations that the data matrix lives in col=1.
+    if matrices is not None and not (
+        isinstance(matrices, (list, tuple))
+        and (not matrices or isinstance(matrices[0], (list, tuple)))
+    ):
+        matrices = [[None, matrices]]
+
     output_dir, output_stem = _resolve_legacy_output_targets(
         keep_file=keep_file,
         tmp_dir=tmp_dir,
@@ -1087,8 +1095,17 @@ def ge(
         )
 
     decorations: List[Dict[str, Any]] = []
-    nrhs = int(Nrhs or 0)
-    if nrhs > 0:
+    nrhs_total: int
+    nrhs_splits: Optional[List[int]] = None
+    if isinstance(Nrhs, (list, tuple)):
+        try:
+            nrhs_total = sum(int(x) for x in Nrhs)
+        except Exception:
+            nrhs_total = 0
+        nrhs_splits = []
+    else:
+        nrhs_total = int(Nrhs or 0)
+    if nrhs_total > 0:
         n_block_rows = len(matrices or [])
         n_block_cols = max((len(r) for r in (matrices or [])), default=0)
         last_col = n_block_cols - 1
@@ -1096,10 +1113,25 @@ def ge(
             row = matrices[br] if br < n_block_rows else []
             mat = row[last_col] if 0 <= last_col < len(row) else None
             _, w = _matrix_shape(mat)
-            split = w - nrhs
-            if w <= 0 or split <= 0 or split >= w:
+            if w <= 0:
                 continue
-            decorations.append({"grid": (br, last_col), "vlines": split})
+            if nrhs_splits is not None:
+                split = w - nrhs_total
+                splits: List[int] = []
+                if 0 < split < w:
+                    splits.append(split)
+                for k in Nrhs[:-1]:
+                    split += int(k)
+                    if 0 < split < w:
+                        splits.append(split)
+                if not splits:
+                    continue
+                decorations.append({"grid": (br, last_col), "vlines": splits})
+            else:
+                split = w - nrhs_total
+                if split <= 0 or split >= w:
+                    continue
+                decorations.append({"grid": (br, last_col), "vlines": split})
 
     rowechelon_paths: List[str] = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
 

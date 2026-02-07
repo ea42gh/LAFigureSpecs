@@ -39,3 +39,29 @@ def test_legacy_ge_disables_format_nrhs_when_using_decorations(monkeypatch):
     assert captured.get("format_nrhs") is False
     decorations = captured.get("decorations") or []
     assert decorations
+
+
+def test_legacy_ge_supports_nrhs_list(monkeypatch):
+    import la_figures.ge_convenience as ge_conv
+    import matrixlayout.ge as ml_ge
+
+    captured = {}
+
+    def fake_render_ge_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_render_ge_svg)
+
+    matrices = [
+        [None, [[1, 2, 3, 4, 5, 6, 7, 8]]],
+    ]
+    ge_conv.ge(
+        matrices,
+        Nrhs=[2, 3, 1],
+        variable_summary=[True, False, False, False, False],
+    )
+    decorations = captured.get("decorations") or []
+    assert decorations
+    # A has 8 cols; rhs blocks 2,3,1 => A width 2, splits at 2, 4, 7.
+    assert decorations[0]["vlines"] == [2, 4, 7]
