@@ -544,7 +544,7 @@ def _legacy_bg_list_to_codebefore(
                     block_align=block_align,
                     block_valign=block_valign,
                 )
-                cmd_2 = f"({c0[1:-1]}-medium) ({c1[1:-1]}-medium)"
+                cmd_2 = f"{c0} {c1}"
             else:
                 i0, j0 = entry
                 c0 = _grid_cell_coord(
@@ -557,7 +557,7 @@ def _legacy_bg_list_to_codebefore(
                     block_align=block_align,
                     block_valign=block_valign,
                 )
-                cmd_2 = f"({c0[1:-1]}-medium)"
+                cmd_2 = f"{c0}"
             codebefore.append(cmd_1 + cmd_2 + " ] {} ;")
 
     for spec in bg_list:
@@ -1086,6 +1086,21 @@ def ge(
             rhs_status=rhs_status,
         )
 
+    decorations: List[Dict[str, Any]] = []
+    nrhs = int(Nrhs or 0)
+    if nrhs > 0:
+        n_block_rows = len(matrices or [])
+        n_block_cols = max((len(r) for r in (matrices or [])), default=0)
+        last_col = n_block_cols - 1
+        for br in range(n_block_rows):
+            row = matrices[br] if br < n_block_rows else []
+            mat = row[last_col] if 0 <= last_col < len(row) else None
+            _, w = _matrix_shape(mat)
+            split = w - nrhs
+            if w <= 0 or split <= 0 or split >= w:
+                continue
+            decorations.append({"grid": (br, last_col), "vlines": split})
+
     rowechelon_paths: List[str] = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
 
     callouts = _legacy_array_name_callouts(
@@ -1129,6 +1144,8 @@ def ge(
         callouts=callouts or None,
         create_extra_nodes=True if (ref_path_list or needs_medium_nodes) else None,
         create_medium_nodes=True if (ref_path_list or needs_medium_nodes) else None,
+        decorations=decorations or None,
+        format_nrhs=False if decorations else True,
         fig_scale=fig_scale,
         decorators=decorators,
         strict=bool(strict) if strict is not None else False,
