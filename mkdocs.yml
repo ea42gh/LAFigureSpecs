@@ -27,3 +27,4 @@ nav:
       - Backsubstitution top-level API: notebooks/10_backsubstitution_top_level_functions.ipynb
       - Formatting + renderers API: notebooks/11_formatting_and_renderers.ipynb
       - ShowGE class: notebooks/12_show_ge_class.ipynb
+      - Generic LaTeX + LAlatex rendering: notebooks/13_latex_fragment_rendering.ipynb

@@ -16,6 +16,7 @@ la_figures provides linear algebra algorithms that produce layout specs for the
 - See `specs.md` for the spec fields and parameters.
 - See `interop.md` for Julia usage.
 - See `notebooks/` for problem-type walkthroughs and top-level API notebooks.
+- See `notebooks/13_latex_fragment_rendering.ipynb` for generic LaTeX and `LAlatex` SVG rendering.
 
 ## CLI quick checks
 
