@@ -6,6 +6,9 @@ def test_public_api_contains_canonical_render_names():
     assert "render_ge_svg" in la_figures.__all__
     assert "render_qr_svg" in la_figures.__all__
     assert "render_eig_svg" in la_figures.__all__
+    assert "latex_svg" in la_figures.__all__
+    assert "latex_document_svg" in la_figures.__all__
+    assert "lshow_svg" in la_figures.__all__
 
 
 def test_public_api_does_not_export_legacy_aliases():

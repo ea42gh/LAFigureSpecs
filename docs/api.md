@@ -20,6 +20,11 @@ rendered output.
   - Use `bundle_summary(bundle)` for a quick status-only view.
 - If you already have prepared matrices/specs and want low-level renderer control:
   - `render_ge_*`, `render_qr_*`, `render_eig_*` (re-exported matrixlayout functions)
+- If you already have LaTeX and just need SVG:
+  - `latex_svg` for fragments
+  - `latex_document_svg` for complete documents
+- If you want to call Julia `LAlatex.L_show(...)` and render the result:
+  - `lshow_svg`
 
 ## Spec validation
 
@@ -84,6 +89,37 @@ These are re-exported for convenience and parity with matrixlayout:
 
 Prefer the higher-level `*_tbl_*` wrappers unless you specifically need direct
 matrixlayout rendering entry points.
+
+## Generic LaTeX rendering
+
+- `la_figures.latex_svg(tex_body, **opts)`: wrap a LaTeX fragment with
+  `jupyter_tikz.TexFragment` and render SVG through `matrixlayout`.
+- `la_figures.latex_document_svg(tex_document, **opts)`: render a full LaTeX
+  document directly.
+- `la_figures.lshow_svg(*args, lshow_kwargs=None, **opts)`: call Julia
+  `LAlatex.L_show(...)` via `juliacall` and render the returned LaTeX.
+  Simple numeric Python vectors/matrices are normalized before calling Julia.
+
+Shared render options:
+
+- `toolchain_name`
+- `crop`
+- `padding`
+- `frame`
+- `exact_bbox`
+- `output_dir`
+- `output_stem`
+- `render_opts`
+
+Fragment-specific options on `latex_svg(...)`:
+
+- `preamble`
+- `tex_packages`
+- `tikz_libraries`
+- `pgfplots_libraries`
+- `no_tikz`
+- `scale`
+- `no_jinja`
 
 ## Backsubstitution
 

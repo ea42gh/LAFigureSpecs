@@ -6,6 +6,9 @@ ready for matrixlayout rendering.
 Use high-level wrappers by default:
 
 - `ge_tbl_svg`, `qr_tbl_svg`, `eig_tbl_svg`, `svd_tbl_svg`
+- `latex_svg` for standalone LaTeX fragments
+- `latex_document_svg` for full LaTeX documents
+- `lshow_svg` for Julia `LAlatex.L_show(...)` output
 
 The `render_*` functions are low-level matrixlayout renderer re-exports.
 
@@ -136,6 +139,37 @@ svg = backsubst_svg(
 )
 ```
 
+## Generic LaTeX to SVG
+
+For a standalone fragment that is not tied to GE/QR/EIG/SVD specs:
+
+```python
+import la_figures
+
+svg = la_figures.latex_svg(
+    r"$A = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$",
+    crop="tight",
+    padding=(2, 2, 2, 2),
+    frame=True,
+)
+```
+
+For an already complete LaTeX document:
+
+```python
+import la_figures
+
+doc = r"""
+\documentclass{standalone}
+\usepackage{amsmath}
+\begin{document}
+$x^2 + y^2 = 1$
+\end{document}
+"""
+
+svg = la_figures.latex_document_svg(doc, crop="tight")
+```
+
 ## End-to-end render
 
 ```python
@@ -168,6 +202,42 @@ svg = la_figures.ge_tbl_svg(
         "padding": (2, 2, 2, 2),
         "frame": True,
     },
+)
+```
+
+The same render options contract applies to `latex_svg(...)` and
+`latex_document_svg(...)`.
+
+## Julia LAlatex bridge
+
+If `juliacall` is installed and the Julia package `LAlatex` is available:
+
+```python
+import la_figures
+
+svg = la_figures.lshow_svg(
+    "A = ",
+    [[1, 2], [3, 4]],
+    output_stem="lshow_matrix",
+    crop="tight",
+    padding=(2, 2, 2, 2),
+)
+```
+
+Use `lshow_kwargs={...}` to pass Julia keyword arguments to `LAlatex.L_show(...)`.
+
+For numeric Python inputs, `lshow_svg(...)` also normalizes simple vectors and
+matrices before calling Julia, so NumPy arrays and rectangular numeric nested
+lists work naturally:
+
+```python
+import numpy as np
+import la_figures
+
+svg = la_figures.lshow_svg(
+    "A = ",
+    np.array([[1, 2], [3, 4]]),
+    crop="tight",
 )
 ```
 

@@ -24,6 +24,9 @@ wrappers that delegate to *matrixlayout* and *jupyter_tikz*.
 
 - Use `la_figures` when you want algorithmic outputs (traces, specs).
 - Use `matrixlayout` when you want layout/rendering of a known spec or matrix grid.
+- Use `la_figures.latex_svg(...)` when you already have a LaTeX fragment and want
+  the same SVG rendering controls (`crop`, `padding`, `frame`, `exact_bbox`)
+  used by the table renderers.
 
 ## Data flow
 
@@ -37,6 +40,12 @@ Example:
 
 ```
 A -> ge_tbl_spec(A) -> render_ge_svg(spec["matrices"], specs=spec["specs"])
+```
+
+For standalone LaTeX fragments:
+
+```
+tex body -> la_figures.latex_svg(...) -> matrixlayout.render.render_svg(...)
 ```
 
 ## Module map
@@ -55,3 +64,4 @@ A -> ge_tbl_spec(A) -> render_ge_svg(spec["matrices"], specs=spec["specs"])
 
 - `spec` dicts for GE/QR/EIG/SVD.
 - `systeme`/`cascade`/solution TeX blocks for backsubstitution.
+- SVG strings from algorithmic renderers and generic LaTeX helpers.

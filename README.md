@@ -1,9 +1,12 @@
 # la-figures
 
-Linear algebra algorithms and rendering.
+Linear algebra algorithms, layout specs, and rendering convenience helpers.
 
 This package contains algorithmic traces/specs (e.g., eigen tables, GE traces)
-but does not render or invoke TeX toolchains.
+and convenience wrappers that render through `matrixlayout` and `jupyter_tikz`.
+
+It also exposes generic helpers for rendering standalone LaTeX fragments or
+full LaTeX documents to SVG.
 
 ## Decorators
 

@@ -50,6 +50,7 @@ from .ge_convenience import show_ge
 from .show_ge import ShowGE
 from .convenience_utils import bundle_summary
 from .convenience_ge import ge as ge, ge_tbl_bundle, ge_tbl_layout_spec, ge_tbl_spec, ge_tbl_tex, ge_tbl_svg
+from .rendering import latex_svg, latex_document_svg, lshow_svg
 from matrixlayout.ge import render_ge_svg, render_ge_tex
 from matrixlayout.qr import render_qr_svg, render_qr_tex
 from matrixlayout import render_eig_svg, render_eig_tex
@@ -141,6 +142,9 @@ __all__ = [
     "render_qr_tex",
     "render_eig_svg",
     "render_eig_tex",
+    "latex_svg",
+    "latex_document_svg",
+    "lshow_svg",
     "qr",
     "latexify",
     "make_decorator",
