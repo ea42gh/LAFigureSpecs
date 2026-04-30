@@ -17,6 +17,9 @@ so Julia can later compute traces/decorations and call the same renderer.
 from __future__ import annotations
 
 import os
+import shutil
+import tempfile
+import uuid
 from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
@@ -1046,6 +1049,7 @@ def ge(
     ):
         matrices = [[None, matrices]]
 
+    preserve_dir = output_dir if output_dir is not None else tmp_dir
     output_dir, output_stem = _resolve_legacy_output_targets(
         keep_file=keep_file,
         tmp_dir=tmp_dir,
@@ -1161,7 +1165,7 @@ def ge(
 
     from matrixlayout.ge import render_ge_svg
 
-    return render_ge_svg(
+    svg = render_ge_svg(
         matrices=matrices,
         Nrhs=Nrhs,
         formatter=formatter,
@@ -1186,6 +1190,13 @@ def ge(
         frame=frame,
         **render_opts,
     )
+    _preserve_legacy_keep_file_artifacts(
+        keep_file=keep_file,
+        tmp_dir=preserve_dir,
+        output_dir=output_dir,
+        output_stem=output_stem or "output",
+    )
+    return svg
 
 
 def _resolve_legacy_output_targets(
@@ -1194,37 +1205,59 @@ def _resolve_legacy_output_targets(
     tmp_dir: Optional[str],
     output_dir: Optional[Any],
 ) -> Tuple[Optional[Any], Optional[str]]:
-    explicit_output_dir = output_dir is not None
+    from pathlib import Path
+
     output_stem: Optional[str] = None
     if keep_file:
-        from pathlib import Path
-
         p = Path(str(keep_file))
         suffix = p.suffix.lower()
         output_stem = p.stem if suffix in (".tex", ".svg", ".pdf", ".dvi", ".xdv") else p.name
-        if output_dir is None:
-            if p.is_absolute():
-                output_dir = str(p.parent)
-            elif str(p.parent) not in ("", "."):
-                output_dir = str(Path(tmp_dir) / p.parent) if tmp_dir else str(p.parent)
-            elif tmp_dir:
-                output_dir = tmp_dir
-    if output_dir is None and tmp_dir:
-        output_dir = tmp_dir
-    # Avoid reusing stale artifacts: if output_dir points to an existing file, use its parent.
-    # If it's an existing directory and no keep_file is requested, create a fresh subdir.
-    if output_dir is not None:
-        from pathlib import Path
-        p = Path(str(output_dir))
-        if p.exists() and p.is_file():
-            output_dir = str(p.parent)
-        elif p.exists() and p.is_dir() and keep_file is None:
-            # keep artifacts for debugging, but avoid reusing stale PDFs
-            output_dir = str(Path(p, f"run_{os.getpid()}"))
-        elif (not explicit_output_dir) and keep_file is None:
-            # tmp_dir-derived output path: isolate per-process to avoid collisions
-            output_dir = str(Path(p, f"run_{os.getpid()}"))
-    return output_dir, output_stem
+    # Always render on a container-local scratch filesystem so latexmk sees
+    # consistent mtimes. Legacy tmp_dir/output_dir/keep_file are preserve targets,
+    # not the live TeX workdir.
+    scratch_root = Path("/tmp/la/run")
+    scratch_root.mkdir(parents=True, exist_ok=True)
+    render_dir = Path(tempfile.mkdtemp(prefix="matrixlayout_render_", dir=str(scratch_root)))
+    return str(render_dir), output_stem
+
+
+def _preserve_legacy_keep_file_artifacts(
+    *,
+    keep_file: Optional[str],
+    tmp_dir: Optional[str],
+    output_dir: Optional[Any],
+    output_stem: str,
+) -> None:
+    if output_dir is None:
+        return
+    from pathlib import Path
+
+    source_base = Path(str(output_dir)) / output_stem
+    artifact_exts = (".svg", ".tex", ".pdf", ".dvi", ".xdv", ".log", ".aux", ".fls", ".fdb_latexmk", ".stdout.txt", ".stderr.txt")
+
+    if tmp_dir:
+        tmp_target_dir = Path(str(tmp_dir))
+        tmp_target_dir.mkdir(parents=True, exist_ok=True)
+        for ext in artifact_exts:
+            src = source_base.with_suffix(ext)
+            if src.exists():
+                shutil.copy2(src, tmp_target_dir / src.name)
+
+    if not keep_file:
+        return
+
+    target = Path(str(keep_file))
+    suffix = target.suffix.lower()
+    if suffix in artifact_exts:
+        target_base = target.with_suffix("")
+    else:
+        target_base = target
+
+    target_base.parent.mkdir(parents=True, exist_ok=True)
+    for ext in artifact_exts:
+        src = source_base.with_suffix(ext)
+        if src.exists():
+            shutil.copy2(src, target_base.with_suffix(ext))
 
 
 def _normalize_legacy_bg_specs(bg_for_entries: Any) -> List[Any]:
