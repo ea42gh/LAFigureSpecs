@@ -440,7 +440,7 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             i, j = ll[-1]
             p4 = f"\\p4 = ({i + tlr + 1}-|{j + tlc + 1}) in "
 
-        cmd = "\\tikz \\draw[" + color + "] " + corners + p3 + p4 + " -- ".join(
+        cmd = "\\draw[" + color + "] " + corners + p3 + p4 + " -- ".join(
             [coords(*p) for p in ll]
         ) + ";"
         out.append(cmd)

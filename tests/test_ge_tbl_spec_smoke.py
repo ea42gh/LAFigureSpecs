@@ -135,3 +135,22 @@ def test_ge_tbl_spec_rowechelon_paths_per_layer():
 
     rowechelon_paths = spec.get("rowechelon_paths") or []
     assert rowechelon_paths
+    assert all(p.startswith(r"\draw") for p in rowechelon_paths)
+    assert all(not p.startswith(r"\tikz") for p in rowechelon_paths)
+
+
+def test_ge_tbl_spec_rowechelon_paths_do_not_nest_tikz_in_rendered_tex():
+    import pytest
+
+    pytest.importorskip("matrixlayout")
+    import la_figures
+    from matrixlayout.ge import render_ge_tex
+
+    A = sym.Matrix([[1, 2], [1, 2], [3, 4]])
+    spec = la_figures.ge_tbl_spec(A, gj=False, show_pivots=True)
+    tex = render_ge_tex(spec=spec)
+
+    assert spec.get("rowechelon_paths")
+    assert r"\tikz \draw" not in tex
+    assert r"\draw[blue" in tex
+    assert tex.count(r"\begin{tikzpicture}") == 1

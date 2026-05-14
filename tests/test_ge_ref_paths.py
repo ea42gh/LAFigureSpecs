@@ -7,6 +7,7 @@ def test_legacy_ref_paths_do_not_use_projection_operator():
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     assert all("-|" in p for p in paths)
+    assert all(not p.startswith(r"\tikz") for p in paths)
 
 
 def test_ref_paths_interior_pivot_anchors_for_all_cases():
@@ -19,6 +20,7 @@ def test_ref_paths_interior_pivot_anchors_for_all_cases():
         path = paths[0]
         assert "-|" in path
         assert ".west" not in path
+        assert not path.startswith(r"\tikz")
 
 
 def test_ref_path_vh_uses_left_border_for_nonzero_columns():
