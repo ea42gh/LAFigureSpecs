@@ -34,3 +34,6 @@ include-package-data = true
 [tool.pytest.ini_options]
 addopts = "-q"
 testpaths = ["tests"]
+markers = [
+  "render: tests that require external rendering toolchains (LaTeX + SVG converter)",
+]
