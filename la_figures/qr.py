@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Sequence, Iterator, List, Tuple
+from typing import Any, Dict, Optional, Sequence, Iterator, List
 
 import sympy as sym
 
@@ -132,7 +132,7 @@ def gram_schmidt_qr_matrices(
     ]
 
 
-def qr_matrices_from_grid(mats: Sequence[Sequence[sym.Matrix]]) -> Dict[str, Any]:
+def qr_matrices_from_grid(mats: Sequence[Sequence[sym.Matrix]]) -> QRGridMatrices:
     """Extract QR-related matrices from a Gram–Schmidt QR grid.
 
     Returns a dict with keys: A, W, WtA, WtW, S, Qt, Q, R.

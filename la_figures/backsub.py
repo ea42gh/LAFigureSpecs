@@ -7,7 +7,7 @@ It provides:
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import sympy as sym
 
@@ -216,8 +216,6 @@ def standard_solution_tex(
     Ab = A.row_join(b)
     rref_Ab, pivot_cols_ab = Ab.rref()
     rref_A = rref_Ab[:, 0:-1]
-    rref_b = rref_Ab[:, -1]
-
     if pivot_cols_ab and pivot_cols_ab[-1] == rref_A.shape[1]:
         pivot_cols = pivot_cols_ab[:-1]
     else:

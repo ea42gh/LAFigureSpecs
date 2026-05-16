@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Sequence, Tuple
+from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 
-from .ge import ge_trace, trace_to_layer_matrices
+from .ge import Pivoting, ge_trace, trace_to_layer_matrices
 from .backsub import backsubstitution_tex, linear_system_tex, standard_solution_tex
 from .ge_convenience import ge_tbl_svg
 from ._sympy_utils import to_sympy_col, to_sympy_matrix
@@ -103,14 +103,19 @@ class ShowGE:
                 Atb = At * b
                 AtA_aug = AtA.row_join(Atb)
                 Nrhs = Atb.shape[1]
-            self._trace = ge_trace(AtA, Atb if b is not None else None, pivoting=self.pivoting, gj=self.gj)
+            self._trace = ge_trace(
+                AtA,
+                Atb if b is not None else None,
+                pivoting=cast(Pivoting, self.pivoting),
+                gj=self.gj,
+            )
             base_layers = trace_to_layer_matrices(self._trace, augmented=True)
             mats = [[None, A_aug], [At, AtA_aug]] + list(base_layers.get("matrices") or [])[1:]
             self._layers = dict(base_layers)
             self._layers["matrices"] = mats
             self._layers["Nrhs"] = Nrhs
         else:
-            self._trace = ge_trace(self.A, self.rhs, pivoting=self.pivoting, gj=self.gj)
+            self._trace = ge_trace(self.A, self.rhs, pivoting=cast(Pivoting, self.pivoting), gj=self.gj)
             self._layers = trace_to_layer_matrices(self._trace, augmented=True)
         self._update_rhs_status()
         self._solution_cache.clear()
@@ -160,7 +165,6 @@ class ShowGE:
         else:
             rhs_cols = b.cols
         rhs_status: List[str] = []
-        rhs_consistent: List[bool] = []
         for col in range(rhs_cols):
             inconsistent = False
             for i in range(A.rows):

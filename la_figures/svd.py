@@ -148,16 +148,6 @@ def svd_tbl_spec(
     if A is None:
         raise ValueError("A must not be None")
 
-    eig: Dict[str, Any] = {
-        "sigma": [],
-        "lambda": [],
-        "ma": [],
-        "evecs": [],
-        "qvecs": [],
-        "uvecs": [],
-        "sz": tuple(A.shape),
-    }
-
     if eig_digits is None and sigma2_digits is not None:
         eig_digits = sigma2_digits
 

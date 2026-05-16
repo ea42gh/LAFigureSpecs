@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Literal, Mapping, Optional, Sequence, Tuple
 
 import sympy as sym
 
-from ._sympy_utils import to_sympy_col, to_sympy_matrix
+from ._sympy_utils import to_sympy_matrix
 
 
 Pivoting = Literal["none", "partial"]
@@ -600,9 +600,6 @@ def decorate_ge(
 
     # Julia-style decorations for interop.
     M = int(shp[0]) if shp and len(shp) == 2 else int(trace.initial.rows)
-    N = int(n_coef)
-    pivot_cols_1b: List[int] = [int(c) + 1 for c in trace.pivot_cols]
-
     def _plist(cols_1b: List[int]) -> List[Tuple[int, int]]:
         return [(row, cols_1b[row] - 1) for row in range(len(cols_1b))]
 

@@ -16,15 +16,16 @@ so Julia can later compute traces/decorations and call the same renderer.
 
 from __future__ import annotations
 
-import os
 import shutil
 import tempfile
-import uuid
-from typing import Any, Dict, List, Optional, Sequence, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify, make_decorator
 from .convenience_utils import make_bundle, merge_render_opts, resolve_output_dir
+
+if TYPE_CHECKING:
+    from matrixlayout.specs import GELayoutSpec
 
 _UNSET = object()
 
