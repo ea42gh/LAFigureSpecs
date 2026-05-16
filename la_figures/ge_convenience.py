@@ -257,7 +257,6 @@ def _build_ge_bundle(
             for item in extra_callouts:
                 if "name" not in item:
                     item.pop("grid", None)
-                    item.pop("grid_pos", None)
             callouts = extra_callouts
         else:
             callouts = callouts
