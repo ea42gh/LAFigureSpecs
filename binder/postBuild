@@ -2,6 +2,7 @@
 set -euo pipefail
 
 kpsewhich systeme.sty
+kpsewhich tikz-cd.sty
 python render_smoke.py
 jupyter nbconvert \
   --to notebook \
