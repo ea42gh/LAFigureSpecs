@@ -47,7 +47,7 @@ source = ["la_figures"]
 branch = true
 
 [tool.coverage.report]
-fail_under = 75
+fail_under = 78
 show_missing = true
 skip_covered = false
 
