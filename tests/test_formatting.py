@@ -1,4 +1,5 @@
 import pytest
+import builtins
 
 from la_figures.formatting import (
     decorate_tex_entries,
@@ -98,3 +99,72 @@ def test_decorate_tex_entries_handles_none_target_and_bad_grid():
     assert decorate_tex_entries(matrices, 0, 0, decorator_bf()) == [[None]]
     with pytest.raises(IndexError):
         decorate_tex_entries(matrices, 1, 0, decorator_bf())
+
+
+def test_local_latexify_fallback_when_matrixlayout_formatting_unavailable(monkeypatch):
+    from fractions import Fraction
+
+    original_import = builtins.__import__
+
+    def blocked_import(name, globals=None, locals=None, fromlist=(), level=0):
+        if name == "matrixlayout.formatting":
+            raise ImportError("blocked for fallback coverage")
+        return original_import(name, globals, locals, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", blocked_import)
+
+    assert latexify("x") == "x"
+    assert latexify((3, 5)) == r"\frac{3}{5}"
+    assert latexify(Fraction(7, 11)) == r"\frac{7}{11}"
+    assert latexify(2.5) == "2.5"
+    assert latexify(True) == "True"
+
+    sym = pytest.importorskip("sympy")
+    assert latexify(sym.Symbol("z") + 1) == "z + 1"
+
+
+def test_selector_fallbacks_when_matrixlayout_formatting_unavailable(monkeypatch):
+    original_import = builtins.__import__
+
+    def blocked_import(name, globals=None, locals=None, fromlist=(), level=0):
+        if name == "matrixlayout.formatting":
+            raise ImportError("blocked for fallback coverage")
+        return original_import(name, globals, locals, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", blocked_import)
+
+    assert sel_entry("1", "2") == (1, 2)
+    assert sel_box(["0", "1"], ("2", "3")) == (("0", "1"), ("2", "3"))
+    assert sel_row("4") == {"row": 4}
+    assert sel_col("5") == {"col": 5}
+    assert sel_rows(["0", 2]) == {"rows": [0, 2]}
+    assert sel_cols(["1", 3]) == {"cols": [1, 3]}
+    assert sel_all() == {"all": True}
+    assert sel_vec("1", "2", "3") == (1, 2, 3)
+    assert sel_vec_range(["0", "1", "2"], ("3", "4", "5")) == (("0", "1", "2"), ("3", "4", "5"))
+
+
+def test_decorator_fallbacks_raise_without_matrixlayout_formatting(monkeypatch):
+    original_import = builtins.__import__
+
+    def blocked_import(name, globals=None, locals=None, fromlist=(), level=0):
+        if name == "matrixlayout.formatting":
+            raise ImportError("blocked for fallback coverage")
+        return original_import(name, globals, locals, fromlist, level)
+
+    monkeypatch.setattr(builtins, "__import__", blocked_import)
+
+    with pytest.raises(RuntimeError, match="matrixlayout is required"):
+        make_decorator(text_color="red")
+    with pytest.raises(RuntimeError, match="matrixlayout is required"):
+        decorator_box()("x")
+    with pytest.raises(RuntimeError, match="matrixlayout is required"):
+        decorator_box(color="red")("x")
+    with pytest.raises(RuntimeError, match="matrixlayout is required"):
+        decorator_color("red")("x")
+    with pytest.raises(RuntimeError, match="matrixlayout is required"):
+        decorator_bg("yellow")("x")
+    with pytest.raises(RuntimeError, match="matrixlayout is required"):
+        decorator_bf()("x")
+    with pytest.raises(RuntimeError, match="matrixlayout is required"):
+        decorate_tex_entries([[1]], 0, 0, lambda x: x)
