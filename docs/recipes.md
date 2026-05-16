@@ -2,7 +2,7 @@
 
 Compact examples for common tasks. Specs are passed directly to matrixlayout
 renderers (e.g., `render_ge_svg`, `render_qr_svg`). You can also pass extra
-label/callout specs via the `specs` argument to the matrixlayout QR/GE renderers.
+label/callout targets via the `annotations` argument to the matrixlayout QR/GE renderers.
 Use specs when you want consistent layout across TeX and SVG; use renderers when
 you only need the final output.
 
@@ -13,7 +13,7 @@ Goal                          | Use                                    | Notes
 ------------------------------|----------------------------------------|------------------------------
 Reuse a spec for TeX + SVG     | la_figures.*_spec + matrixlayout.*_svg | Stable layout across outputs
 Quick render, no extra edits   | la_figures.*_svg wrappers              | Shortest path
-Custom labels/callouts         | matrixlayout.*_svg with specs          | Avoid manual label rows/cols
+Custom labels/callouts         | matrixlayout.*_svg with annotations    | Avoid manual label rows/cols
 ```
 
 Note: all SVG renderers accept `render_opts`, which is forwarded to
@@ -40,7 +40,7 @@ from matrixlayout.ge import render_ge_svg
 A = sym.Matrix([[2, 1], [4, 3]])
 trace = ge_trace(A, show_pivots=True)
 spec = ge_tbl_spec(A, trace=trace)
-svg = render_ge_svg(spec["matrices"], annotations=spec["specs"])
+svg = render_ge_svg(spec=spec)
 ```
 
 ## QR with labels
@@ -54,7 +54,7 @@ W = sym.eye(2)
 spec = la_figures.qr_tbl_spec(A, array_names=True)
 ```
 
-## QR with custom specs
+## QR with custom annotations
 
 ```python
 import sympy as sym
@@ -64,8 +64,8 @@ from matrixlayout.qr import render_qr_svg
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
 spec = qr_tbl_spec(A)
-spec["specs"].append({"grid": (0, 2), "side": "above", "labels": ["x_1", "x_2"]})
-svg = render_qr_svg(spec["matrices"], annotations=spec["specs"])
+annotations = [{"grid": (0, 2), "side": "above", "labels": ["x_1", "x_2"]}]
+svg = render_qr_svg(spec=spec, annotations=annotations)
 ```
 
 ## Eigen/SVD
