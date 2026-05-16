@@ -63,7 +63,7 @@ def test_svd_tbl_spec_sigma_sorted_and_scaled():
     spec_scaled = la_figures.svd_tbl_spec(A, Ascale=2)
     sigmas_scaled = spec_scaled["sigma"]
     assert len(sigmas_scaled) == len(sigmas)
-    for s, s_scaled in zip(sigmas, sigmas_scaled):
+    for s, s_scaled in zip(sigmas, sigmas_scaled, strict=False):
         assert sym.simplify(s_scaled * 2 - s) == 0
 
 

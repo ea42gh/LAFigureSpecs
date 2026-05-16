@@ -77,7 +77,7 @@ from .formatting import (
 def show_svg(svg: str):
     """Display an SVG string in a notebook when possible."""
     try:
-        from IPython.display import SVG, display  # type: ignore
+        from IPython.display import SVG, display
     except Exception:
         return svg
     return display(SVG(svg))

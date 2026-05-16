@@ -187,7 +187,7 @@ def svd_matrices_from_spec(
     cols_U: List[sym.Matrix] = []
     full_sigma: List[Any] = []
     rank = 0
-    for sigma, m, vgrp, ugrp in zip(sigmas, mas, qvecs, uvecs):
+    for sigma, m, vgrp, ugrp in zip(sigmas, mas, qvecs, uvecs, strict=False):
         keep = True
         if reduced and getattr(sigma, "is_zero", False):
             keep = False

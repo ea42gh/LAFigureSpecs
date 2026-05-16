@@ -11,7 +11,7 @@ DEFAULT_TEX_PACKAGES = "amsmath,amssymb,mathtools,xcolor,systeme,cascade,nicemat
 
 def _is_numpy_array(value: Any) -> bool:
     try:
-        import numpy as np  # type: ignore
+        import numpy as np
     except Exception:
         return False
     return isinstance(value, np.ndarray)

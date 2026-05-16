@@ -575,7 +575,7 @@ def decorate_ge(
     if n_coef is None:
         n_coef = int(trace.initial.cols - int(trace.Nrhs or 0))
 
-    pivot_set = set(int(c) for c in trace.pivot_cols)
+    pivot_set = {int(c) for c in trace.pivot_cols}
     variable_types: List[bool] = [(j in pivot_set) for j in range(n_coef)]
 
     def _cell(r: int, c: int) -> str:

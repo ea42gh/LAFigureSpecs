@@ -130,9 +130,9 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
         if isinstance(jl_list, list) and jl_list:
             first = jl_list[0]
             if isinstance(first, (list, tuple)) and first and _is_rational_tuple(first[0]):
-                return _tuples_to_rationals_2d(jl_list)  # type: ignore[arg-type]
+                return _tuples_to_rationals_2d(jl_list)
             if _is_rational_tuple(first):
-                return _tuples_to_rationals_1d(jl_list)  # type: ignore[arg-type]
+                return _tuples_to_rationals_1d(jl_list)
         return sym.Matrix(jl_list)
 
     # ---- Julia bridge convenience: rationals passed as integer tuples -----------------
@@ -140,9 +140,9 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
     if isinstance(A, (list, tuple)) and A:
         first = A[0]
         if isinstance(first, (list, tuple)) and first and _is_rational_tuple(first[0]):
-            return _tuples_to_rationals_2d(A)  # type: ignore[arg-type]
+            return _tuples_to_rationals_2d(A)
         if _is_rational_tuple(first):
-            return _tuples_to_rationals_1d(A)  # type: ignore[arg-type]
+            return _tuples_to_rationals_1d(A)
 
     # NumPy-like "matrix of pairs": shape (m,n,2)
     shp = getattr(A, "shape", None)
@@ -160,7 +160,7 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
     try:
         a00 = A[0, 0]
         if _is_rational_tuple(a00) and hasattr(A, "tolist"):
-            return _tuples_to_rationals_2d(A.tolist())  # type: ignore[arg-type]
+            return _tuples_to_rationals_2d(A.tolist())
     except Exception:
         pass
 
@@ -169,8 +169,8 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
         a0 = A[0]
         if _is_rational_tuple(a0):
             if hasattr(A, "tolist"):
-                return _tuples_to_rationals_1d(A.tolist())  # type: ignore[arg-type]
-            return _tuples_to_rationals_1d(list(A))  # type: ignore[arg-type]
+                return _tuples_to_rationals_1d(A.tolist())
+            return _tuples_to_rationals_1d(list(A))
     except Exception:
         pass
 

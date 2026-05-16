@@ -356,7 +356,17 @@ def _legacy_ref_path_list_to_rowechelon_paths(
         tlc = span.col_start - 1
         name = span.name
 
-        def coords(i: int, j: int) -> str:
+        def coords(
+            i: int,
+            j: int,
+            *,
+            shape: Tuple[int, int] = shape,
+            gN: int = gN,
+            tlr: int = tlr,
+            tlc: int = tlc,
+            left_pad: float = left_pad,
+            adj: float = adj,
+        ) -> str:
             if i >= shape[0]:
                 if gN == 0 and j == 0:
                     x = r"\x1"

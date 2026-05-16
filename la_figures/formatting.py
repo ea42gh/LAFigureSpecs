@@ -12,7 +12,7 @@ from typing import Any, Callable, Iterable, Optional, Tuple
 def latexify(x: Any) -> str:
     """Return a TeX-ready representation for a scalar-like value."""
     try:
-        from matrixlayout.formatting import latexify as _latexify  # type: ignore
+        from matrixlayout.formatting import latexify as _latexify
     except Exception:
         _latexify = None
 
@@ -34,7 +34,7 @@ def latexify(x: Any) -> str:
         return rf"\frac{{{x.numerator}}}{{{x.denominator}}}"
 
     try:
-        import sympy as sym  # type: ignore
+        import sympy as sym
 
         if isinstance(x, sym.Basic):
             return sym.latex(x)
@@ -49,7 +49,7 @@ def latexify(x: Any) -> str:
 def make_decorator(**kwargs: Any) -> Callable[[str], str]:
     """Return a decorator function for TeX strings (matrixlayout-compatible)."""
     try:
-        from matrixlayout.formatting import make_decorator as _make_decorator  # type: ignore
+        from matrixlayout.formatting import make_decorator as _make_decorator
     except Exception:
         _make_decorator = None
     if _make_decorator is not None:
@@ -60,7 +60,7 @@ def make_decorator(**kwargs: Any) -> Callable[[str], str]:
 def decorator_box(*, color: Optional[str] = None) -> Callable[[str], str]:
     """Return a decorator that draws a box (optionally colored) around TeX."""
     try:
-        from matrixlayout.formatting import decorator_box as _decorator_box  # type: ignore
+        from matrixlayout.formatting import decorator_box as _decorator_box
     except Exception:
         _decorator_box = None
     if _decorator_box is not None:
@@ -73,7 +73,7 @@ def decorator_box(*, color: Optional[str] = None) -> Callable[[str], str]:
 def decorator_color(color: str) -> Callable[[str], str]:
     """Return a decorator that colors TeX."""
     try:
-        from matrixlayout.formatting import decorator_color as _decorator_color  # type: ignore
+        from matrixlayout.formatting import decorator_color as _decorator_color
     except Exception:
         _decorator_color = None
     if _decorator_color is not None:
@@ -84,7 +84,7 @@ def decorator_color(color: str) -> Callable[[str], str]:
 def decorator_bg(color: str) -> Callable[[str], str]:
     """Return a decorator that adds a background color to TeX."""
     try:
-        from matrixlayout.formatting import decorator_bg as _decorator_bg  # type: ignore
+        from matrixlayout.formatting import decorator_bg as _decorator_bg
     except Exception:
         _decorator_bg = None
     if _decorator_bg is not None:
@@ -95,7 +95,7 @@ def decorator_bg(color: str) -> Callable[[str], str]:
 def decorator_bf() -> Callable[[str], str]:
     """Return a decorator that boldfaces TeX."""
     try:
-        from matrixlayout.formatting import decorator_bf as _decorator_bf  # type: ignore
+        from matrixlayout.formatting import decorator_bf as _decorator_bf
     except Exception:
         _decorator_bf = None
     if _decorator_bf is not None:
@@ -106,7 +106,7 @@ def decorator_bf() -> Callable[[str], str]:
 def sel_entry(i: int, j: int) -> Any:
     """Selector for a single matrix entry."""
     try:
-        from matrixlayout.formatting import sel_entry as _sel_entry  # type: ignore
+        from matrixlayout.formatting import sel_entry as _sel_entry
     except Exception:
         _sel_entry = None
     if _sel_entry is not None:
@@ -117,7 +117,7 @@ def sel_entry(i: int, j: int) -> Any:
 def sel_box(top_left: Any, bottom_right: Any) -> Any:
     """Selector for a rectangular entry region."""
     try:
-        from matrixlayout.formatting import sel_box as _sel_box  # type: ignore
+        from matrixlayout.formatting import sel_box as _sel_box
     except Exception:
         _sel_box = None
     if _sel_box is not None:
@@ -128,7 +128,7 @@ def sel_box(top_left: Any, bottom_right: Any) -> Any:
 def sel_row(i: int) -> Any:
     """Selector for an entire row."""
     try:
-        from matrixlayout.formatting import sel_row as _sel_row  # type: ignore
+        from matrixlayout.formatting import sel_row as _sel_row
     except Exception:
         _sel_row = None
     if _sel_row is not None:
@@ -139,7 +139,7 @@ def sel_row(i: int) -> Any:
 def sel_col(j: int) -> Any:
     """Selector for an entire column."""
     try:
-        from matrixlayout.formatting import sel_col as _sel_col  # type: ignore
+        from matrixlayout.formatting import sel_col as _sel_col
     except Exception:
         _sel_col = None
     if _sel_col is not None:
@@ -150,7 +150,7 @@ def sel_col(j: int) -> Any:
 def sel_rows(rows: Any) -> Any:
     """Selector for multiple rows."""
     try:
-        from matrixlayout.formatting import sel_rows as _sel_rows  # type: ignore
+        from matrixlayout.formatting import sel_rows as _sel_rows
     except Exception:
         _sel_rows = None
     if _sel_rows is not None:
@@ -161,7 +161,7 @@ def sel_rows(rows: Any) -> Any:
 def sel_cols(cols: Any) -> Any:
     """Selector for multiple columns."""
     try:
-        from matrixlayout.formatting import sel_cols as _sel_cols  # type: ignore
+        from matrixlayout.formatting import sel_cols as _sel_cols
     except Exception:
         _sel_cols = None
     if _sel_cols is not None:
@@ -172,7 +172,7 @@ def sel_cols(cols: Any) -> Any:
 def sel_all() -> Any:
     """Selector for all entries."""
     try:
-        from matrixlayout.formatting import sel_all as _sel_all  # type: ignore
+        from matrixlayout.formatting import sel_all as _sel_all
     except Exception:
         _sel_all = None
     if _sel_all is not None:
@@ -183,7 +183,7 @@ def sel_all() -> Any:
 def sel_vec(group: int, vec: int, entry: int) -> Any:
     """Selector for a vector entry in an eigenproblem row."""
     try:
-        from matrixlayout.formatting import sel_vec as _sel_vec  # type: ignore
+        from matrixlayout.formatting import sel_vec as _sel_vec
     except Exception:
         _sel_vec = None
     if _sel_vec is not None:
@@ -194,7 +194,7 @@ def sel_vec(group: int, vec: int, entry: int) -> Any:
 def sel_vec_range(start: Any, end: Any) -> Any:
     """Selector for a contiguous vector entry range."""
     try:
-        from matrixlayout.formatting import sel_vec_range as _sel_vec_range  # type: ignore
+        from matrixlayout.formatting import sel_vec_range as _sel_vec_range
     except Exception:
         _sel_vec_range = None
     if _sel_vec_range is not None:
@@ -213,7 +213,7 @@ def decorate_tex_entries(
 ) -> Any:
     """Apply a decorator to selected entries in a grid matrix (in-place)."""
     try:
-        from matrixlayout.formatting import decorate_tex_entries as _decorate_tex_entries  # type: ignore
+        from matrixlayout.formatting import decorate_tex_entries as _decorate_tex_entries
     except Exception:
         _decorate_tex_entries = None
     if _decorate_tex_entries is None:

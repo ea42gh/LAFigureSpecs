@@ -220,7 +220,7 @@ def eig_matrices_from_spec(
 
     cols: List[sym.Matrix] = []
     full_lambda: List[Any] = []
-    for lam, m, vecs in zip(lambdas, mas, groups):
+    for lam, m, vecs in zip(lambdas, mas, groups, strict=False):
         full_lambda.extend([lam] * m)
         cols.extend([sym.Matrix(v) for v in vecs])
 

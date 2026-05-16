@@ -46,22 +46,22 @@ def _filter_tex_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
 
 def _import_render_eig_tex():
     try:
-        from matrixlayout import render_eig_tex  # type: ignore
+        from matrixlayout import render_eig_tex
 
         return render_eig_tex
     except Exception:
-        from matrixlayout.eigproblem import render_eig_tex  # type: ignore
+        from matrixlayout.eigproblem import render_eig_tex
 
         return render_eig_tex
 
 
 def _import_render_eig_svg():
     try:
-        from matrixlayout import render_eig_svg  # type: ignore
+        from matrixlayout import render_eig_svg
 
         return render_eig_svg
     except Exception:
-        from matrixlayout.eigproblem import render_eig_svg  # type: ignore
+        from matrixlayout.eigproblem import render_eig_svg
 
         return render_eig_svg
 

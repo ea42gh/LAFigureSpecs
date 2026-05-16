@@ -11,7 +11,7 @@ from ._sympy_utils import to_sympy_col, to_sympy_matrix
 
 def _show_svg(svg: str):
     try:
-        from IPython.display import SVG, display  # type: ignore
+        from IPython.display import SVG, display
     except Exception:
         return svg
     return display(SVG(svg))

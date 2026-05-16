@@ -16,7 +16,7 @@ so Julia can later compute traces/decorations and call the same renderer.
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Sequence, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Sequence, Tuple, cast
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify
@@ -187,7 +187,7 @@ def _build_ge_bundle(
 
     extension = _merge_extension(extension, row_stretch)
 
-    tr: GETrace = ge_trace(ref_A, ref_rhs, pivoting=pivoting, gj=gj)  # type: ignore[arg-type]
+    tr: GETrace = ge_trace(ref_A, ref_rhs, pivoting=cast(Literal["none", "partial"], pivoting), gj=gj)
 
     # Decorations are produced in *coefficient-matrix* coordinates.
     # We rebase pivot boxes to the final (last-layer) A-block in the GE grid.
@@ -319,30 +319,30 @@ def _build_ge_bundle(
                 continue
             decorations.append({"grid": (br, last_col), "vlines": split})
 
-    spec: Dict[str, Any] = dict(
-        matrices=layers["matrices"],
-        n_rhs=int(tr.Nrhs or 0),
-        body_preamble=preamble,
-        document_preamble=extension,
-        nice_options=nice_options,
-        pivot_locs=pivot_locs,
-        txt_with_locs=txt_with_locs,
-        variable_labels=variable_labels,
-        rowechelon_paths=rowechelon_paths,
-        callouts=callouts,
-        decorators=decorators,
-        decorations=decorations or None,
-        fig_scale=fig_scale,
-        outer_delims=bool(outer_delims),
-        outer_hspace_mm=int(outer_hspace_mm),
-        cell_align=str(cell_align),
-        format_nrhs=False if decorations else True,
-        strict=bool(strict) if strict is not None else False,
-        codebefore=codebefore,
-        create_cell_nodes=True if rowechelon_paths else None,
-        create_medium_nodes=True if codebefore else None,
-        create_extra_nodes=True if callouts else None,
-    )
+    spec: Dict[str, Any] = {
+        "matrices": layers["matrices"],
+        "n_rhs": int(tr.Nrhs or 0),
+        "body_preamble": preamble,
+        "document_preamble": extension,
+        "nice_options": nice_options,
+        "pivot_locs": pivot_locs,
+        "txt_with_locs": txt_with_locs,
+        "variable_labels": variable_labels,
+        "rowechelon_paths": rowechelon_paths,
+        "callouts": callouts,
+        "decorators": decorators,
+        "decorations": decorations or None,
+        "fig_scale": fig_scale,
+        "outer_delims": bool(outer_delims),
+        "outer_hspace_mm": int(outer_hspace_mm),
+        "cell_align": str(cell_align),
+        "format_nrhs": False if decorations else True,
+        "strict": bool(strict) if strict is not None else False,
+        "codebefore": codebefore,
+        "create_cell_nodes": True if rowechelon_paths else None,
+        "create_medium_nodes": True if codebefore else None,
+        "create_extra_nodes": True if callouts else None,
+    }
 
     typed_layout = _build_typed_layout_spec(
         pivot_locs=pivot_locs,
@@ -694,7 +694,7 @@ def show_ge(*args: Any, **kwargs: Any) -> Any:
     """Render GE and return a displayable SVG object when possible."""
     svg = ge(*args, **kwargs)
     try:
-        from IPython.display import SVG  # type: ignore
+        from IPython.display import SVG
 
         return SVG(svg)
     except Exception:

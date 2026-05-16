@@ -88,4 +88,4 @@ def test_qr_specs_from_matrices_and_layout_spec():
     assert spec["fig_scale"] == 1.2
 
     layout = qr_tbl_layout_spec([[1, 0], [1, 1]])
-    assert getattr(layout, "matrices")
+    assert layout.matrices
