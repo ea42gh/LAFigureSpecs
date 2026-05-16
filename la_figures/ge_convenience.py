@@ -628,7 +628,7 @@ def _variable_summary_label_rows(
     return [
         {
             "grid": (n_block_rows - 1, n_block_cols - 1),
-            "rows": [arrows, labels],
+            "labels": [arrows, labels],
         }
     ]
 

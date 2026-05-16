@@ -56,7 +56,7 @@ def test_ge_tbl_spec_variable_summary_labels():
 
     labels = spec.get("variable_labels") or []
     assert labels
-    rows = labels[0]["rows"]
+    rows = labels[0]["labels"]
     assert rows[0] == [
         r"\textcolor{blue}{\ensuremath{\Uparrow}}",
         r"\textcolor{orange}{\ensuremath{\uparrow}}",

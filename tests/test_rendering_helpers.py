@@ -93,6 +93,38 @@ def test_latex_svg_default_packages_cover_la_figures_fragments(monkeypatch):
     assert "nicematrix" in calls["fragment_kwargs"]["tex_packages"]
 
 
+def test_latex_svg_accepts_external_package_set(monkeypatch):
+    import la_figures.rendering as rendering
+
+    calls = {}
+
+    class FakeTexFragment:
+        def __init__(self, code, **kwargs):
+            calls["fragment_code"] = code
+            calls["fragment_kwargs"] = kwargs
+            self.full_latex = f"FULL::{code}"
+
+    monkeypatch.setitem(
+        sys.modules,
+        "jupyter_tikz",
+        types.SimpleNamespace(TexFragment=FakeTexFragment),
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "matrixlayout.render",
+        types.SimpleNamespace(render_svg=lambda tex_source, **kwargs: "<svg/>"),
+    )
+
+    svg = rendering.latex_svg(
+        r'\begin{tikzcd}[ampersand replacement=\&] V \arrow[r, "T"] \& W \end{tikzcd}',
+        tex_packages="amsmath,amssymb,tikz-cd",
+    )
+
+    assert svg == "<svg/>"
+    assert "tikzcd" in calls["fragment_code"]
+    assert calls["fragment_kwargs"]["tex_packages"] == "amsmath,amssymb,tikz-cd"
+
+
 def test_latex_svg_prefers_explicit_preamble_path(monkeypatch):
     import la_figures.rendering as rendering
 

@@ -93,6 +93,16 @@ fragments or full LaTeX documents to SVG:
 svg = lf.latex_svg(r"$A x = b$")
 ```
 
+Pass `tex_packages="..."` when the fragment uses another installed LaTeX
+package:
+
+```python
+svg = lf.latex_svg(
+    r'\begin{tikzcd} V \arrow[r, "T"] & W \end{tikzcd}',
+    tex_packages="amsmath,amssymb,tikz-cd",
+)
+```
+
 ## Julia interop
 
 See `../JULIA_INTEROP.md` for PyCall/PythonCall usage patterns and a small
