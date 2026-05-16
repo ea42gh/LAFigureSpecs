@@ -6,6 +6,9 @@ from numbers import Number
 from typing import Any, Dict, Mapping, Optional
 
 
+DEFAULT_TEX_PACKAGES = "amsmath,amssymb,mathtools,xcolor,systeme,cascade,nicematrix"
+
+
 def _is_numpy_array(value: Any) -> bool:
     try:
         import numpy as np  # type: ignore
@@ -78,7 +81,7 @@ def latex_svg(
     tex_body: str,
     *,
     preamble: str | None = None,
-    tex_packages: str | None = "amsmath,amssymb,mathtools,xcolor",
+    tex_packages: str | None = DEFAULT_TEX_PACKAGES,
     tikz_libraries: str | None = None,
     pgfplots_libraries: str | None = None,
     no_tikz: bool = True,
@@ -173,7 +176,7 @@ def lshow_svg(
     *args: Any,
     lshow_kwargs: Optional[Mapping[str, Any]] = None,
     preamble: str | None = None,
-    tex_packages: str | None = "amsmath,amssymb,mathtools,xcolor",
+    tex_packages: str | None = DEFAULT_TEX_PACKAGES,
     tikz_libraries: str | None = None,
     pgfplots_libraries: str | None = None,
     no_tikz: bool = True,

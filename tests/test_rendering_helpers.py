@@ -63,6 +63,36 @@ def test_latex_svg_wraps_fragment_and_forwards_render_options(monkeypatch):
     assert calls["render_kwargs"]["output_stem"] == "demo"
 
 
+def test_latex_svg_default_packages_cover_la_figures_fragments(monkeypatch):
+    import la_figures.rendering as rendering
+
+    calls = {}
+
+    class FakeTexFragment:
+        def __init__(self, code, **kwargs):
+            calls["fragment_code"] = code
+            calls["fragment_kwargs"] = kwargs
+            self.full_latex = f"FULL::{code}"
+
+    monkeypatch.setitem(
+        sys.modules,
+        "jupyter_tikz",
+        types.SimpleNamespace(TexFragment=FakeTexFragment),
+    )
+    monkeypatch.setitem(
+        sys.modules,
+        "matrixlayout.render",
+        types.SimpleNamespace(render_svg=lambda tex_source, **kwargs: "<svg/>"),
+    )
+
+    svg = rendering.latex_svg(r"$\systeme{x=1}$")
+
+    assert svg == "<svg/>"
+    assert "systeme" in calls["fragment_kwargs"]["tex_packages"]
+    assert "cascade" in calls["fragment_kwargs"]["tex_packages"]
+    assert "nicematrix" in calls["fragment_kwargs"]["tex_packages"]
+
+
 def test_latex_svg_prefers_explicit_preamble_path(monkeypatch):
     import la_figures.rendering as rendering
 
