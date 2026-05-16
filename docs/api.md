@@ -121,6 +121,21 @@ Fragment-specific options on `latex_svg(...)`:
 - `scale`
 - `no_jinja`
 
+`latex_svg(...)` defaults to the packages used by la_figures fragments:
+`amsmath`, `amssymb`, `mathtools`, `xcolor`, `systeme`, `cascade`, and
+`nicematrix`. Pass `tex_packages="..."` to use a different package set, for
+example `tex_packages="amsmath,amssymb,tikz-cd"`.
+
+Passing `preamble=...` selects the explicit-preamble path and bypasses
+`tex_packages`, `tikz_libraries`, and the default package list. Include every
+needed package in the preamble when using that mode.
+
+Because fragments are scaled with `\scalebox{...}{...}`, environments that use
+alignment markers may need package-specific escaping. In `tikz-cd`, prefer
+`ampersand replacement=\&` over raw `&`.
+
+See `docs/notebooks/13_latex_fragment_rendering.ipynb` for examples.
+
 ## Backsubstitution
 
 - `la_figures.linear_system_tex(A, b, **opts)`: build a `systeme` block for a linear system. Returns: TeX string.
