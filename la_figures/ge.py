@@ -488,7 +488,7 @@ def trace_to_layer_matrices(
     dict
         Keys:
         - ``matrices``: nested list of SymPy matrices
-        - ``Nrhs``: RHS column count (for future partition-line insertion)
+        - ``n_rhs``: RHS column count (for future partition-line insertion)
         - ``pivot_positions`` / ``pivot_cols`` / ``free_cols``
         - ``meta``: metadata passthrough
     """
@@ -511,6 +511,7 @@ def trace_to_layer_matrices(
 
     return {
         "matrices": layers,
+        "n_rhs": trace.Nrhs,
         "Nrhs": trace.Nrhs,
         "pivot_positions": list(trace.pivot_positions),
         "pivot_cols": list(trace.pivot_cols),

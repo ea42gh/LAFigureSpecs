@@ -30,6 +30,18 @@ if TYPE_CHECKING:
 _UNSET = object()
 
 
+def _resolve_n_rhs_alias(*, n_rhs: Any = _UNSET, Nrhs: Any = _UNSET) -> Any:
+    """Resolve canonical ``n_rhs`` while keeping the legacy ``Nrhs`` keyword."""
+
+    if n_rhs is not _UNSET and Nrhs is not _UNSET and n_rhs != Nrhs:
+        raise TypeError("Use either n_rhs or Nrhs, not both.")
+    if n_rhs is not _UNSET:
+        return n_rhs
+    if Nrhs is not _UNSET:
+        return Nrhs
+    return 0
+
+
 def _matrix_shape(mat: Any) -> Tuple[int, int]:
     if mat is None:
         return (0, 0)
@@ -834,7 +846,7 @@ def _build_ge_bundle(
 
     spec: Dict[str, Any] = dict(
         matrices=layers["matrices"],
-        Nrhs=int(tr.Nrhs or 0),
+        n_rhs=int(tr.Nrhs or 0),
         preamble=preamble,
         extension=extension,
         nice_options=nice_options,
@@ -995,7 +1007,7 @@ def ge_tbl_layout_spec(
 
     spec = {
         "matrices": bundle["layers"]["matrices"],
-        "Nrhs": int(bundle["trace"].Nrhs or 0),
+        "n_rhs": int(bundle["trace"].Nrhs or 0),
         "layout": bundle["typed_layout"],
         "outer_hspace_mm": int(outer_hspace_mm),
         "cell_align": str(cell_align),
@@ -1016,7 +1028,8 @@ def ge_tbl_layout_spec(
 def ge(
     matrices: Sequence[Sequence[Any]],
     *,
-    Nrhs: Any = 0,
+    n_rhs: Any = _UNSET,
+    Nrhs: Any = _UNSET,
     formatter: Any = latexify,
     pivot_list: Optional[Sequence[Any]] = None,
     bg_for_entries: Optional[Any] = None,
@@ -1042,6 +1055,8 @@ def ge(
     **render_opts: Any,
 ) -> str:
     """Convenience wrapper for the GE rendering surface."""
+    n_rhs = _resolve_n_rhs_alias(n_rhs=n_rhs, Nrhs=Nrhs)
+
     # Allow a single matrix input by wrapping into a 1x2 grid: [None, A].
     # This preserves legacy expectations that the data matrix lives in col=1.
     if matrices is not None and not (
@@ -1102,14 +1117,14 @@ def ge(
     decorations: List[Dict[str, Any]] = []
     nrhs_total: int
     nrhs_splits: Optional[List[int]] = None
-    if isinstance(Nrhs, (list, tuple)):
+    if isinstance(n_rhs, (list, tuple)):
         try:
-            nrhs_total = sum(int(x) for x in Nrhs)
+            nrhs_total = sum(int(x) for x in n_rhs)
         except Exception:
             nrhs_total = 0
         nrhs_splits = []
     else:
-        nrhs_total = int(Nrhs or 0)
+        nrhs_total = int(n_rhs or 0)
     if nrhs_total > 0:
         n_block_rows = len(matrices or [])
         n_block_cols = max((len(r) for r in (matrices or [])), default=0)
@@ -1125,7 +1140,7 @@ def ge(
                 splits: List[int] = []
                 if 0 < split < w:
                     splits.append(split)
-                for k in Nrhs[:-1]:
+                for k in n_rhs[:-1]:
                     split += int(k)
                     if 0 < split < w:
                         splits.append(split)
@@ -1143,7 +1158,7 @@ def ge(
     callouts = _legacy_array_name_callouts(
         matrices,
         array_names=array_names,
-        Nrhs=Nrhs,
+        Nrhs=n_rhs,
         start_index=start_index,
     )
 
@@ -1168,7 +1183,7 @@ def ge(
 
     svg = render_ge_svg(
         matrices=matrices,
-        Nrhs=Nrhs,
+        n_rhs=n_rhs,
         formatter=formatter,
         outer_hspace_mm=outer_hspace_mm,
         legacy_submatrix_names=True,

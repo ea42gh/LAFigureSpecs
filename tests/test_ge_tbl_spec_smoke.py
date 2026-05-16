@@ -12,8 +12,8 @@ def test_ge_tbl_spec_and_tex_smoke():
     spec = la_figures.ge_tbl_spec(A)
     assert isinstance(spec, dict)
     assert "matrices" in spec
-    assert "Nrhs" in spec
-    assert spec["Nrhs"] == 0
+    assert "n_rhs" in spec
+    assert spec["n_rhs"] == 0
 
     tex = la_figures.ge_tbl_tex(A)
     assert "\\begin{NiceArray}" in tex

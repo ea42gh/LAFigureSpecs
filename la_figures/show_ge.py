@@ -96,13 +96,13 @@ class ShowGE:
             if b is None:
                 A_aug = A
                 AtA_aug = At * A
-                Nrhs = 0
+                n_rhs = 0
             else:
                 A_aug = A.row_join(b)
                 AtA = At * A
                 Atb = At * b
                 AtA_aug = AtA.row_join(Atb)
-                Nrhs = Atb.shape[1]
+                n_rhs = Atb.shape[1]
             self._trace = ge_trace(
                 AtA,
                 Atb if b is not None else None,
@@ -113,7 +113,7 @@ class ShowGE:
             mats = [[None, A_aug], [At, AtA_aug]] + list(base_layers.get("matrices") or [])[1:]
             self._layers = dict(base_layers)
             self._layers["matrices"] = mats
-            self._layers["Nrhs"] = Nrhs
+            self._layers["n_rhs"] = n_rhs
         else:
             self._trace = ge_trace(self.A, self.rhs, pivoting=cast(Pivoting, self.pivoting), gj=self.gj)
             self._layers = trace_to_layer_matrices(self._trace, augmented=True)
@@ -141,7 +141,7 @@ class ShowGE:
         if not mats:
             return self.A, self.rhs
         last = mats[-1][1]
-        nrhs = int(layers.get("Nrhs") or 0)
+        nrhs = int(layers.get("n_rhs", layers.get("Nrhs")) or 0)
         if nrhs <= 0:
             return last, None
         return last[:, :-nrhs], last[:, -nrhs:]
@@ -204,7 +204,7 @@ class ShowGE:
         if idx < 0 or idx >= len(mats):
             raise IndexError("step out of range for GE stack")
         Ab = mats[idx][1]
-        nrhs = int(layers.get("Nrhs") or 0)
+        nrhs = int(layers.get("n_rhs", layers.get("Nrhs")) or 0)
         if nrhs <= 0:
             return None
         rhs = Ab[:, -nrhs:]
@@ -323,7 +323,7 @@ class ShowGE:
                 array_names = {"name_specs": name_specs}
             svg = legacy_ge(
                 layers.get("matrices"),
-                Nrhs=layers.get("Nrhs") or 0,
+                n_rhs=layers.get("n_rhs", layers.get("Nrhs")) or 0,
                 pivot_list=decor.get("pivot_list") if self.show_pivots else None,
                 bg_for_entries=decor.get("bg_for_entries"),
                 ref_path_list=decor.get("ref_path_list"),
@@ -356,7 +356,7 @@ class ShowGE:
                     var_summary = decor.get("basic_var") if var_summary else None
                 svg = legacy_ge(
                     mats,
-                    Nrhs=layers.get("Nrhs") or 0,
+                    n_rhs=layers.get("n_rhs", layers.get("Nrhs")) or 0,
                     pivot_list=decor.get("pivot_list") if self.show_pivots else None,
                     bg_for_entries=decor.get("bg_for_entries"),
                     ref_path_list=decor.get("ref_path_list"),

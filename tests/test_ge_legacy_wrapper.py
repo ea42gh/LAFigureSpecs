@@ -181,3 +181,24 @@ def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():
         assert any(r"\mid  b" in label for label in labels)
     finally:
         ml_ge.render_ge_svg = ge_svg_orig
+
+
+def test_ge_legacy_wrapper_supports_canonical_n_rhs_keyword():
+    from la_figures.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
+
+    matrices = [[None, sym.Matrix([[1, 2, 3], [4, 5, 6]])]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    ge_svg_orig = ml_ge.render_ge_svg
+    ml_ge.render_ge_svg = fake_svg
+    try:
+        assert ge(matrices, n_rhs=1) == "<svg/>"
+    finally:
+        ml_ge.render_ge_svg = ge_svg_orig
+
+    assert captured["n_rhs"] == 1

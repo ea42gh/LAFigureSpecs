@@ -13,6 +13,7 @@ def test_ge_trace_pivots_and_steps():
     assert len(trace.steps) == 1
 
     layers = la_figures.trace_to_layer_matrices(trace)
+    assert layers["n_rhs"] == 0
     assert layers["Nrhs"] == 0
     assert layers["matrices"][0][0] is None
     assert layers["matrices"][0][1] == trace.initial
