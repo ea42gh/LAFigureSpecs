@@ -42,7 +42,7 @@ A = sym.Matrix([[1, 2], [3, 4]])
 spec = la_figures.ge_tbl_spec(A)
 # spec["decorations"] includes RHS separators (if present) as vline specs.
 # spec["matrices"] holds the matrix grid
-# spec["specs"] holds label/callout specs
+# spec["specs"] holds label/callout annotations
 ```
 
 ## GE spec
@@ -60,7 +60,7 @@ Minimal render from a spec:
 ```python
 from matrixlayout.ge import render_ge_svg
 
-svg = render_ge_svg(spec["matrices"], specs=spec["specs"])
+svg = render_ge_svg(spec["matrices"], annotations=spec["specs"])
 ```
 
 ## Stateful GE helper (ShowGE)
@@ -107,7 +107,7 @@ from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
 spec = qr_tbl_spec(A)
-svg = render_qr_svg(spec["matrices"], specs=spec["specs"])
+svg = render_qr_svg(spec["matrices"], annotations=spec["specs"])
 ```
 
 ## Eigen/SVD specs

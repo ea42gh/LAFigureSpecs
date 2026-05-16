@@ -40,7 +40,7 @@ from matrixlayout.ge import render_ge_svg
 A = sym.Matrix([[2, 1], [4, 3]])
 trace = ge_trace(A, show_pivots=True)
 spec = ge_tbl_spec(A, trace=trace)
-svg = render_ge_svg(spec["matrices"], specs=spec["specs"])
+svg = render_ge_svg(spec["matrices"], annotations=spec["specs"])
 ```
 
 ## QR with labels
@@ -65,7 +65,7 @@ A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
 spec = qr_tbl_spec(A)
 spec["specs"].append({"grid": (0, 2), "side": "above", "labels": ["x_1", "x_2"]})
-svg = render_qr_svg(spec["matrices"], specs=spec["specs"])
+svg = render_qr_svg(spec["matrices"], annotations=spec["specs"])
 ```
 
 ## Eigen/SVD

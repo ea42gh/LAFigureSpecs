@@ -39,7 +39,7 @@ matrices -> la_figures (trace/spec) -> matrixlayout (tex/svg)
 Example:
 
 ```
-A -> ge_tbl_spec(A) -> render_ge_svg(spec["matrices"], specs=spec["specs"])
+A -> ge_tbl_spec(A) -> render_ge_svg(spec["matrices"], annotations=spec["specs"])
 ```
 
 For standalone LaTeX fragments:
