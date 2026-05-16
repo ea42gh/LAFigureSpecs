@@ -105,6 +105,7 @@ def test_ge_tbl_spec_dict_roundtrip_render_ge_svg_accepts_spec():
     import pytest
 
     pytest.importorskip("matrixlayout")
+    pytest.importorskip("jupyter_tikz")
     import la_figures
     from matrixlayout.ge import render_ge_svg
 

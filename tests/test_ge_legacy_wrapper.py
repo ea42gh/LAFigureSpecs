@@ -21,11 +21,14 @@ def test_legacy_pivot_list_to_pivot_locs():
     ]
 
 
-def test_ge_legacy_wrapper_rejects_unsupported_options():
+def test_ge_legacy_wrapper_rejects_unsupported_options(monkeypatch):
     from la_figures.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    ge([[None, A]], func=lambda m: m)
+    monkeypatch.setattr(ml_ge, "render_ge_svg", lambda **kwargs: "<svg/>")
+
+    assert ge([[None, A]], func=lambda m: m) == "<svg/>"
 
 
 def test_ge_legacy_wrapper_supports_backgrounds_and_comments():
