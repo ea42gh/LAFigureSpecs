@@ -3,6 +3,11 @@
 `*_spec` functions return plain dictionaries suitable for matrixlayout.
 `*_layout_spec` functions return typed layout objects (use `.to_dict()` for dict access).
 
+Specs emitted for matrixlayout use `body_preamble` for document-body setup and
+`document_preamble` for true LaTeX preamble insertion. The public la_figures
+wrapper keywords `preamble` and `extension` are still accepted and are mapped to
+those matrixlayout keys.
+
 Selectors and decorators use 0-based entry indices within each matrix block.
 Grid positions are addressed by (row, column) in the outer list.
 
@@ -21,8 +26,8 @@ Grid positions are addressed by (row, column) in the outer list.
 | `index_base` | int | 1 | Index base for labels. |
 | `pivot_style` | str | "" | Use CodeAfter fit boxes when set. |
 | `pivot_text_color` | str | "red" | Pivot entry text color. |
-| `preamble` | str | nicematrix opts | Body preamble. |
-| `extension` | str | "" | LaTeX preamble injection. |
+| `preamble` | str | nicematrix opts | Public alias for emitted `body_preamble`. |
+| `extension` | str | "" | Public alias for emitted `document_preamble`. |
 | `row_stretch` | float | None | Row spacing multiplier. |
 | `nice_options` | str | "" | NiceArray options. |
 | `callouts` | list/bool | None | Matrix labels/callouts. |
@@ -94,8 +99,8 @@ vertical lines only appear in the matrix rows.
 | `W` | matrix | required | Computed internally via naive Gram–Schmidt (LCD-scaled, no normalization). |
 | `array_names` | bool/list | True | Enable labels or custom list. |
 | `fig_scale` | float | None | Figure scale. |
-| `preamble` | str | nicematrix opts | Body preamble. |
-| `extension` | str | "" | LaTeX preamble injection. |
+| `preamble` | str | nicematrix opts | Public alias for emitted `body_preamble`. |
+| `extension` | str | "" | Public alias for emitted `document_preamble`. |
 | `nice_options` | str | "vlines-in-sub-matrix = I" | NiceArray options. |
 | `label_color` | str | "blue" | Label color. |
 | `label_text_color` | str | "red" | Label text color. |

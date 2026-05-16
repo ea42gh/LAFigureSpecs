@@ -40,6 +40,8 @@ def test_ge_tbl_layout_spec_uses_typed_layout():
 
     assert isinstance(spec, GEGridSpec)
     assert isinstance(spec.layout, GELayoutSpec)
+    assert spec.layout.body_preamble is not None
+    assert spec.layout.document_preamble is not None
     tex = render_ge_tex(spec=spec)
     assert "\\begin{NiceArray}" in tex
 

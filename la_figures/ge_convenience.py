@@ -653,8 +653,8 @@ def _build_typed_layout_spec(
 
     return GELayoutSpec(
         nice_options=nice_options,
-        preamble=preamble,
-        extension=extension,
+        body_preamble=preamble,
+        document_preamble=extension,
         pivot_locs=typed_pivots,
         txt_with_locs=typed_txt,
         rowechelon_paths=typed_paths,
@@ -848,8 +848,8 @@ def _build_ge_bundle(
     spec: Dict[str, Any] = dict(
         matrices=layers["matrices"],
         n_rhs=int(tr.Nrhs or 0),
-        preamble=preamble,
-        extension=extension,
+        body_preamble=preamble,
+        document_preamble=extension,
         nice_options=nice_options,
         pivot_locs=pivot_locs,
         txt_with_locs=txt_with_locs,
