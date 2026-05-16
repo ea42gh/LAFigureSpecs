@@ -11,6 +11,28 @@ eigenproblem tables, and SVD tables, then hands explicit layout specs to
 The package is intended for notebooks and course material where the displayed
 figure should follow the actual linear algebra computation.
 
+## Top-Level Use Functions
+
+| Area | Function | Output |
+|---|---|---|
+| GE | `ge(...)` | Rendered SVG for a row-reduction layout. |
+| GE | `show_ge(...)` / `ShowGE` | Notebook-friendly row-reduction workflow/display helpers. |
+| GE | `ge_tbl_spec(...)` | Reusable spec dictionary for a GE layout. |
+| GE | `ge_tbl_tex(...)` | TeX source for a GE layout. |
+| GE | `ge_tbl_svg(...)` | Rendered SVG for a GE layout. |
+| GE | `ge_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| QR | `gram_schmidt_qr(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
+| QR | `qr(...)` | Renders a precomputed QR matrix stack as SVG. |
+| QR | `qr_tbl_spec(...)` | Reusable spec dictionary for a QR layout. |
+| QR | `qr_tbl_tex(...)` | TeX source for a QR layout. |
+| QR | `qr_tbl_svg(...)` | Rendered SVG for a QR layout. |
+| QR | `qr_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| Eigen | `eigendecomposition(...)` | Structured eigenvalue/eigenvector data. |
+| Eigen | `eig_tbl_spec(...)` | Reusable spec dictionary for an eigen layout. |
+| Eigen | `eig_tbl_tex(...)` | TeX source for an eigen layout. |
+| Eigen | `eig_tbl_svg(...)` | Rendered SVG for an eigen layout. |
+| Eigen | `eig_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+
 ## Try It
 
 Open the Binder demo:
