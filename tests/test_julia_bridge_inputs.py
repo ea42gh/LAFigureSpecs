@@ -71,6 +71,71 @@ def test_to_sympy_matrix_accepts_juliacall_arrayvalue_wrapper():
     assert int(M[1, 1]) == 4
 
 
+def test_to_sympy_matrix_accepts_juliacall_to_numpy_hook():
+    import numpy as np
+
+    from la_figures._sympy_utils import to_sympy_matrix
+
+    class FakeArrayValue:
+        __module__ = "juliacall"
+
+        def to_numpy(self):
+            arr = np.empty((1, 2), dtype=object)
+            arr[0, 0] = (1, 2)
+            arr[0, 1] = (3, 4)
+            return arr
+
+    M = to_sympy_matrix(FakeArrayValue())
+    assert M.shape == (1, 2)
+    assert M[0, 0] == sym.Rational(1, 2)
+    assert M[0, 1] == sym.Rational(3, 4)
+
+
+def test_to_sympy_matrix_juliacall_vector_and_failure_fallbacks():
+    import pytest
+
+    from la_figures._sympy_utils import to_sympy_col, to_sympy_matrix
+
+    class FakeVectorValue:
+        __module__ = "juliacall"
+
+        shape = (2,)
+
+        def __getitem__(self, idx):
+            if idx < 1:
+                raise IndexError("1-based")
+            return (idx, idx + 1)
+
+    class BadShapeValue:
+        __module__ = "juliacall"
+        shape = ("not", "ints")
+
+    v = to_sympy_matrix(FakeVectorValue())
+    assert list(v) == [sym.Rational(1, 2), sym.Rational(2, 3)]
+    with pytest.raises(TypeError, match="Cannot convert object"):
+        to_sympy_matrix(BadShapeValue())
+    assert to_sympy_col(FakeVectorValue()).shape == (2, 1)
+
+
+def test_to_sympy_matrix_numpy_tuple_vector_and_invalid_rhs():
+    import pytest
+
+    from la_figures._sympy_utils import to_sympy_col, to_sympy_matrix
+
+    v = np.empty((2,), dtype=object)
+    v[0] = (1, 3)
+    v[1] = (2, 5)
+    M = to_sympy_matrix(v)
+    assert M.shape == (2, 1)
+    assert M[1, 0] == sym.Rational(2, 5)
+
+    with pytest.raises(ValueError, match="rhs must be a vector"):
+        to_sympy_col([[1, 2], [3, 4]])
+
+    with pytest.raises(TypeError, match="Cannot convert object"):
+        to_sympy_matrix(object())
+
+
 def test_julia_symbol_normalization_in_convenience_wrappers():
     from la_figures.convenience import _julia_str
 
