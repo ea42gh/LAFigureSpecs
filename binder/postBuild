@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+kpsewhich systeme.sty
+python render_smoke.py
+jupyter nbconvert \
+  --to notebook \
+  --execute la_figures_demo.ipynb \
+  --output /tmp/la_figures_demo.executed.ipynb \
+  --ExecutePreprocessor.timeout=300

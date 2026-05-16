@@ -1,0 +1,8 @@
+jupyter-tikz @ git+https://github.com/ea42gh/jupyter-tikz.git@47ca7ea885075871631852eda1433a695260490a
+matrixlayout[render] @ git+https://github.com/ea42gh/matrixlayout.git@main
+-e .
+ipython
+ipykernel
+nbconvert
+numpy
+sympy
