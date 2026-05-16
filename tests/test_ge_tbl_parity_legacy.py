@@ -47,7 +47,7 @@ def test_ge_submatrix_names_match_legacy_no_rhs():
     layers = la_figures.trace_to_layer_matrices(tr, augmented=True)["matrices"]
 
     legacy = _legacy_ge_tex(layers, Nrhs=0)
-    new = render_ge_tex(matrices=layers, Nrhs=0)
+    new = render_ge_tex(matrices=layers, n_rhs=0)
 
     legacy_names = _submatrix_names(legacy)
     new_names = _submatrix_names(new)
@@ -68,7 +68,7 @@ def test_ge_submatrix_names_match_legacy_with_rhs():
     layers = la_figures.trace_to_layer_matrices(tr, augmented=True)["matrices"]
 
     legacy = _legacy_ge_tex(layers, Nrhs=1)
-    new = render_ge_tex(matrices=layers, Nrhs=1)
+    new = render_ge_tex(matrices=layers, n_rhs=1)
 
     legacy_names = _submatrix_names(legacy)
     new_names = _submatrix_names(new)

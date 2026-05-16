@@ -65,7 +65,7 @@ For most users, prefer `ge_tbl_svg(...)` over direct `render_ge_svg(...)`.
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `matrices` | grid | required | Matrix grid. |
-| `n_rhs` | int/list | 0 | RHS partitioning. Legacy public calls may still pass `Nrhs`. |
+| `n_rhs` | int/list | 0 | RHS partitioning for matrixlayout specs. |
 | `pivot_list` | list | None | Legacy pivot specs. |
 | `bg_for_entries` | list | None | Background highlights. |
 | `ref_path_list` | list | None | Row‑echelon paths. |
