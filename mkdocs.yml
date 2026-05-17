@@ -1,4 +1,5 @@
 site_name: la_figures
+site_url: https://ea42gh.github.io/la_figures/
 docs_dir: docs
 site_dir: site
 theme:
