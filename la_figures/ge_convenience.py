@@ -530,6 +530,8 @@ def ge(
 ) -> str:
     """Convenience wrapper for the GE rendering surface."""
     n_rhs = _resolve_n_rhs_alias(n_rhs=n_rhs, Nrhs=Nrhs)
+    body_preamble = render_opts.pop("body_preamble", render_opts.pop("preamble", None))
+    document_preamble = render_opts.pop("document_preamble", render_opts.pop("extension", None))
 
     # Allow a single matrix input by wrapping into a 1x2 grid: [None, A].
     # This preserves legacy expectations that the data matrix lives in col=1.
@@ -673,6 +675,8 @@ def ge(
         decorations=decorations or None,
         format_nrhs=False if decorations else True,
         fig_scale=fig_scale,
+        body_preamble=body_preamble or "",
+        document_preamble=document_preamble or "",
         decorators=decorators,
         strict=bool(strict) if strict is not None else False,
         output_dir=output_dir,
