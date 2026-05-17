@@ -1,6 +1,6 @@
 # Interop
 
-la_figures accepts Julia-style inputs via PythonCall/PyCall.
+LAFigureSpecs accepts Julia-style inputs via PythonCall/PyCall.
 
 - Julia Symbols are normalized (e.g., `:tight`).
 - Julia arrays are converted to nested Python lists when possible.
@@ -10,7 +10,7 @@ la_figures accepts Julia-style inputs via PythonCall/PyCall.
 
 ```julia
 using PythonCall
-la = pyimport("la_figures")
+la = pyimport("LAFigureSpecs")
 A = [1 2; 3 4]
 spec = la.ge_tbl_spec(A)
 ```
@@ -20,7 +20,7 @@ result of Julia `LAlatex.L_show(...)` directly:
 
 ```julia
 using PythonCall
-la = pyimport("la_figures")
+la = pyimport("LAFigureSpecs")
 svg = la.lshow_svg("A = ", [1 2; 3 4])
 ```
 

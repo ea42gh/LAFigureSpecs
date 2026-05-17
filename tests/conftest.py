@@ -12,20 +12,20 @@ def _ensure_monorepo_imports() -> None:
 
     During the migration, developers commonly run pytest from a checkout without
     installing the packages in editable mode. Several tests intentionally
-    exercise cross-package integration (e.g., :mod:`la_figures` ->
+    exercise cross-package integration (e.g., :mod:`LAFigureSpecs` ->
     :mod:`matrixlayout`), so we make the sibling package roots importable.
 
     This is test-harness-only wiring; production dependencies remain governed
     by each package's packaging metadata.
     """
 
-    # This file lives at la_figures/tests/...; the monorepo root is two levels up.
+    # This file lives at LAFigureSpecs/tests/...; the monorepo root is two levels up.
     repo_root = Path(__file__).resolve().parents[2]
 
     # Add per-package roots. These are the directories that contain the
     # corresponding importable packages.
     pkg_roots = [
-        repo_root / "la_figures",
+        repo_root / "LAFigureSpecs",
         repo_root / "matrixlayout",
         repo_root / "jupyter_tikz",
         repo_root / "itikz",  # legacy characterization tests

@@ -11,8 +11,8 @@ Decision table:
 ```
 Goal                          | Use                                    | Notes
 ------------------------------|----------------------------------------|------------------------------
-Reuse a spec for TeX + SVG     | la_figures.*_spec + matrixlayout.*_svg | Stable layout across outputs
-Quick render, no extra edits   | la_figures.*_svg wrappers              | Shortest path
+Reuse a spec for TeX + SVG     | LAFigureSpecs.*_spec + matrixlayout.*_svg | Stable layout across outputs
+Quick render, no extra edits   | LAFigureSpecs.*_svg wrappers              | Shortest path
 Custom labels/callouts         | matrixlayout.*_svg with annotations    | Avoid manual label rows/cols
 ```
 
@@ -26,17 +26,17 @@ new code and `tmp_dir` kept for compatibility.
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = la_figures.ge_tbl_spec(A, show_pivots=True)
+spec = LAFigureSpecs.ge_tbl_spec(A, show_pivots=True)
 ```
 
 ## GE trace to SVG
 
 ```python
 import sympy as sym
-from la_figures import ge_trace, ge_tbl_spec
+from LAFigureSpecs import ge_trace, ge_tbl_spec
 from matrixlayout.ge import render_ge_svg
 
 A = sym.Matrix([[2, 1], [4, 3]])
@@ -49,18 +49,18 @@ svg = render_ge_svg(spec=spec)
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
-spec = la_figures.qr_tbl_spec(A, array_names=True)
+spec = LAFigureSpecs.qr_tbl_spec(A, array_names=True)
 ```
 
 ## QR with custom annotations
 
 ```python
 import sympy as sym
-from la_figures import qr_tbl_spec
+from LAFigureSpecs import qr_tbl_spec
 from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
@@ -74,20 +74,20 @@ svg = render_qr_svg(spec=spec, annotations=annotations)
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[2, 0], [0, 3]])
-eig_spec = la_figures.eig_tbl_spec(A)
-Λ, V = la_figures.eig_matrices_from_spec(eig_spec)
-svd_spec = la_figures.svd_tbl_spec(A)
-U, Σ, V, rank = la_figures.svd_matrices_from_spec(svd_spec)
+eig_spec = LAFigureSpecs.eig_tbl_spec(A)
+Λ, V = LAFigureSpecs.eig_matrices_from_spec(eig_spec)
+svd_spec = LAFigureSpecs.svd_tbl_spec(A)
+U, Σ, V, rank = LAFigureSpecs.svd_matrices_from_spec(svd_spec)
 ```
 
 ## Backsubstitution blocks
 
 ```python
 import sympy as sym
-from la_figures import linear_system_tex, backsubstitution_tex, standard_solution_tex
+from LAFigureSpecs import linear_system_tex, backsubstitution_tex, standard_solution_tex
 from matrixlayout.backsubst import backsubst_tex, backsubst_svg
 
 A = sym.Matrix([[1, 0, sym.pi], [0, 1, 1]])
@@ -112,7 +112,7 @@ svg = backsubst_svg(
 Minimal (no SymPy) example:
 
 ```python
-from la_figures import linear_system_tex, backsubstitution_tex, standard_solution_tex
+from LAFigureSpecs import linear_system_tex, backsubstitution_tex, standard_solution_tex
 from matrixlayout.backsubst import backsubst_tex
 
 A = [[1, 0, 1], [0, 1, 1]]

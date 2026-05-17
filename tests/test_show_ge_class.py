@@ -1,5 +1,5 @@
 def test_show_ge_methods_use_backsubst(monkeypatch):
-    import la_figures
+    import LAFigureSpecs
 
     captured = {}
 
@@ -11,7 +11,7 @@ def test_show_ge_methods_use_backsubst(monkeypatch):
 
     A = [[1, 0], [0, 1]]
     b = [[1], [2]]
-    show = la_figures.ShowGE(A, b)
+    show = LAFigureSpecs.ShowGE(A, b)
     show.show_system()
     assert captured["show_system"] is True
     assert captured["show_cascade"] is False
@@ -19,12 +19,12 @@ def test_show_ge_methods_use_backsubst(monkeypatch):
 
 
 def test_show_ge_solve_returns_particular_and_homogeneous():
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     A = sym.Matrix([[1, 1], [0, 0]])
     b = sym.Matrix([[1], [0]])
-    show = la_figures.ShowGE(A, b, gj=True)
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
     sol = show.solve()
 
     assert sol["pivot_cols"] == [0]
@@ -34,12 +34,12 @@ def test_show_ge_solve_returns_particular_and_homogeneous():
 
 
 def test_show_ge_ref_updates_trace_and_layers():
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
-    show = la_figures.ShowGE(A, b)
+    show = LAFigureSpecs.ShowGE(A, b)
     show.ref(gj=True, pivoting="none")
     assert show.trace() is not None
     mats = show.matrices()
@@ -47,23 +47,23 @@ def test_show_ge_ref_updates_trace_and_layers():
 
 
 def test_show_ge_show_ref_alias():
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     A = sym.Matrix([[1, 0], [0, 1]])
     b = sym.Matrix([[1], [0]])
-    show = la_figures.ShowGE(A, b)
+    show = LAFigureSpecs.ShowGE(A, b)
     show.show_ref(gj=True, pivoting=None)
     assert show.trace() is not None
 
 
 def test_show_ge_normal_eq_layers_include_at_and_ata():
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
-    show = la_figures.ShowGE(A, b, normal_eq=True)
+    show = LAFigureSpecs.ShowGE(A, b, normal_eq=True)
     show.ref()
     mats = show.matrices()
     assert mats
@@ -76,7 +76,7 @@ def test_show_ge_normal_eq_layers_include_at_and_ata():
 
 
 def test_show_ge_inconsistent_rhs_status_and_solution(monkeypatch):
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     captured = {}
@@ -89,7 +89,7 @@ def test_show_ge_inconsistent_rhs_status_and_solution(monkeypatch):
 
     A = sym.Matrix([[1, 0], [0, 0]])
     b = sym.Matrix([[1, 0], [1, 0]])
-    show = la_figures.ShowGE(A, b, gj=True)
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
     show.ref()
 
     assert show.rhs_status == ["inconsistent", "consistent"]
@@ -101,7 +101,7 @@ def test_show_ge_inconsistent_rhs_status_and_solution(monkeypatch):
 
 
 def test_show_ge_normal_eq_name_specs(monkeypatch):
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     captured = {}
@@ -110,11 +110,11 @@ def test_show_ge_normal_eq_name_specs(monkeypatch):
         captured.update(kwargs)
         return "<svg/>"
 
-    monkeypatch.setattr("la_figures.ge_convenience.ge", fake_ge)
+    monkeypatch.setattr("LAFigureSpecs.ge_convenience.ge", fake_ge)
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
-    show = la_figures.ShowGE(A, b, gj=True, normal_eq=True)
+    show = LAFigureSpecs.ShowGE(A, b, gj=True, normal_eq=True)
     show.ref()
     show.show_layout()
 
@@ -126,7 +126,7 @@ def test_show_ge_normal_eq_name_specs(monkeypatch):
 
 
 def test_show_ge_layout_uses_full_stack(monkeypatch):
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     captured = {"legacy": 0}
@@ -139,12 +139,12 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
     def fail_ge_tbl_svg(*args, **kwargs):
         raise RuntimeError("ge_tbl_svg should not be called when full stack is available")
 
-    monkeypatch.setattr("la_figures.ge_convenience.ge", fake_ge)
-    monkeypatch.setattr("la_figures.show_ge.ge_tbl_svg", fail_ge_tbl_svg)
+    monkeypatch.setattr("LAFigureSpecs.ge_convenience.ge", fake_ge)
+    monkeypatch.setattr("LAFigureSpecs.show_ge.ge_tbl_svg", fail_ge_tbl_svg)
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
-    show = la_figures.ShowGE(A, b, gj=True)
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
     show.ref()
     show.show_layout()
 
@@ -153,12 +153,12 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
 
 
 def test_show_ge_rhs_block_accessor():
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
-    show = la_figures.ShowGE(A, b, gj=True)
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
     show.ref()
 
     rhs = show.rhs_block()
@@ -169,12 +169,12 @@ def test_show_ge_rhs_block_accessor():
 
 
 def test_show_ge_homogeneous_returns_zero_vector_when_full_rank():
-    import la_figures
+    import LAFigureSpecs
     import sympy as sym
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
-    show = la_figures.ShowGE(A, b, gj=True)
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
     sol = show.solve()
 
     homog = sol["homogeneous"]
@@ -183,7 +183,7 @@ def test_show_ge_homogeneous_returns_zero_vector_when_full_rank():
 
 
 def test_show_ge_default_array_names(monkeypatch):
-    import la_figures
+    import LAFigureSpecs
 
     captured = {}
 
@@ -191,21 +191,21 @@ def test_show_ge_default_array_names(monkeypatch):
         captured.update(kwargs)
         return "<svg/>"
 
-    monkeypatch.setattr("la_figures.show_ge.ge_tbl_svg", fake_ge_tbl_svg)
+    monkeypatch.setattr("LAFigureSpecs.show_ge.ge_tbl_svg", fake_ge_tbl_svg)
 
-    show = la_figures.ShowGE([[1, 0], [0, 1]])
+    show = LAFigureSpecs.ShowGE([[1, 0], [0, 1]])
     show.ref()
     show.show_layout()
     assert captured["array_names"] == ["E", "A"]
 
     captured.clear()
-    show2 = la_figures.ShowGE([[1, 0], [0, 1]], [[1], [2]])
+    show2 = LAFigureSpecs.ShowGE([[1, 0], [0, 1]], [[1], [2]])
     show2.ref()
     show2.show_layout()
     assert captured["array_names"] == ["E", ["A", "b"]]
 
     captured.clear()
-    show3 = la_figures.ShowGE([[1, 0], [0, 1]], [[1, 0], [2, 0]])
+    show3 = LAFigureSpecs.ShowGE([[1, 0], [0, 1]], [[1, 0], [2, 0]])
     show3.ref()
     show3.show_layout()
     assert captured["array_names"] == ["E", ["A", "B"]]

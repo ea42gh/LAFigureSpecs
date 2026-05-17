@@ -6,11 +6,11 @@ def _flatten_groups(groups):
 
 
 def test_eig_spec_from_eigenvects_matches_eig_tbl_spec():
-    import la_figures
+    import LAFigureSpecs
 
     A = sym.Matrix([[2, 0], [0, 1]])
-    expected = la_figures.eig_tbl_spec(A)
-    got = la_figures.eig_spec_from_eigenvects(A.eigenvects())
+    expected = LAFigureSpecs.eig_tbl_spec(A)
+    got = LAFigureSpecs.eig_spec_from_eigenvects(A.eigenvects())
 
     assert got["lambda"] == expected["lambda"]
     assert got["ma"] == expected["ma"]
@@ -22,10 +22,10 @@ def test_eig_spec_from_eigenvects_matches_eig_tbl_spec():
 
 
 def test_eig_tbl_spec_normal_adds_orthonormal_basis():
-    import la_figures
+    import LAFigureSpecs
 
     A = sym.Matrix([[2, 0], [0, 1]])
-    spec = la_figures.eig_tbl_spec(A, normal=True)
+    spec = LAFigureSpecs.eig_tbl_spec(A, normal=True)
     assert "qvecs" in spec
     assert len(spec["qvecs"]) == len(spec["evecs"])
 
@@ -35,17 +35,17 @@ def test_eig_tbl_spec_normal_adds_orthonormal_basis():
 
 
 def test_eigendecomposition_to_spec_roundtrips():
-    import la_figures
+    import LAFigureSpecs
 
     A = sym.Matrix([[2, 0], [0, 1]])
-    dec = la_figures.eigendecomposition(A, normal=True)
-    assert dec.to_spec() == la_figures.eig_tbl_spec(A, normal=True)
+    dec = LAFigureSpecs.eigendecomposition(A, normal=True)
+    assert dec.to_spec() == LAFigureSpecs.eig_tbl_spec(A, normal=True)
 
 
 def test_eig_spec_order_sympy_is_reverse_of_legacy():
-    import la_figures
+    import LAFigureSpecs
 
     A = sym.Matrix([[2, 0], [0, 1]])
-    legacy = la_figures.eig_tbl_spec(A)
-    sympy_order = la_figures.eig_spec_from_eigenvects(A.eigenvects(), order="sympy")
+    legacy = LAFigureSpecs.eig_tbl_spec(A)
+    sympy_order = LAFigureSpecs.eig_spec_from_eigenvects(A.eigenvects(), order="sympy")
     assert list(reversed(legacy["lambda"])) == sympy_order["lambda"]

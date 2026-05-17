@@ -2,7 +2,7 @@
 
 These tests compare the TeX emitted by legacy ``itikz.nicematrix`` with the TeX
 emitted by the migrated ``matrixlayout`` implementation, when fed description
-objects produced by :mod:`la_figures`.
+objects produced by :mod:`LAFigureSpecs`.
 
 If the legacy package is not importable (e.g. in a trimmed install), the tests
 are skipped.
@@ -16,7 +16,7 @@ import sys
 def _ensure_repo_on_path() -> None:
     """Make the monorepo root importable for cross-package tests."""
 
-    # This file lives at la_figures/tests/...; the repo root is two levels up.
+    # This file lives at LAFigureSpecs/tests/...; the repo root is two levels up.
     from pathlib import Path
 
     root = Path(__file__).resolve().parents[2]
@@ -69,7 +69,7 @@ def test_eigenproblem_tex_matches_legacy_for_simple_matrix():
 
     import sympy as sym
 
-    from la_figures import eig_tbl_spec
+    from LAFigureSpecs import eig_tbl_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[2, 0], [0, 3]])
@@ -92,7 +92,7 @@ def test_svd_tex_matches_legacy_for_rank_deficient_matrix():
 
     import sympy as sym
 
-    from la_figures import svd_tbl_spec
+    from LAFigureSpecs import svd_tbl_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[3, 0], [0, 0]])
@@ -115,7 +115,7 @@ def test_svd_tex_matches_legacy_for_rectangular_full_rank_matrix():
 
     import sympy as sym
 
-    from la_figures import svd_tbl_spec
+    from LAFigureSpecs import svd_tbl_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[1, 2], [3, 4], [5, 6]])
@@ -138,7 +138,7 @@ def test_svd_tex_matches_legacy_for_rectangular_rank_deficient_matrix():
 
     import sympy as sym
 
-    from la_figures import svd_tbl_spec
+    from LAFigureSpecs import svd_tbl_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[1, 2], [2, 4], [3, 6]])
@@ -161,7 +161,7 @@ def test_svd_tex_matches_legacy_for_wide_matrix():
 
     import sympy as sym
 
-    from la_figures import svd_tbl_spec
+    from LAFigureSpecs import svd_tbl_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[1, 2, 3], [4, 5, 6]])
@@ -184,7 +184,7 @@ def test_svd_tex_matches_legacy_with_Ascale():
 
     import sympy as sym
 
-    from la_figures import svd_tbl_spec
+    from LAFigureSpecs import svd_tbl_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[2, 0], [0, 1]])

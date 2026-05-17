@@ -3,7 +3,7 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "la_figures"
+name = "LAFigureSpecs"
 version = "0.0.1"
 description = "Linear algebra algorithms and description objects for matrixlayout figures"
 readme = "README.md"
@@ -43,7 +43,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["la_figures"]
+source = ["LAFigureSpecs"]
 branch = true
 
 [tool.coverage.report]

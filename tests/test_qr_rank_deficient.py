@@ -1,7 +1,7 @@
 import sympy as sym
 import pytest
 
-from la_figures.qr import gram_schmidt_qr_matrices
+from LAFigureSpecs.qr import gram_schmidt_qr_matrices
 
 
 def test_gram_schmidt_qr_rank_deficient_raises_by_default():
@@ -25,7 +25,7 @@ def test_gram_schmidt_qr_rank_deficient_drop():
 
 
 def test_qr_matrix_extraction_supports_tuple_and_dict_views():
-    from la_figures.qr import qr_matrices_dict_from_grid, qr_matrices_from_grid
+    from LAFigureSpecs.qr import qr_matrices_dict_from_grid, qr_matrices_from_grid
 
     A = sym.Matrix([[1, 1], [0, 1]])
     mats = gram_schmidt_qr_matrices(A)
@@ -44,7 +44,7 @@ def test_qr_matrix_extraction_supports_tuple_and_dict_views():
 def test_naive_gram_schmidt_handles_empty_and_fractional_columns():
     import pytest
 
-    from la_figures.qr import naive_gram_schmidt_w
+    from LAFigureSpecs.qr import naive_gram_schmidt_w
 
     with pytest.raises(ValueError, match="non-empty A"):
         naive_gram_schmidt_w(None)
@@ -61,7 +61,7 @@ def test_naive_gram_schmidt_handles_empty_and_fractional_columns():
 def test_naive_qr_rejects_bad_inputs_and_runs_square_case():
     import pytest
 
-    from la_figures.qr import naive_qr
+    from LAFigureSpecs.qr import naive_qr
 
     with pytest.raises(ValueError, match="non-empty square"):
         naive_qr(None)
@@ -78,7 +78,7 @@ def test_qr_specs_from_matrices_and_layout_spec():
     import pytest
 
     pytest.importorskip("matrixlayout")
-    from la_figures.qr import qr_tbl_layout_spec, qr_tbl_spec_from_matrices
+    from LAFigureSpecs.qr import qr_tbl_layout_spec, qr_tbl_spec_from_matrices
 
     mats = gram_schmidt_qr_matrices([[1, 0], [1, 1]])
     spec = qr_tbl_spec_from_matrices(mats, array_names=False, fig_scale=1.2)

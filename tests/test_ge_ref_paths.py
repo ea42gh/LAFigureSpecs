@@ -1,4 +1,4 @@
-from la_figures.ge_convenience import _legacy_ref_path_list_to_rowechelon_paths
+from LAFigureSpecs.ge_convenience import _legacy_ref_path_list_to_rowechelon_paths
 
 
 def test_legacy_ref_paths_do_not_use_projection_operator():

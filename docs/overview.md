@@ -1,12 +1,12 @@
 # Overview
 
-la_figures implements algorithmic logic and produces layout specs consumed by
+LAFigureSpecs implements algorithmic logic and produces layout specs consumed by
 *matrixlayout*. It does not render TeX directly unless using the convenience
 wrappers that delegate to *matrixlayout* and *jupyter_tikz*.
 
 ## Layering
 
-- *la_figures*: algorithms and spec construction.
+- *LAFigureSpecs*: algorithms and spec construction.
 - *matrixlayout*: formatting, layout, TeX emission, SVG rendering.
 - *jupyter_tikz*: toolchain execution and SVG conversion.
 
@@ -22,9 +22,9 @@ wrappers that delegate to *matrixlayout* and *jupyter_tikz*.
 
 ## Package boundary
 
-- Use `la_figures` when you want algorithmic outputs (traces, specs).
+- Use `LAFigureSpecs` when you want algorithmic outputs (traces, specs).
 - Use `matrixlayout` when you want layout/rendering of a known spec or matrix grid.
-- Use `la_figures.latex_svg(...)` when you already have a LaTeX fragment and want
+- Use `LAFigureSpecs.latex_svg(...)` when you already have a LaTeX fragment and want
   the same SVG rendering controls (`crop`, `padding`, `frame`, `exact_bbox`)
   used by the table renderers.
 
@@ -33,7 +33,7 @@ wrappers that delegate to *matrixlayout* and *jupyter_tikz*.
 Input matrices → algorithm trace → spec dictionary → matrixlayout renderer.
 
 ```
-matrices -> la_figures (trace/spec) -> matrixlayout (tex/svg)
+matrices -> LAFigureSpecs (trace/spec) -> matrixlayout (tex/svg)
 ```
 
 Example:
@@ -45,7 +45,7 @@ A -> ge_tbl_spec(A) -> render_ge_svg(spec=spec)
 For standalone LaTeX fragments:
 
 ```
-tex body -> la_figures.latex_svg(...) -> matrixlayout.render.render_svg(...)
+tex body -> LAFigureSpecs.latex_svg(...) -> matrixlayout.render.render_svg(...)
 ```
 
 ## Module map

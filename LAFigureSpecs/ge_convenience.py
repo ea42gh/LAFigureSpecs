@@ -2,9 +2,9 @@
 
 This module is intentionally thin: it ties together
 
-- :func:`la_figures.ge.ge_trace` (algorithmic trace)
-- :func:`la_figures.ge.decorate_ge` (data-only decorations)
-- :func:`la_figures.ge.trace_to_layer_matrices` (matrix stack)
+- :func:`LAFigureSpecs.ge.ge_trace` (algorithmic trace)
+- :func:`LAFigureSpecs.ge.decorate_ge` (data-only decorations)
+- :func:`LAFigureSpecs.ge.trace_to_layer_matrices` (matrix stack)
 - :func:`matrixlayout.ge.render_ge_tex` / :func:`matrixlayout.ge.render_ge_svg` (layout/render)
 
 The TeX helpers do **not** call any toolchains.

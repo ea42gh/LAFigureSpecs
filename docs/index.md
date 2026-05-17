@@ -1,6 +1,6 @@
-# la_figures
+# LAFigureSpecs
 
-la_figures provides linear algebra algorithms that produce layout specs for the
+LAFigureSpecs provides linear algebra algorithms that produce layout specs for the
 *matrixlayout* package. It does not render TeX or call toolchains.
 
 ## Scope

@@ -152,10 +152,10 @@ def _count_nonempty_blocks(matrices):
     ],
 )
 def test_qr_layout_matches_legacy(A):
-    import la_figures
+    import LAFigureSpecs
     from matrixlayout.qr import render_qr_tex
 
-    matrices = la_figures.compute_qr_matrices(A)
+    matrices = LAFigureSpecs.compute_qr_matrices(A)
     new = render_qr_tex(matrices=matrices, formatter=str)
 
     assert _extract_mat_format(new)

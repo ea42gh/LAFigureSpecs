@@ -2,7 +2,7 @@ import sympy as sym
 
 
 def test_eig_tbl_tex_decorates_eigenbasis_entry():
-    from la_figures import eig_tbl_tex
+    from LAFigureSpecs import eig_tbl_tex
 
     A = sym.Matrix([[2]])
 
@@ -20,7 +20,7 @@ def test_eig_tbl_tex_decorates_eigenbasis_entry():
 
 
 def test_svd_tbl_tex_decorates_sigma_matrix_entry():
-    from la_figures import svd_tbl_tex
+    from LAFigureSpecs import svd_tbl_tex
 
     A = sym.Matrix([[3, 0], [0, 0]])
 
@@ -38,7 +38,7 @@ def test_svd_tbl_tex_decorates_sigma_matrix_entry():
 
 
 def test_eig_tbl_spec_as_scale_inference_matches_explicit():
-    from la_figures.eig import eig_tbl_spec, _factor_out_denominator
+    from LAFigureSpecs.eig import eig_tbl_spec, _factor_out_denominator
 
     A = sym.Matrix([[sym.Rational(1, 2), 0], [0, sym.Rational(3, 4)]])
     d, _ = _factor_out_denominator(A)
@@ -51,7 +51,7 @@ def test_eig_tbl_spec_as_scale_inference_matches_explicit():
 
 
 def test_eig_tbl_tex_default_case_includes_S_matrix():
-    from la_figures import eig_tbl_tex
+    from LAFigureSpecs import eig_tbl_tex
 
     A = sym.Matrix([[1, 0], [0, 2]])
     tex = eig_tbl_tex(A, preamble="")
@@ -59,7 +59,7 @@ def test_eig_tbl_tex_default_case_includes_S_matrix():
 
 
 def test_eig_tbl_tex_includes_lambda_and_S_labels():
-    from la_figures import eig_tbl_tex
+    from LAFigureSpecs import eig_tbl_tex
 
     A = sym.Matrix([[1, 0], [0, 2]])
     tex = eig_tbl_tex(A, preamble="")
@@ -68,7 +68,7 @@ def test_eig_tbl_tex_includes_lambda_and_S_labels():
 
 
 def test_svd_tbl_tex_includes_sigma_v_u_labels():
-    from la_figures import svd_tbl_tex
+    from LAFigureSpecs import svd_tbl_tex
 
     A = sym.Matrix([[1, 0], [0, 2]])
     tex = svd_tbl_tex(A, preamble="")

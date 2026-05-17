@@ -19,9 +19,9 @@ def _pick_toolchain_name_or_skip() -> str:
 
 
 def test_svd_tbl_tex_smoke():
-    import la_figures
+    import LAFigureSpecs
 
-    tex = la_figures.svd_tbl_tex([[1, 0], [0, 0]])
+    tex = LAFigureSpecs.svd_tbl_tex([[1, 0], [0, 0]])
     assert "\\begin{tabular}" in tex
     assert "\\Sigma" in tex
 
@@ -30,9 +30,9 @@ def test_svd_tbl_tex_smoke():
 def test_svd_tbl_svg_smoke():
     pytest.importorskip("jupyter_tikz")
 
-    import la_figures
+    import LAFigureSpecs
 
-    svg = la_figures.svd_tbl_svg(
+    svg = LAFigureSpecs.svd_tbl_svg(
         [[1, 0], [0, 0]],
         toolchain_name=_pick_toolchain_name_or_skip(),
         crop="tight",

@@ -1,4 +1,4 @@
-from la_figures.convenience_utils import (
+from LAFigureSpecs.convenience_utils import (
     bundle_summary,
     make_bundle,
     resolve_crop_padding,

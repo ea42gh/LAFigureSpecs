@@ -1,10 +1,10 @@
-# la_figures
+# LAFigureSpecs
 
-[![CI](https://github.com/ea42gh/la_figures/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/ea42gh/la_figures/actions/workflows/ci.yml)
-[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ea42gh/la_figures/master?labpath=la_figures_demo.ipynb)
-[![Docs](https://img.shields.io/badge/docs-live-blue.svg)](https://ea42gh.github.io/la_figures/)
+[![CI](https://github.com/ea42gh/LAFigureSpecs/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/ea42gh/LAFigureSpecs/actions/workflows/ci.yml)
+[![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ea42gh/LAFigureSpecs/master?labpath=LAFigureSpecs_demo.ipynb)
+[![Docs](https://img.shields.io/badge/docs-live-blue.svg)](https://ea42gh.github.io/LAFigureSpecs/)
 
-`la_figures` is the algorithm layer for linear-algebra teaching figures. It
+`LAFigureSpecs` is the algorithm layer for linear-algebra teaching figures. It
 computes Gaussian-elimination traces, back-substitution fragments, QR layouts,
 eigenproblem tables, and SVD tables, then hands explicit layout specs to
 [`matrixlayout`](https://github.com/ea42gh/matrixlayout) for rendering.
@@ -38,7 +38,7 @@ figure should follow the actual linear algebra computation.
 
 Open the Binder demo:
 
-https://mybinder.org/v2/gh/ea42gh/la_figures/master?labpath=la_figures_demo.ipynb
+https://mybinder.org/v2/gh/ea42gh/LAFigureSpecs/master?labpath=LAFigureSpecs_demo.ipynb
 
 The demo renders examples for row reduction, systems with right-hand sides,
 back-substitution helpers, Gram-Schmidt/QR, eigenproblem tables, and SVD tables.
@@ -65,7 +65,7 @@ notebook rendering stays aligned with the tested toolchain.
 
 ```python
 import sympy as sym
-import la_figures as lf
+import LAFigureSpecs as lf
 
 A = sym.Matrix([[1, 2], [1, 2], [3, 4]])
 spec = lf.ge_tbl_spec(A, gj=False)
@@ -83,11 +83,11 @@ svg = lf.eig_tbl_svg(A)
 
 The convenience wrappers pass decorator specs through to `matrixlayout`. Use
 selector helpers from `matrixlayout.formatting` (or re-exported via
-`la_figures`) to target entries or vector rows.
+`LAFigureSpecs`) to target entries or vector rows.
 
 ## Rendering Helpers
 
-`la_figures` also exposes generic helpers for rendering standalone LaTeX
+`LAFigureSpecs` also exposes generic helpers for rendering standalone LaTeX
 fragments or full LaTeX documents to SVG:
 
 ```python
@@ -112,12 +112,12 @@ same top-level function names.
 
 ## Documentation
 
-MkDocs configuration lives in `la_figures/mkdocs.yml` with content under
-`la_figures/docs/`.
+MkDocs configuration lives in `LAFigureSpecs/mkdocs.yml` with content under
+`LAFigureSpecs/docs/`.
 
 Build the docs:
 
 ```bash
-cd la_figures
+cd LAFigureSpecs
 mkdocs build
 ```

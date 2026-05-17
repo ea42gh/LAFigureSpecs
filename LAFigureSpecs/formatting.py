@@ -1,4 +1,4 @@
-"""Shared TeX formatting helpers for la_figures.
+"""Shared TeX formatting helpers for LAFigureSpecs.
 
 This module defers to ``matrixlayout.formatting`` when available to keep the
 formatting policy consistent across packages.

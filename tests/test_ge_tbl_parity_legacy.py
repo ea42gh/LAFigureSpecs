@@ -39,12 +39,12 @@ def _submatrix_spans(tex: str):
 
 
 def test_ge_submatrix_names_match_legacy_no_rhs():
-    import la_figures
+    import LAFigureSpecs
     from matrixlayout.ge import render_ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    tr = la_figures.ge_trace(A, pivoting="none")
-    layers = la_figures.trace_to_layer_matrices(tr, augmented=True)["matrices"]
+    tr = LAFigureSpecs.ge_trace(A, pivoting="none")
+    layers = LAFigureSpecs.trace_to_layer_matrices(tr, augmented=True)["matrices"]
 
     legacy = _legacy_ge_tex(layers, Nrhs=0)
     new = render_ge_tex(matrices=layers, n_rhs=0)
@@ -59,13 +59,13 @@ def test_ge_submatrix_names_match_legacy_no_rhs():
 
 
 def test_ge_submatrix_names_match_legacy_with_rhs():
-    import la_figures
+    import LAFigureSpecs
     from matrixlayout.ge import render_ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
-    tr = la_figures.ge_trace(A, rhs, pivoting="none")
-    layers = la_figures.trace_to_layer_matrices(tr, augmented=True)["matrices"]
+    tr = LAFigureSpecs.ge_trace(A, rhs, pivoting="none")
+    layers = LAFigureSpecs.trace_to_layer_matrices(tr, augmented=True)["matrices"]
 
     legacy = _legacy_ge_tex(layers, Nrhs=1)
     new = render_ge_tex(matrices=layers, n_rhs=1)

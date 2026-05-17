@@ -2,7 +2,7 @@ import sympy as sym
 
 
 def test_eig_tbl_spec_basic():
-    from la_figures import eig_tbl_spec
+    from LAFigureSpecs import eig_tbl_spec
 
     A = [[2, 0], [0, 3]]
     spec = eig_tbl_spec(A)
@@ -14,7 +14,7 @@ def test_eig_tbl_spec_basic():
 
 
 def test_eig_tbl_spec_normal_adds_qvecs():
-    from la_figures import eig_tbl_spec
+    from LAFigureSpecs import eig_tbl_spec
 
     A = [[1, 0], [0, 1]]
     spec = eig_tbl_spec(A, normal=True)
@@ -24,7 +24,7 @@ def test_eig_tbl_spec_normal_adds_qvecs():
 
 
 def test_svd_tbl_spec_has_sz_and_sigma():
-    from la_figures import svd_tbl_spec
+    from LAFigureSpecs import svd_tbl_spec
 
     A = [[3, 0], [0, 0]]
     spec = svd_tbl_spec(A)
@@ -34,7 +34,7 @@ def test_svd_tbl_spec_has_sz_and_sigma():
 
 
 def test_svd_tbl_spec_rectangular_rank_deficient_adds_left_nullspace():
-    from la_figures import svd_tbl_spec
+    from LAFigureSpecs import svd_tbl_spec
 
     A = sym.Matrix([[1, 2], [2, 4], [3, 6]])
     spec = svd_tbl_spec(A)

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-import la_figures.convenience as lf_conv
-import la_figures.convenience_qr as lf_qr
-import la_figures.ge_convenience as lf_ge
+import LAFigureSpecs.convenience as lf_conv
+import LAFigureSpecs.convenience_qr as lf_qr
+import LAFigureSpecs.ge_convenience as lf_ge
 import matrixlayout.qr as ml_qr
 import matrixlayout.ge as ml_ge
 

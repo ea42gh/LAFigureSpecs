@@ -1,5 +1,5 @@
 def test_ge_tbl_bundle_falls_back_to_render_ge_tex(monkeypatch):
-    import la_figures.ge_convenience as ge_conv
+    import LAFigureSpecs.ge_convenience as ge_conv
 
     class _NoGridBundle:
         def __call__(self, **kwargs):

@@ -3,16 +3,16 @@ import sys
 
 import sympy as sym
 
-import la_figures as lf
+import LAFigureSpecs as lf
 
 
 def main() -> int:
-    outdir = os.environ.get("LA_FIGURES_SMOKE_OUT", "/tmp/la/smoke/la_figures")
+    outdir = os.environ.get("LA_FIGURES_SMOKE_OUT", "/tmp/la/smoke/LAFigureSpecs")
     os.makedirs(outdir, exist_ok=True)
-    print("la_figures smoke render ->", outdir)
+    print("LAFigureSpecs smoke render ->", outdir)
     print("python:", sys.version.split()[0])
     print("sympy:", sym.__version__)
-    print("la_figures:", getattr(lf, "__version__", "unknown"))
+    print("LAFigureSpecs:", getattr(lf, "__version__", "unknown"))
     try:
         import matrixlayout
 

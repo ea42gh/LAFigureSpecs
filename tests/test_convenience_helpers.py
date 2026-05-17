@@ -1,5 +1,5 @@
 def test_filter_tex_kwargs_removes_svg_only_options():
-    import la_figures.convenience as conv
+    import LAFigureSpecs.convenience as conv
 
     kwargs = {
         "output_dir": "out",
@@ -23,7 +23,7 @@ def test_filter_tex_kwargs_removes_svg_only_options():
 
 
 def test_julia_str_aliases_norm_str():
-    import la_figures.convenience as conv
+    import LAFigureSpecs.convenience as conv
 
     assert conv._julia_str(":foo") == "foo"
     assert conv._julia_str("Symbol(:bar)") == "bar"

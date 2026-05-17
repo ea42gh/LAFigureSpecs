@@ -3,7 +3,7 @@ import sympy as sym
 
 def test_decorate_ge_pivots_and_variable_types():
     import importlib
-    ge_mod = importlib.import_module("la_figures.ge")
+    ge_mod = importlib.import_module("LAFigureSpecs.ge")
 
     A = sym.Matrix([[1, 2], [3, 4]])
     tr = ge_mod.ge_trace(A, pivoting="partial")
@@ -21,7 +21,7 @@ def test_decorate_ge_pivots_and_variable_types():
 
 def test_decorate_ge_excludes_rhs_from_variable_types():
     import importlib
-    ge_mod = importlib.import_module("la_figures.ge")
+    ge_mod = importlib.import_module("LAFigureSpecs.ge")
 
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])

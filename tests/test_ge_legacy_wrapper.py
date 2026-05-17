@@ -2,7 +2,7 @@ import sympy as sym
 
 
 def test_legacy_pivot_list_to_pivot_locs():
-    from la_figures.ge_convenience import _legacy_pivot_list_to_pivot_locs
+    from LAFigureSpecs.ge_convenience import _legacy_pivot_list_to_pivot_locs
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
     E1 = sym.eye(2)
@@ -21,7 +21,7 @@ def test_legacy_pivot_list_to_pivot_locs():
 
 
 def test_ge_legacy_wrapper_rejects_unsupported_options(monkeypatch):
-    from la_figures.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -31,7 +31,7 @@ def test_ge_legacy_wrapper_rejects_unsupported_options(monkeypatch):
 
 
 def test_ge_legacy_wrapper_supports_backgrounds_and_comments():
-    from la_figures.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -60,7 +60,7 @@ def test_ge_legacy_wrapper_supports_backgrounds_and_comments():
 
 
 def test_ge_legacy_wrapper_supports_ref_path_list():
-    from la_figures.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -90,7 +90,7 @@ def test_ge_legacy_wrapper_supports_ref_path_list():
 
 
 def test_ge_legacy_wrapper_supports_variable_summary():
-    from la_figures.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -117,7 +117,7 @@ def test_ge_legacy_wrapper_supports_variable_summary():
 
 
 def test_ge_legacy_wrapper_supports_array_names():
-    from la_figures.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -146,7 +146,7 @@ def test_ge_legacy_wrapper_supports_array_names():
 
 
 def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():
-    from la_figures.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -184,7 +184,7 @@ def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():
 
 
 def test_ge_legacy_wrapper_supports_canonical_n_rhs_keyword():
-    from la_figures.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2, 3], [4, 5, 6]])]]

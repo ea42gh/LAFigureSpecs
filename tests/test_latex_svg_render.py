@@ -22,9 +22,9 @@ def _pick_toolchain_name_or_skip() -> str:
 def test_latex_svg_smoke():
     pytest.importorskip("matrixlayout")
     pytest.importorskip("jupyter_tikz")
-    import la_figures
+    import LAFigureSpecs
 
-    svg = la_figures.latex_svg(
+    svg = LAFigureSpecs.latex_svg(
         r"$A = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$",
         crop="tight",
         padding=(2, 2, 2, 2),

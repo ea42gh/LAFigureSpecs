@@ -102,7 +102,7 @@ def _assert_qr_tex_has_markers(tex: str) -> None:
 def test_qr_tex_matches_legacy_for_2x2():
     import sympy as sym
 
-    from la_figures import compute_qr_matrices
+    from LAFigureSpecs import compute_qr_matrices
     from matrixlayout.qr import render_qr_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -115,7 +115,7 @@ def test_qr_tex_matches_legacy_for_2x2():
 def test_qr_tex_matches_legacy_for_3x2():
     import sympy as sym
 
-    from la_figures import compute_qr_matrices
+    from LAFigureSpecs import compute_qr_matrices
     from matrixlayout.qr import render_qr_tex
 
     A = sym.Matrix([[1, 2], [3, 4], [5, 6]])
@@ -128,7 +128,7 @@ def test_qr_tex_matches_legacy_for_3x2():
 def test_qr_tex_matches_legacy_for_rank_deficient():
     import sympy as sym
 
-    from la_figures import compute_qr_matrices
+    from LAFigureSpecs import compute_qr_matrices
     from matrixlayout.qr import render_qr_tex
 
     A = sym.Matrix([[1, 2], [2, 4]])

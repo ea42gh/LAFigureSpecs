@@ -1,5 +1,5 @@
 def test_eig_tbl_bundle_sets_svg_none_on_render_failure(monkeypatch):
-    import la_figures.convenience as conv
+    import LAFigureSpecs.convenience as conv
 
     monkeypatch.setattr(
         conv,
@@ -13,7 +13,7 @@ def test_eig_tbl_bundle_sets_svg_none_on_render_failure(monkeypatch):
 
 
 def test_svd_tbl_bundle_sets_svg_none_on_render_failure(monkeypatch):
-    import la_figures.convenience as conv
+    import LAFigureSpecs.convenience as conv
 
     monkeypatch.setattr(
         conv,
@@ -27,7 +27,7 @@ def test_svd_tbl_bundle_sets_svg_none_on_render_failure(monkeypatch):
 
 
 def test_qr_tbl_bundle_sets_svg_none_on_render_failure(monkeypatch):
-    import la_figures.convenience_qr as conv
+    import LAFigureSpecs.convenience_qr as conv
 
     monkeypatch.setattr(
         conv,

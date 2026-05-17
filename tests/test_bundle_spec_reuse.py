@@ -1,5 +1,5 @@
 def test_eig_tbl_bundle_builds_spec_once(monkeypatch):
-    import la_figures.convenience as conv
+    import LAFigureSpecs.convenience as conv
 
     calls = {"n": 0}
 
@@ -18,7 +18,7 @@ def test_eig_tbl_bundle_builds_spec_once(monkeypatch):
 
 
 def test_svd_tbl_bundle_builds_spec_once(monkeypatch):
-    import la_figures.convenience as conv
+    import LAFigureSpecs.convenience as conv
 
     calls = {"n": 0}
 
@@ -37,7 +37,7 @@ def test_svd_tbl_bundle_builds_spec_once(monkeypatch):
 
 
 def test_qr_tbl_bundle_builds_spec_once(monkeypatch):
-    import la_figures.convenience_qr as conv
+    import LAFigureSpecs.convenience_qr as conv
 
     calls = {"n": 0}
 

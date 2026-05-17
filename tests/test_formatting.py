@@ -1,7 +1,7 @@
 import pytest
 import builtins
 
-from la_figures.formatting import (
+from LAFigureSpecs.formatting import (
     decorate_tex_entries,
     decorator_bf,
     decorator_bg,

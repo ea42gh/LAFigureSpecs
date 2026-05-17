@@ -6,11 +6,11 @@ def test_ge_tbl_bundle_includes_submatrix_spans_metadata():
 
     # The spans metadata depends on the matrixlayout bundle API.
     pytest.importorskip("matrixlayout")
-    import la_figures
+    import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
 
-    bundle = la_figures.ge_tbl_bundle(A)
+    bundle = LAFigureSpecs.ge_tbl_bundle(A)
     assert isinstance(bundle, dict)
     assert "tex" in bundle
     assert "spec" in bundle

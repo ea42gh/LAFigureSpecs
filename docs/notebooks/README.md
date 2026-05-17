@@ -1,7 +1,7 @@
 JupyterLab Notebooks
 ====================
 
-Use this directory for notebooks that demonstrate la_figures features.
+Use this directory for notebooks that demonstrate LAFigureSpecs features.
 
 Top-level API by problem type
 -----------------------------

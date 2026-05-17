@@ -1,6 +1,6 @@
 """Legacy GE layout compatibility helpers.
 
-These helpers preserve old ``la_figures.ge(...)`` callback and decoration
+These helpers preserve old ``LAFigureSpecs.ge(...)`` callback and decoration
 behavior while the public wrappers migrate toward typed matrixlayout specs.
 """
 

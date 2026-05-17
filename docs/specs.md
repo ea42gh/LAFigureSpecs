@@ -4,7 +4,7 @@
 `*_layout_spec` functions return typed layout objects (use `.to_dict()` for dict access).
 
 Specs emitted for matrixlayout use `body_preamble` for document-body setup and
-`document_preamble` for true LaTeX preamble insertion. The public la_figures
+`document_preamble` for true LaTeX preamble insertion. The public LAFigureSpecs
 wrapper keywords `preamble` and `extension` are still accepted and are mapped to
 those matrixlayout keys.
 

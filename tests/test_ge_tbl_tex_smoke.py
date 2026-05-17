@@ -18,7 +18,7 @@ def test_ge_tbl_tex_smoke():
     if not _has_ge_template():
         pytest.skip("matrixlayout GE template not found")
 
-    from la_figures.ge_convenience import ge_tbl_tex
+    from LAFigureSpecs.ge_convenience import ge_tbl_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
     tex = ge_tbl_tex(A, show_pivots=True)
@@ -35,7 +35,7 @@ def test_ge_tbl_tex_auto_callouts_smoke():
     if not _has_ge_template():
         pytest.skip("matrixlayout GE template not found")
 
-    from la_figures.ge_convenience import ge_tbl_tex
+    from LAFigureSpecs.ge_convenience import ge_tbl_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
     tex = ge_tbl_tex(A, callouts=True)

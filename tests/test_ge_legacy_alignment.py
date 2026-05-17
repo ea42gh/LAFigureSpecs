@@ -1,4 +1,4 @@
-from la_figures.ge_convenience import _legacy_bg_list_to_codebefore
+from LAFigureSpecs.ge_convenience import _legacy_bg_list_to_codebefore
 
 
 def test_legacy_bg_uses_block_padding_for_right_align():
@@ -16,7 +16,7 @@ def test_legacy_bg_uses_block_padding_for_right_align():
 
 
 def test_legacy_ge_disables_format_nrhs_when_using_decorations(monkeypatch):
-    import la_figures.ge_convenience as ge_conv
+    import LAFigureSpecs.ge_convenience as ge_conv
     import matrixlayout.ge as ml_ge
 
     captured = {}
@@ -42,7 +42,7 @@ def test_legacy_ge_disables_format_nrhs_when_using_decorations(monkeypatch):
 
 
 def test_legacy_ge_supports_nrhs_list(monkeypatch):
-    import la_figures.ge_convenience as ge_conv
+    import LAFigureSpecs.ge_convenience as ge_conv
     import matrixlayout.ge as ml_ge
 
     captured = {}

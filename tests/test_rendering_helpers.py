@@ -7,7 +7,7 @@ import numpy as np
 
 
 def test_latex_svg_wraps_fragment_and_forwards_render_options(monkeypatch):
-    import la_figures.rendering as rendering
+    import LAFigureSpecs.rendering as rendering
 
     calls = {}
 
@@ -63,8 +63,8 @@ def test_latex_svg_wraps_fragment_and_forwards_render_options(monkeypatch):
     assert calls["render_kwargs"]["output_stem"] == "demo"
 
 
-def test_latex_svg_default_packages_cover_la_figures_fragments(monkeypatch):
-    import la_figures.rendering as rendering
+def test_latex_svg_default_packages_cover_LAFigureSpecs_fragments(monkeypatch):
+    import LAFigureSpecs.rendering as rendering
 
     calls = {}
 
@@ -94,7 +94,7 @@ def test_latex_svg_default_packages_cover_la_figures_fragments(monkeypatch):
 
 
 def test_latex_svg_accepts_external_package_set(monkeypatch):
-    import la_figures.rendering as rendering
+    import LAFigureSpecs.rendering as rendering
 
     calls = {}
 
@@ -126,7 +126,7 @@ def test_latex_svg_accepts_external_package_set(monkeypatch):
 
 
 def test_latex_svg_prefers_explicit_preamble_path(monkeypatch):
-    import la_figures.rendering as rendering
+    import LAFigureSpecs.rendering as rendering
 
     calls = {}
 
@@ -157,7 +157,7 @@ def test_latex_svg_prefers_explicit_preamble_path(monkeypatch):
 
 
 def test_latex_document_svg_forwards_render_options(monkeypatch):
-    import la_figures.rendering as rendering
+    import LAFigureSpecs.rendering as rendering
 
     calls = {}
 
@@ -192,7 +192,7 @@ def test_latex_document_svg_forwards_render_options(monkeypatch):
 
 
 def test_lshow_svg_uses_juliacall_and_delegates_to_latex_svg(monkeypatch):
-    import la_figures.rendering as rendering
+    import LAFigureSpecs.rendering as rendering
 
     calls = {"seval": []}
 
@@ -241,7 +241,7 @@ def test_lshow_svg_uses_juliacall_and_delegates_to_latex_svg(monkeypatch):
 
 
 def test_lshow_svg_converts_numeric_python_arrays_for_julia(monkeypatch):
-    import la_figures.rendering as rendering
+    import LAFigureSpecs.rendering as rendering
 
     calls = {"seval": []}
 
@@ -286,7 +286,7 @@ def test_lshow_svg_converts_numeric_python_arrays_for_julia(monkeypatch):
 
 
 def test_lshow_svg_leaves_non_numeric_structures_unchanged(monkeypatch):
-    import la_figures.rendering as rendering
+    import LAFigureSpecs.rendering as rendering
 
     calls = {}
 

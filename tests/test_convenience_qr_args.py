@@ -2,11 +2,11 @@ from typing import Any, Dict
 
 import sympy as sym
 
-import la_figures
+import LAFigureSpecs
 
 
 def test_qr_tbl_svg_normalizes_svg_args(monkeypatch):
-    import la_figures.convenience_qr as convenience_qr
+    import LAFigureSpecs.convenience_qr as convenience_qr
 
     captured: Dict[str, Any] = {}
 
@@ -32,12 +32,12 @@ def test_qr_tbl_svg_normalizes_svg_args(monkeypatch):
 def test_qr_tbl_spec_sets_create_extra_nodes_for_array_names():
     A = sym.Matrix([[1, 2], [3, 4]])
 
-    spec = la_figures.qr_tbl_spec(A, array_names=True)
+    spec = LAFigureSpecs.qr_tbl_spec(A, array_names=True)
     assert spec.get("create_extra_nodes") is True
 
 
 def test_qr_tbl_tex_passes_strict_override(monkeypatch):
-    import la_figures.convenience_qr as convenience_qr
+    import LAFigureSpecs.convenience_qr as convenience_qr
 
     captured: Dict[str, Any] = {}
 
@@ -61,7 +61,7 @@ def test_qr_tbl_tex_passes_strict_override(monkeypatch):
 
 
 def test_qr_tbl_bundle_success_uses_default_svg_options(monkeypatch):
-    import la_figures.convenience_qr as convenience_qr
+    import LAFigureSpecs.convenience_qr as convenience_qr
 
     captured: Dict[str, Any] = {}
 
@@ -91,7 +91,7 @@ def test_qr_tbl_bundle_success_uses_default_svg_options(monkeypatch):
 
 
 def test_qr_render_wrapper_defers_crop_padding_to_render_opts(monkeypatch):
-    import la_figures.convenience_qr as convenience_qr
+    import LAFigureSpecs.convenience_qr as convenience_qr
 
     captured: Dict[str, Any] = {}
 
@@ -120,7 +120,7 @@ def test_qr_render_wrapper_defers_crop_padding_to_render_opts(monkeypatch):
 def test_gram_schmidt_qr_wrapper_uses_rank_deficient_mode_and_svg_defaults(
     monkeypatch,
 ):
-    import la_figures.convenience_qr as convenience_qr
+    import LAFigureSpecs.convenience_qr as convenience_qr
 
     captured: Dict[str, Any] = {}
 

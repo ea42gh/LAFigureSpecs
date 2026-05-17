@@ -3,7 +3,7 @@ import sympy as sym
 
 
 def test_to_sympy_matrix_tuple_rationals_2d_list():
-    from la_figures._sympy_utils import to_sympy_matrix
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
 
     A = [[(1, 2), (0, 1)], [(3, 4), (5, 6)]]
     M = to_sympy_matrix(A)
@@ -13,7 +13,7 @@ def test_to_sympy_matrix_tuple_rationals_2d_list():
 
 
 def test_to_sympy_matrix_tuple_rationals_numpy_array():
-    from la_figures._sympy_utils import to_sympy_matrix
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
 
     A = np.array([[(1, 2), (0, 1)], [(3, 4), (5, 6)]], dtype=object)
     M = to_sympy_matrix(A)
@@ -23,19 +23,19 @@ def test_to_sympy_matrix_tuple_rationals_numpy_array():
 
 
 def test_eig_tbl_spec_accepts_tuple_rationals():
-    import la_figures
+    import LAFigureSpecs
 
     A = [[(1, 1), (0, 1)], [(0, 1), (2, 1)]]
-    spec = la_figures.eig_tbl_spec(A, normal=True)
+    spec = LAFigureSpecs.eig_tbl_spec(A, normal=True)
     assert "lambda" in spec and spec["lambda"]
     assert "qvecs" in spec  # normal=True should populate qvecs
 
 
 def test_svd_tbl_spec_accepts_tuple_rationals():
-    import la_figures
+    import LAFigureSpecs
 
     A = [[(1, 1), (0, 1)], [(0, 1), (0, 1)]]
-    spec = la_figures.svd_tbl_spec(A)
+    spec = LAFigureSpecs.svd_tbl_spec(A)
     assert spec["sz"] == (2, 2)
     # For this A, the only nonzero singular value is 1.
     assert sym.simplify(spec["sigma"][0] - 1) == 0
@@ -44,7 +44,7 @@ def test_svd_tbl_spec_accepts_tuple_rationals():
 def test_to_sympy_matrix_accepts_juliacall_arrayvalue_wrapper():
     """Simulate PythonCall/JuliaCall ArrayValue (1-based indexing)"""
 
-    from la_figures._sympy_utils import to_sympy_matrix
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
 
     class FakeArrayValue:
         __module__ = "juliacall"
@@ -74,7 +74,7 @@ def test_to_sympy_matrix_accepts_juliacall_arrayvalue_wrapper():
 def test_to_sympy_matrix_accepts_juliacall_to_numpy_hook():
     import numpy as np
 
-    from la_figures._sympy_utils import to_sympy_matrix
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
 
     class FakeArrayValue:
         __module__ = "juliacall"
@@ -94,7 +94,7 @@ def test_to_sympy_matrix_accepts_juliacall_to_numpy_hook():
 def test_to_sympy_matrix_juliacall_vector_and_failure_fallbacks():
     import pytest
 
-    from la_figures._sympy_utils import to_sympy_col, to_sympy_matrix
+    from LAFigureSpecs._sympy_utils import to_sympy_col, to_sympy_matrix
 
     class FakeVectorValue:
         __module__ = "juliacall"
@@ -120,7 +120,7 @@ def test_to_sympy_matrix_juliacall_vector_and_failure_fallbacks():
 def test_to_sympy_matrix_numpy_tuple_vector_and_invalid_rhs():
     import pytest
 
-    from la_figures._sympy_utils import to_sympy_col, to_sympy_matrix
+    from LAFigureSpecs._sympy_utils import to_sympy_col, to_sympy_matrix
 
     v = np.empty((2,), dtype=object)
     v[0] = (1, 3)
@@ -137,7 +137,7 @@ def test_to_sympy_matrix_numpy_tuple_vector_and_invalid_rhs():
 
 
 def test_julia_symbol_normalization_in_convenience_wrappers():
-    from la_figures.convenience import _julia_str
+    from LAFigureSpecs.convenience import _julia_str
 
     class FakeSymbol:
         __module__ = "juliacall"
@@ -159,11 +159,11 @@ def test_convenience_tex_wrappers_smoke():
     import pytest
 
     pytest.importorskip("matrixlayout")
-    import la_figures
+    import LAFigureSpecs
 
     A = [[1, 0], [0, 2]]
-    tex_eig = la_figures.eig_tbl_tex(A)
+    tex_eig = LAFigureSpecs.eig_tbl_tex(A)
     assert "\\begin{tabular}" in tex_eig
 
-    tex_svd = la_figures.svd_tbl_tex([[1, 0], [0, 0]])
+    tex_svd = LAFigureSpecs.svd_tbl_tex([[1, 0], [0, 0]])
     assert "\\begin{tabular}" in tex_svd

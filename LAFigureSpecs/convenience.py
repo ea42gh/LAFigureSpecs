@@ -1,6 +1,6 @@
-"""Convenience wrappers that produce TeX/SVG from :mod:`la_figures` specs.
+"""Convenience wrappers that produce TeX/SVG from :mod:`LAFigureSpecs` specs.
 
-The core la_figures API returns *spec dictionaries* intended to be consumed by
+The core LAFigureSpecs API returns *spec dictionaries* intended to be consumed by
 :mod:`matrixlayout`. These wrappers exist to make interactive use (including
 Julia via PyCall/PythonCall) more ergonomic by providing single-call helpers.
 

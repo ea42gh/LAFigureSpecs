@@ -36,10 +36,10 @@ or SVG.
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = la_figures.ge_tbl_spec(A)
+spec = LAFigureSpecs.ge_tbl_spec(A)
 # spec["decorations"] includes RHS separators (if present) as vline specs.
 # spec["matrices"] holds the matrix grid
 # pass extra label/callout targets with annotations=...
@@ -49,10 +49,10 @@ spec = la_figures.ge_tbl_spec(A)
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = la_figures.ge_tbl_spec(A)
+spec = LAFigureSpecs.ge_tbl_spec(A)
 ```
 
 Minimal render from a spec:
@@ -67,7 +67,7 @@ svg = render_ge_svg(spec=spec)
 
 ```python
 import sympy as sym
-import la_figures as lf
+import LAFigureSpecs as lf
 
 A = sym.Matrix([[1, 2], [3, 4]])
 b = sym.Matrix([[5], [6]])
@@ -80,7 +80,7 @@ show.show_solution()
 rhs = show.rhs_block()
 ```
 
-By default, la_figures renders to a subdirectory under `/tmp/la` unless you
+By default, LAFigureSpecs renders to a subdirectory under `/tmp/la` unless you
 pass `output_dir` or `tmp_dir`.
 
 If the system is inconsistent, `ShowGE` marks the offending RHS columns with a
@@ -92,17 +92,17 @@ empty list.
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = la_figures.qr_tbl_spec(A)
+spec = LAFigureSpecs.qr_tbl_spec(A)
 ```
 
 ## QR end-to-end render
 
 ```python
 import sympy as sym
-from la_figures import qr_tbl_spec
+from LAFigureSpecs import qr_tbl_spec
 from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
@@ -114,19 +114,19 @@ svg = render_qr_svg(spec=spec)
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[4, 2], [0, 9]])
-eig_spec = la_figures.eig_tbl_spec(A)
-Λ, V = la_figures.eig_matrices_from_spec(eig_spec)
-svd_spec = la_figures.svd_tbl_spec(A)
-U, Σ, V, rank = la_figures.svd_matrices_from_spec(svd_spec)
+eig_spec = LAFigureSpecs.eig_tbl_spec(A)
+Λ, V = LAFigureSpecs.eig_matrices_from_spec(eig_spec)
+svd_spec = LAFigureSpecs.svd_tbl_spec(A)
+U, Σ, V, rank = LAFigureSpecs.svd_matrices_from_spec(svd_spec)
 ```
 
 ## Backsubstitution blocks
 
 ```python
-from la_figures import linear_system_tex, backsubstitution_tex, standard_solution_tex
+from LAFigureSpecs import linear_system_tex, backsubstitution_tex, standard_solution_tex
 from matrixlayout.backsubst import backsubst_svg
 
 A = [[1, 0, 1], [0, 1, 1]]
@@ -144,9 +144,9 @@ svg = backsubst_svg(
 For a standalone fragment that is not tied to GE/QR/EIG/SVD specs:
 
 ```python
-import la_figures
+import LAFigureSpecs
 
-svg = la_figures.latex_svg(
+svg = LAFigureSpecs.latex_svg(
     r"$A = \begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix}$",
     crop="tight",
     padding=(2, 2, 2, 2),
@@ -157,7 +157,7 @@ svg = la_figures.latex_svg(
 For an already complete LaTeX document:
 
 ```python
-import la_figures
+import LAFigureSpecs
 
 doc = r"""
 \documentclass{standalone}
@@ -167,17 +167,17 @@ $x^2 + y^2 = 1$
 \end{document}
 """
 
-svg = la_figures.latex_document_svg(doc, crop="tight")
+svg = LAFigureSpecs.latex_document_svg(doc, crop="tight")
 ```
 
 ## End-to-end render
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-svg = la_figures.ge_tbl_svg(A, output_dir="./_out", output_stem="ge_min")
+svg = LAFigureSpecs.ge_tbl_svg(A, output_dir="./_out", output_stem="ge_min")
 ```
 
 ### render_opts pass-through
@@ -188,14 +188,14 @@ The wrappers resolve `output_dir`/`tmp_dir` once, then apply the shared render
 option merge path. `output_dir` is canonical; `tmp_dir` is retained only as a
 compatibility alias.
 Padding tuples use the order `(left, right, top, bottom)` in SVG units; use
-`la_figures.mm_to_px` to convert millimeters.
+`LAFigureSpecs.mm_to_px` to convert millimeters.
 
 ```python
 import sympy as sym
-import la_figures
+import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-svg = la_figures.ge_tbl_svg(
+svg = LAFigureSpecs.ge_tbl_svg(
     A,
     render_opts={
         "toolchain_name": "pdftex_dvisvgm",
@@ -214,9 +214,9 @@ The same render options contract applies to `latex_svg(...)` and
 If `juliacall` is installed and the Julia package `LAlatex` is available:
 
 ```python
-import la_figures
+import LAFigureSpecs
 
-svg = la_figures.lshow_svg(
+svg = LAFigureSpecs.lshow_svg(
     "A = ",
     [[1, 2], [3, 4]],
     output_stem="lshow_matrix",
@@ -233,9 +233,9 @@ lists work naturally:
 
 ```python
 import numpy as np
-import la_figures
+import LAFigureSpecs
 
-svg = la_figures.lshow_svg(
+svg = LAFigureSpecs.lshow_svg(
     "A = ",
     np.array([[1, 2], [3, 4]]),
     crop="tight",
@@ -247,8 +247,8 @@ svg = la_figures.lshow_svg(
 For a quick status-only view (without dumping SVG/TeX), use `bundle_summary`:
 
 ```python
-bundle = la_figures.ge_tbl_bundle(A)
-print(la_figures.bundle_summary(bundle))
+bundle = LAFigureSpecs.ge_tbl_bundle(A)
+print(LAFigureSpecs.bundle_summary(bundle))
 ```
 
 ### Smoke render helper
