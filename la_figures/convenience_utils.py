@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Mapping, Optional
 
 
 def norm_str(x: Any) -> Any:
@@ -60,7 +60,7 @@ def merge_render_opts(
     frame: Any = None,
     exact_bbox: Any = None,
     output_dir: Any = None,
-    render_opts: Optional[Dict[str, Any]] = None,
+    render_opts: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Merge render options with explicit keyword overrides."""
     opts: Dict[str, Any] = dict(render_opts or {})
@@ -89,7 +89,7 @@ def resolve_render_svg_opts(
     output_dir: Any = None,
     tmp_dir: Any = None,
     output_stem: Any = None,
-    render_opts: Optional[Dict[str, Any]] = None,
+    render_opts: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Resolve SVG render kwargs with canonical alias handling."""
 
@@ -114,7 +114,7 @@ def resolve_crop_padding(
     crop: Any,
     padding_is_unset: bool,
     padding: Any,
-    render_opts: Optional[Dict[str, Any]] = None,
+    render_opts: Optional[Mapping[str, Any]] = None,
     crop_default: Any = "tight",
     padding_default: Any = (2, 2, 2, 2),
 ) -> tuple[Any, Any]:
