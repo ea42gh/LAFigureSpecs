@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from numbers import Number
-from typing import Any, Dict, Mapping, Optional
+from typing import Any, Mapping, Optional
 
+from .convenience_utils import resolve_render_svg_opts
 
 DEFAULT_TEX_PACKAGES = "amsmath,amssymb,mathtools,xcolor,systeme,cascade,nicematrix"
 
@@ -118,21 +119,16 @@ def latex_svg(
             no_jinja=no_jinja,
         )
 
-    opts: Dict[str, Any] = dict(render_opts or {})
-    if toolchain_name is not None:
-        opts["toolchain_name"] = toolchain_name
-    if crop is not None:
-        opts["crop"] = crop
-    if padding is not None:
-        opts["padding"] = padding
-    if frame is not None:
-        opts["frame"] = frame
-    if output_dir is not None:
-        opts["output_dir"] = output_dir
-    if output_stem is not None:
-        opts["output_stem"] = output_stem
-    if exact_bbox is not None:
-        opts["exact_bbox"] = exact_bbox
+    opts = resolve_render_svg_opts(
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
+        frame=frame,
+        exact_bbox=exact_bbox,
+        output_dir=output_dir,
+        output_stem=output_stem,
+        render_opts=render_opts,
+    )
     return _render_svg(frag.full_latex, **opts)
 
 
@@ -151,21 +147,16 @@ def latex_document_svg(
     """Render a full LaTeX document to SVG."""
     from matrixlayout.render import render_svg as _render_svg
 
-    opts: Dict[str, Any] = dict(render_opts or {})
-    if toolchain_name is not None:
-        opts["toolchain_name"] = toolchain_name
-    if crop is not None:
-        opts["crop"] = crop
-    if padding is not None:
-        opts["padding"] = padding
-    if frame is not None:
-        opts["frame"] = frame
-    if output_dir is not None:
-        opts["output_dir"] = output_dir
-    if output_stem is not None:
-        opts["output_stem"] = output_stem
-    if exact_bbox is not None:
-        opts["exact_bbox"] = exact_bbox
+    opts = resolve_render_svg_opts(
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
+        frame=frame,
+        exact_bbox=exact_bbox,
+        output_dir=output_dir,
+        output_stem=output_stem,
+        render_opts=render_opts,
+    )
     return _render_svg(tex_document, **opts)
 
 

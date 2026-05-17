@@ -79,6 +79,54 @@ def merge_render_opts(
     return opts
 
 
+def resolve_render_svg_opts(
+    *,
+    toolchain_name: Any = None,
+    crop: Any = None,
+    padding: Any = None,
+    frame: Any = None,
+    exact_bbox: Any = None,
+    output_dir: Any = None,
+    tmp_dir: Any = None,
+    output_stem: Any = None,
+    render_opts: Optional[Dict[str, Any]] = None,
+) -> Dict[str, Any]:
+    """Resolve SVG render kwargs with canonical alias handling."""
+
+    resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
+    opts = merge_render_opts(
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
+        frame=frame,
+        exact_bbox=exact_bbox,
+        output_dir=resolved_output_dir,
+        render_opts=render_opts,
+    )
+    if output_stem is not None:
+        opts["output_stem"] = output_stem
+    return opts
+
+
+def resolve_crop_padding(
+    *,
+    crop_is_unset: bool,
+    crop: Any,
+    padding_is_unset: bool,
+    padding: Any,
+    render_opts: Optional[Dict[str, Any]] = None,
+    crop_default: Any = "tight",
+    padding_default: Any = (2, 2, 2, 2),
+) -> tuple[Any, Any]:
+    """Resolve SVG crop/padding defaults with render_opts-aware fallback."""
+
+    if crop_is_unset:
+        crop = None if (render_opts and "crop" in render_opts) else crop_default
+    if padding_is_unset:
+        padding = None if (render_opts and "padding" in render_opts) else padding_default
+    return crop, padding
+
+
 def make_bundle(
     *,
     spec: Dict[str, Any],
@@ -120,6 +168,8 @@ __all__ = [
     "norm_padding",
     "resolve_output_dir",
     "merge_render_opts",
+    "resolve_render_svg_opts",
+    "resolve_crop_padding",
     "make_bundle",
     "bundle_summary",
 ]

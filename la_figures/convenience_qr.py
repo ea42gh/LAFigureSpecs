@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from .formatting import latexify
-from .convenience_utils import make_bundle, merge_render_opts, resolve_output_dir
+from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
 from .qr import gram_schmidt_qr_matrices, qr_tbl_spec, qr_tbl_spec_from_matrices
 
 _UNSET = object()
@@ -51,14 +51,14 @@ def _render_qr_svg_from_spec(
 ) -> str:
     from matrixlayout.qr import render_qr_svg
 
-    resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
-    opts = merge_render_opts(
+    opts = resolve_render_svg_opts(
         toolchain_name=toolchain_name,
         crop=crop,
         padding=padding,
         frame=frame,
         exact_bbox=exact_bbox,
-        output_dir=resolved_output_dir,
+        output_dir=output_dir,
+        tmp_dir=tmp_dir,
         render_opts=render_opts,
     )
     return render_qr_svg(
@@ -150,10 +150,13 @@ def qr_tbl_svg(
         decorators=decorators,
         strict=strict,
     )
-    if crop is _UNSET:
-        crop = None if (render_opts and "crop" in render_opts) else "tight"
-    if padding is _UNSET:
-        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
+    crop, padding = resolve_crop_padding(
+        crop_is_unset=crop is _UNSET,
+        crop=crop,
+        padding_is_unset=padding is _UNSET,
+        padding=padding,
+        render_opts=render_opts,
+    )
 
     return _render_qr_svg_from_spec(
         spec,
@@ -186,20 +189,13 @@ def qr_tbl_bundle(
     render_error = None
     try:
         render_opts = kwargs.get("render_opts")
-        has_crop = "crop" in kwargs
-        has_padding = "padding" in kwargs
-        crop = kwargs.get("crop") if has_crop else None
-        padding = kwargs.get("padding") if has_padding else None
-        if not has_crop:
-            if render_opts and "crop" in render_opts:
-                crop = None
-            else:
-                crop = "tight"
-        if not has_padding:
-            if render_opts and "padding" in render_opts:
-                padding = None
-            else:
-                padding = (2, 2, 2, 2)
+        crop, padding = resolve_crop_padding(
+            crop_is_unset="crop" not in kwargs,
+            crop=kwargs.get("crop"),
+            padding_is_unset="padding" not in kwargs,
+            padding=kwargs.get("padding"),
+            render_opts=render_opts,
+        )
         svg = _render_qr_svg_from_spec(
             spec,
             formatter=kwargs.get("formatter", latexify),
@@ -257,10 +253,13 @@ def qr(
         decorators=decorators,
         strict=strict,
     )
-    if crop is _UNSET:
-        crop = None if (render_opts and "crop" in render_opts) else "tight"
-    if padding is _UNSET:
-        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
+    crop, padding = resolve_crop_padding(
+        crop_is_unset=crop is _UNSET,
+        crop=crop,
+        padding_is_unset=padding is _UNSET,
+        padding=padding,
+        render_opts=render_opts,
+    )
 
     return _render_qr_svg_from_spec(
         spec,
@@ -322,10 +321,13 @@ def gram_schmidt_qr(
         decorators=decorators,
         strict=strict,
     )
-    if crop is _UNSET:
-        crop = None if (render_opts and "crop" in render_opts) else "tight"
-    if padding is _UNSET:
-        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
+    crop, padding = resolve_crop_padding(
+        crop_is_unset=crop is _UNSET,
+        crop=crop,
+        padding_is_unset=padding is _UNSET,
+        padding=padding,
+        render_opts=render_opts,
+    )
 
     return _render_qr_svg_from_spec(
         spec,

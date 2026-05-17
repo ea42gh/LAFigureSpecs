@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Tuple, Union
 
 from .formatting import latexify
-from .convenience_utils import make_bundle, norm_str, norm_padding, resolve_output_dir
+from .convenience_utils import make_bundle, norm_str, resolve_crop_padding, resolve_render_svg_opts
 
 from .eig import eig_tbl_spec
 from .svd import svd_tbl_spec
@@ -119,20 +119,16 @@ def _render_eig_svg_from_spec(
     render_opts: Optional[Dict[str, Any]],
 ) -> str:
     render_eig_svg = _import_render_eig_svg()
-    resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
-    opts: Dict[str, Any] = dict(render_opts or {})
-    if toolchain_name is not None:
-        opts["toolchain_name"] = norm_str(toolchain_name)
-    if crop is not None:
-        opts["crop"] = norm_str(crop)
-    if padding is not None:
-        opts["padding"] = norm_padding(padding)
-    if frame is not None:
-        opts["frame"] = frame
-    if exact_bbox is not None:
-        opts["exact_bbox"] = exact_bbox
-    if resolved_output_dir is not None:
-        opts["output_dir"] = resolved_output_dir
+    opts = resolve_render_svg_opts(
+        toolchain_name=toolchain_name,
+        crop=crop,
+        padding=padding,
+        frame=frame,
+        exact_bbox=exact_bbox,
+        output_dir=output_dir,
+        tmp_dir=tmp_dir,
+        render_opts=render_opts,
+    )
     return render_eig_svg(
         spec,
         case=norm_str(case),
@@ -232,10 +228,13 @@ def eig_tbl_svg(
         eig_digits=eig_digits,
         vec_digits=vec_digits,
     )
-    if crop is _UNSET:
-        crop = None if (render_opts and "crop" in render_opts) else "tight"
-    if padding is _UNSET:
-        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
+    crop, padding = resolve_crop_padding(
+        crop_is_unset=crop is _UNSET,
+        crop=crop,
+        padding_is_unset=padding is _UNSET,
+        padding=padding,
+        render_opts=render_opts,
+    )
 
     return _render_eig_svg_from_spec(
         spec,
@@ -296,20 +295,13 @@ def eig_tbl_bundle(
     render_error = None
     try:
         render_opts = kwargs.get("render_opts")
-        has_crop = "crop" in kwargs
-        has_padding = "padding" in kwargs
-        crop = kwargs.get("crop") if has_crop else None
-        padding = kwargs.get("padding") if has_padding else None
-        if not has_crop:
-            if render_opts and "crop" in render_opts:
-                crop = None
-            else:
-                crop = "tight"
-        if not has_padding:
-            if render_opts and "padding" in render_opts:
-                padding = None
-            else:
-                padding = (2, 2, 2, 2)
+        crop, padding = resolve_crop_padding(
+            crop_is_unset="crop" not in kwargs,
+            crop=kwargs.get("crop"),
+            padding_is_unset="padding" not in kwargs,
+            padding=kwargs.get("padding"),
+            render_opts=render_opts,
+        )
         svg = _render_eig_svg_from_spec(
             spec,
             case=case,
@@ -423,10 +415,13 @@ def svd_tbl_svg(
     )
     if sz is None:
         sz = spec.get("sz")
-    if crop is _UNSET:
-        crop = None if (render_opts and "crop" in render_opts) else "tight"
-    if padding is _UNSET:
-        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
+    crop, padding = resolve_crop_padding(
+        crop_is_unset=crop is _UNSET,
+        crop=crop,
+        padding_is_unset=padding is _UNSET,
+        padding=padding,
+        render_opts=render_opts,
+    )
 
     return _render_eig_svg_from_spec(
         spec,
@@ -480,20 +475,13 @@ def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
     render_error = None
     try:
         render_opts = kwargs.get("render_opts")
-        has_crop = "crop" in kwargs
-        has_padding = "padding" in kwargs
-        crop = kwargs.get("crop") if has_crop else None
-        padding = kwargs.get("padding") if has_padding else None
-        if not has_crop:
-            if render_opts and "crop" in render_opts:
-                crop = None
-            else:
-                crop = "tight"
-        if not has_padding:
-            if render_opts and "padding" in render_opts:
-                padding = None
-            else:
-                padding = (2, 2, 2, 2)
+        crop, padding = resolve_crop_padding(
+            crop_is_unset="crop" not in kwargs,
+            crop=kwargs.get("crop"),
+            padding_is_unset="padding" not in kwargs,
+            padding=kwargs.get("padding"),
+            render_opts=render_opts,
+        )
         svg = _render_eig_svg_from_spec(
             spec,
             case="SVD",

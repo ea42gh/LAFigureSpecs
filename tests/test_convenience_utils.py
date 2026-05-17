@@ -1,10 +1,12 @@
 from la_figures.convenience_utils import (
     bundle_summary,
     make_bundle,
+    resolve_crop_padding,
     merge_render_opts,
     norm_padding,
     norm_str,
     resolve_output_dir,
+    resolve_render_svg_opts,
 )
 
 
@@ -56,6 +58,50 @@ def test_merge_render_opts_prefers_explicit_kwargs():
     assert opts["toolchain_name"] == "pdftex_dvisvgm"
     assert opts["padding"] == (1, 2, 3, 4)
     assert opts["output_dir"] == "/tmp/x"
+
+
+def test_resolve_render_svg_opts_combines_aliases_and_output_stem():
+    opts = resolve_render_svg_opts(
+        toolchain_name="pdftex_dvisvgm",
+        crop="tight",
+        padding=(1, 2, 3, 4),
+        frame=True,
+        exact_bbox=True,
+        output_dir=None,
+        tmp_dir="/tmp/work",
+        output_stem="demo",
+        render_opts={"crop": "page"},
+    )
+    assert opts["toolchain_name"] == "pdftex_dvisvgm"
+    assert opts["crop"] == "tight"
+    assert opts["padding"] == (1, 2, 3, 4)
+    assert opts["frame"] is True
+    assert opts["exact_bbox"] is True
+    assert opts["output_dir"] == "/tmp/work"
+    assert opts["output_stem"] == "demo"
+
+
+def test_resolve_crop_padding_preserves_wrapper_defaults():
+    crop, padding = resolve_crop_padding(
+        crop_is_unset=True,
+        crop=None,
+        padding_is_unset=True,
+        padding=None,
+        render_opts=None,
+    )
+    assert crop == "tight"
+    assert padding == (2, 2, 2, 2)
+
+    crop, padding = resolve_crop_padding(
+        crop_is_unset=True,
+        crop=None,
+        padding_is_unset=True,
+        padding=None,
+        render_opts=None,
+        crop_default=None,
+    )
+    assert crop is None
+    assert padding == (2, 2, 2, 2)
 
 
 def test_bundle_summary_contract():

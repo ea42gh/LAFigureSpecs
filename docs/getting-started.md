@@ -184,10 +184,11 @@ svg = la_figures.ge_tbl_svg(A, output_dir="./_out", output_stem="ge_min")
 
 All high-level SVG helpers accept `render_opts`, which is forwarded to
 `jupyter_tikz.render_svg`. Explicit kwargs override keys in `render_opts`.
+The wrappers resolve `output_dir`/`tmp_dir` once, then apply the shared render
+option merge path. `output_dir` is canonical; `tmp_dir` is retained only as a
+compatibility alias.
 Padding tuples use the order `(left, right, top, bottom)` in SVG units; use
 `la_figures.mm_to_px` to convert millimeters.
-`output_dir` is the canonical way to persist artifacts; `tmp_dir` is accepted as
-a legacy alias.
 
 ```python
 import sympy as sym

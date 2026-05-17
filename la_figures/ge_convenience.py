@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Sequence, 
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify
-from .convenience_utils import make_bundle, merge_render_opts, resolve_output_dir
+from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
 from ._ge_legacy_compat import (
     _coerce_rhs_labels,
     _grid_offsets,
@@ -930,21 +930,25 @@ def ge_tbl_svg(
         rhs_status=rhs_status,
         strict=bool(strict) if strict is not None else False,
     )
-    if crop is _UNSET:
-        crop = None if (render_opts and "crop" in render_opts) else None
-    if padding is _UNSET:
-        padding = None if (render_opts and "padding" in render_opts) else (2, 2, 2, 2)
+    crop, padding = resolve_crop_padding(
+        crop_is_unset=crop is _UNSET,
+        crop=crop,
+        padding_is_unset=padding is _UNSET,
+        padding=padding,
+        render_opts=render_opts,
+        crop_default=None,
+    )
 
     from matrixlayout.ge import render_ge_svg
 
-    resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
-    opts = merge_render_opts(
+    opts = resolve_render_svg_opts(
         toolchain_name=toolchain_name,
         crop=crop,
         padding=padding,
         frame=frame,
         exact_bbox=exact_bbox,
-        output_dir=resolved_output_dir,
+        output_dir=output_dir,
+        tmp_dir=tmp_dir,
         render_opts=render_opts,
     )
     return render_ge_svg(**spec, **opts)
