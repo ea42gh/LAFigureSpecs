@@ -11,7 +11,7 @@ rendered output.
 
 Preferred cross-language top-level names:
 
-- `ge_svg`, `qr_svg`, `qr_figure`
+- `ge_svg`, `qr_svg`, `eig_svg`, `svd_svg`, `qr_figure`
 - `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
 
 The older `_tbl` bundle names remain available for compatibility.
@@ -19,7 +19,7 @@ The older `_tbl` bundle names remain available for compatibility.
 ## Which function should I call?
 
 - If you want compute + render in one call (recommended):
-  - `ge_svg`, `qr_svg`, `eig_tbl_svg`, `svd_tbl_svg`
+  - `ge_svg`, `qr_svg`, `eig_svg`, `svd_svg`
 - If you want compute + inspect intermediates + render:
   - `*_bundle` / `*_tbl_bundle` (returns standardized bundle:
     `{"spec", "tex", "svg", "data", "render_error"}`)
@@ -92,11 +92,13 @@ Example options:
 - `LAFigureSpecs.svd_tbl_spec_from_right_singular_vectors(V, **opts)`: build SVD specs from given vectors. Returns: spec dict.
 - `LAFigureSpecs.svd_matrices_from_spec(spec, reduced=True)`: assemble `(U, Σ, V, rank)` from an SVD spec.
 - `LAFigureSpecs.eig_tbl_tex(A, **opts)`: render eigen table TeX.
-- `LAFigureSpecs.eig_tbl_svg(A, **opts)`: render eigen table SVG.
+- `LAFigureSpecs.eig_svg(A, **opts)`: canonical rendered SVG helper for eigen layouts.
+- `LAFigureSpecs.eig_tbl_svg(A, **opts)`: compatibility alias for `eig_svg(...)`.
 - `LAFigureSpecs.eig_bundle(A, **opts)`: canonical eigen bundle helper.
 - `LAFigureSpecs.eig_tbl_bundle(A, **opts)`: compatibility alias for `eig_bundle(...)`.
 - `LAFigureSpecs.svd_tbl_tex(A, **opts)`: render SVD table TeX.
-- `LAFigureSpecs.svd_tbl_svg(A, **opts)`: render SVD table SVG.
+- `LAFigureSpecs.svd_svg(A, **opts)`: canonical rendered SVG helper for SVD layouts.
+- `LAFigureSpecs.svd_tbl_svg(A, **opts)`: compatibility alias for `svd_svg(...)`.
 - `LAFigureSpecs.svd_bundle(A, **opts)`: canonical SVD bundle helper.
 - `LAFigureSpecs.svd_tbl_bundle(A, **opts)`: compatibility alias for `svd_bundle(...)`.
 

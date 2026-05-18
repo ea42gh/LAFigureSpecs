@@ -16,7 +16,7 @@ figure should follow the actual linear algebra computation.
 
 Canonical cross-language names:
 
-- render helpers: `ge_svg`, `qr_svg`, `qr_figure`
+- render helpers: `ge_svg`, `qr_svg`, `eig_svg`, `svd_svg`, `qr_figure`
 - bundle helpers: `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
 - workflow/display helpers on `ShowGE` objects:
   `ref`, `show_layout`, `show_system`, `show_backsubstitution`,
@@ -44,7 +44,8 @@ surface for parity with `LATeachingSuite`.
 | Eigen | `eigendecomposition(...)` | Structured eigenvalue/eigenvector data. |
 | Eigen | `eig_tbl_spec(...)` | Reusable spec dictionary for an eigen layout. |
 | Eigen | `eig_tbl_tex(...)` | TeX source for an eigen layout. |
-| Eigen | `eig_tbl_svg(...)` | Rendered SVG for an eigen layout. |
+| Eigen | `eig_svg(...)` / `eig_tbl_svg(...)` | Rendered SVG for an eigen layout. |
+| SVD | `svd_svg(...)` / `svd_tbl_svg(...)` | Rendered SVG for an SVD layout. |
 | Eigen | `eig_bundle(...)` / `eig_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | SVD | `svd_bundle(...)` / `svd_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 
@@ -90,7 +91,7 @@ For one-call rendering:
 
 ```python
 A = sym.Matrix([[2, 1], [0, 3]])
-svg = lf.eig_tbl_svg(A)
+svg = lf.eig_svg(A)
 ```
 
 ## Decorators

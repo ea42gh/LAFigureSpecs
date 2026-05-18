@@ -105,6 +105,8 @@ def px_to_mm(px: float) -> float:
 # Canonical cross-language aliases for top-level display/bundle helpers.
 ge_svg = ge
 qr_svg = qr
+eig_svg = eig_tbl_svg
+svd_svg = svd_tbl_svg
 qr_figure = gram_schmidt_qr
 ge_bundle = ge_tbl_bundle
 qr_bundle = qr_tbl_bundle
@@ -169,6 +171,8 @@ __all__ = [
     "ge_svg",
     "ge_bundle",
     "ge",
+    "eig_svg",
+    "svd_svg",
     "render_ge_svg",
     "render_ge_tex",
     "render_qr_svg",

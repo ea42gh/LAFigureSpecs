@@ -5,6 +5,8 @@ def test_public_api_contains_canonical_render_names():
     assert "qr" in LAFigureSpecs.__all__
     assert "ge_svg" in LAFigureSpecs.__all__
     assert "qr_svg" in LAFigureSpecs.__all__
+    assert "eig_svg" in LAFigureSpecs.__all__
+    assert "svd_svg" in LAFigureSpecs.__all__
     assert "qr_figure" in LAFigureSpecs.__all__
     assert "ge_bundle" in LAFigureSpecs.__all__
     assert "qr_bundle" in LAFigureSpecs.__all__
@@ -37,6 +39,8 @@ def test_canonical_aliases_point_to_existing_top_level_helpers():
 
     assert LAFigureSpecs.ge_svg is LAFigureSpecs.ge
     assert LAFigureSpecs.qr_svg is LAFigureSpecs.qr
+    assert LAFigureSpecs.eig_svg is LAFigureSpecs.eig_tbl_svg
+    assert LAFigureSpecs.svd_svg is LAFigureSpecs.svd_tbl_svg
     assert LAFigureSpecs.qr_figure is LAFigureSpecs.gram_schmidt_qr
     assert LAFigureSpecs.ge_bundle is LAFigureSpecs.ge_tbl_bundle
     assert LAFigureSpecs.qr_bundle is LAFigureSpecs.qr_tbl_bundle
