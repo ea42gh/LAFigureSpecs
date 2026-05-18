@@ -249,7 +249,7 @@ svg = LAFigureSpecs.lshow_svg(
 For a quick status-only view (without dumping SVG/TeX), use `bundle_summary`:
 
 ```python
-bundle = LAFigureSpecs.ge_tbl_bundle(A)
+bundle = LAFigureSpecs.ge_bundle(A)
 print(LAFigureSpecs.bundle_summary(bundle))
 ```
 

@@ -60,7 +60,7 @@ parameters: `toolchain_name`, `crop`, `padding`, `output_dir`, `output_stem`,
 
 For most users, prefer `ge_tbl_svg(...)` over direct `render_ge_svg(...)`.
 
-`ge(...)` parameters (subset shown):
+`ge_svg(...)` parameters (subset shown):
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -73,10 +73,10 @@ For most users, prefer `ge_tbl_svg(...)` over direct `render_ge_svg(...)`.
 | `array_names` | list/bool | None | Matrix labels. |
 | `decorators` | list | None | Entry decorators. |
 
-`ge_tbl_tex`, `ge_tbl_svg`, `ge_tbl_bundle` accept the same algorithmic
+`ge_tbl_tex`, `ge_tbl_svg`, `ge_bundle` accept the same algorithmic
 parameters as `ge_tbl_spec` plus renderer options (for SVG).
 
-Bundle return contract (`ge_tbl_bundle`):
+Bundle return contract (`ge_bundle`):
 
 - `spec`, `tex`, `svg`, `data`, `render_error`
 - GE-specific intermediates are in `data`:
@@ -108,7 +108,7 @@ vertical lines only appear in the matrix rows.
 | `decorators` | list | None | Entry decorators. |
 | `strict` | bool | None | Error on invalid decorators. |
 
-`qr(...)` / `qr_tbl_svg(...)` parameters (subset shown):
+`qr_svg(...)` / `qr_tbl_svg(...)` parameters (subset shown):
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -117,10 +117,10 @@ vertical lines only appear in the matrix rows.
 | `array_names` | bool/list | True | Labels. |
 | `decorators` | list | None | Entry decorators. |
 
-`qr_tbl_tex`, `qr_tbl_svg`, `qr_tbl_bundle` follow `qr_tbl_spec` plus renderer
+`qr_tbl_tex`, `qr_tbl_svg`, `qr_bundle` follow `qr_tbl_spec` plus renderer
 options (for SVG).
 
-Bundle return contract (`qr_tbl_bundle`): `spec`, `tex`, `svg`, `data`, `render_error`.
+Bundle return contract (`qr_bundle`): `spec`, `tex`, `svg`, `data`, `render_error`.
 
 For most users, prefer `qr_tbl_svg(...)` over direct `render_qr_svg(...)`.
 
@@ -149,7 +149,7 @@ inputs, the Q^T label uses a longer arrow to avoid overlapping the R label.
 `eig_tbl_tex`, `eig_tbl_svg`, `svd_tbl_tex`, `svd_tbl_svg` accept `A` plus the
 corresponding spec parameters, along with renderer options (for SVG).
 
-Bundle return contract (`eig_tbl_bundle`, `svd_tbl_bundle`):
+Bundle return contract (`eig_bundle`, `svd_bundle`):
 `spec`, `tex`, `svg`, `data`, `render_error`.
 
 For most users, prefer `eig_tbl_svg(...)` / `svd_tbl_svg(...)` over direct
