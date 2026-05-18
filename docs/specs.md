@@ -122,7 +122,7 @@ options (for SVG).
 
 Bundle return contract (`qr_bundle`): `spec`, `tex`, `svg`, `data`, `render_error`.
 
-For most users, prefer `qr_tbl_svg(...)` over direct `render_qr_svg(...)`.
+For most users, prefer `qr_svg(...)` over direct `render_qr_svg(...)`.
 
 QR callout labels are nudged vertically to align with their arrows. For 2x2
 inputs, the Q^T label uses a longer arrow to avoid overlapping the R label.
@@ -152,5 +152,5 @@ corresponding spec parameters, along with renderer options (for SVG).
 Bundle return contract (`eig_bundle`, `svd_bundle`):
 `spec`, `tex`, `svg`, `data`, `render_error`.
 
-For most users, prefer `eig_tbl_svg(...)` / `svd_tbl_svg(...)` over direct
+For most users, prefer `eig_svg(...)` / `svd_svg(...)` over direct
 `render_eig_svg(...)`.

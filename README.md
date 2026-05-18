@@ -34,20 +34,23 @@ surface for parity with `LATeachingSuite`.
 | GE | `ge_tbl_spec(...)` | Reusable spec dictionary for a GE layout. |
 | GE | `ge_tbl_tex(...)` | TeX source for a GE layout. |
 | GE | `ge_tbl_svg(...)` | Rendered SVG for a GE layout. |
-| GE | `ge_bundle(...)` / `ge_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
-| QR | `qr_figure(...)` / `gram_schmidt_qr(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
-| QR | `qr_svg(...)` / `qr(...)` | Renders a precomputed QR matrix stack as SVG. |
+| GE | `ge_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| QR | `qr_figure(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
+| QR | `qr_svg(...)` | Renders a precomputed QR matrix stack as SVG. |
 | QR | `qr_tbl_spec(...)` | Reusable spec dictionary for a QR layout. |
 | QR | `qr_tbl_tex(...)` | TeX source for a QR layout. |
-| QR | `qr_tbl_svg(...)` | Rendered SVG for a QR layout. |
-| QR | `qr_bundle(...)` / `qr_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| QR | `qr_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | Eigen | `eigendecomposition(...)` | Structured eigenvalue/eigenvector data. |
 | Eigen | `eig_tbl_spec(...)` | Reusable spec dictionary for an eigen layout. |
 | Eigen | `eig_tbl_tex(...)` | TeX source for an eigen layout. |
-| Eigen | `eig_svg(...)` / `eig_tbl_svg(...)` | Rendered SVG for an eigen layout. |
-| SVD | `svd_svg(...)` / `svd_tbl_svg(...)` | Rendered SVG for an SVD layout. |
-| Eigen | `eig_bundle(...)` / `eig_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
-| SVD | `svd_bundle(...)` / `svd_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| Eigen | `eig_svg(...)` | Rendered SVG for an eigen layout. |
+| SVD | `svd_svg(...)` | Rendered SVG for an SVD layout. |
+| Eigen | `eig_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| SVD | `svd_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+
+Compatibility aliases such as `ge_tbl_bundle`, `qr_tbl_bundle`, `eig_tbl_bundle`,
+`svd_tbl_bundle`, and `gram_schmidt_qr` remain available, but the canonical
+cross-language names above are preferred for new code.
 
 ## Try It
 
