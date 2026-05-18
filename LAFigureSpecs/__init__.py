@@ -47,7 +47,16 @@ from .backsub import (
 )
 from .ge import ge_trace, trace_to_layer_matrices, decorate_ge
 from .ge_convenience import show_ge
-from .show_ge import ShowGE
+from .show_ge import (
+    ShowGE,
+    ref,
+    rhs_block,
+    show_backsubstitution,
+    show_layout,
+    show_solution,
+    show_system,
+    solutions,
+)
 from .convenience_utils import bundle_summary
 from .convenience_ge import ge as ge, ge_tbl_bundle, ge_tbl_layout_spec, ge_tbl_spec, ge_tbl_tex, ge_tbl_svg
 from .rendering import latex_svg, latex_document_svg, lshow_svg
@@ -149,6 +158,13 @@ __all__ = [
     "ge_tbl_svg",
     "show_ge",
     "ShowGE",
+    "ref",
+    "show_layout",
+    "show_system",
+    "show_backsubstitution",
+    "show_solution",
+    "rhs_block",
+    "solutions",
     "ge_tbl_bundle",
     "ge_svg",
     "ge_bundle",

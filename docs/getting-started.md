@@ -74,11 +74,12 @@ A = sym.Matrix([[1, 2], [3, 4]])
 b = sym.Matrix([[5], [6]])
 
 show = lf.ShowGE(A, b, gj=True)
-show.ref(pivoting="partial")
-show.show_layout()
-show.show_backsubstitution()
-show.show_solution()
-rhs = show.rhs_block()
+lf.ref(show, pivoting="partial")
+lf.show_layout(show)
+lf.show_backsubstitution(show)
+lf.show_solution(show)
+rhs = lf.rhs_block(show)
+xp, xh = lf.solutions(show)
 ```
 
 By default, LAFigureSpecs renders to a subdirectory under `/tmp/la` unless you

@@ -18,6 +18,61 @@ def test_show_ge_methods_use_backsubst(monkeypatch):
     assert captured["show_solution"] is False
 
 
+def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
+    import LAFigureSpecs
+
+    calls = []
+
+    class DummyShow:
+        def ref(self, *, gj=None, pivoting=None):
+            calls.append(("ref", gj, pivoting))
+            return "ref-ok"
+
+        def show_layout(self, **render_opts):
+            calls.append(("show_layout", render_opts))
+            return "layout-ok"
+
+        def show_system(self, *, var_name="x", **render_opts):
+            calls.append(("show_system", var_name, render_opts))
+            return "system-ok"
+
+        def show_backsubstitution(self, *, var_name="x", param_name=r"\alpha", **render_opts):
+            calls.append(("show_backsubstitution", var_name, param_name, render_opts))
+            return "backsub-ok"
+
+        def show_solution(self, *, var_name="x", param_name=r"\alpha", **render_opts):
+            calls.append(("show_solution", var_name, param_name, render_opts))
+            return "solution-ok"
+
+        def rhs_block(self, *, step="final", b_col=None):
+            calls.append(("rhs_block", step, b_col))
+            return "rhs-ok"
+
+        def solve(self, *, gj=None):
+            calls.append(("solve", gj))
+            return {"particular": "xp", "homogeneous": "xh"}
+
+    show = DummyShow()
+
+    assert LAFigureSpecs.ref(show, gj=True, pivoting="partial") == "ref-ok"
+    assert LAFigureSpecs.show_layout(show, crop="tight") == "layout-ok"
+    assert LAFigureSpecs.show_system(show, var_name="y", crop="tight") == "system-ok"
+    assert LAFigureSpecs.show_backsubstitution(show, var_name="y", param_name="β") == "backsub-ok"
+    assert LAFigureSpecs.show_solution(show, var_name="y", param_name="β") == "solution-ok"
+    assert LAFigureSpecs.rhs_block(show, step=2, b_col=0) == "rhs-ok"
+    assert LAFigureSpecs.solutions(show, gj=False) == ("xp", "xh")
+
+    assert calls == [
+        ("ref", True, "partial"),
+        ("show_layout", {"crop": "tight"}),
+        ("show_system", "y", {"crop": "tight"}),
+        ("show_backsubstitution", "y", "β", {}),
+        ("show_solution", "y", "β", {}),
+        ("rhs_block", 2, 0),
+        ("solve", False),
+    ]
+
+
 def test_show_ge_solve_returns_particular_and_homogeneous():
     import LAFigureSpecs
     import sympy as sym

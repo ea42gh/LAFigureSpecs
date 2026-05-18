@@ -44,6 +44,13 @@ Use these when you want a lightweight preflight before rendering:
 - `LAFigureSpecs.ge_trace(A, **opts)`: generate a GE trace with pivots and steps. Inputs: matrix-like `A`. Returns: trace dict. Use when you need step-by-step elimination.
 - `LAFigureSpecs.trace_to_layer_matrices(trace)`: convert a trace to matrix layers. Inputs: trace dict. Returns: list of grid matrices.
 - `LAFigureSpecs.ShowGE(A, b, **opts)`: stateful helper mirroring Julia `ShowGE`. Use `show.ref(gj=..., pivoting=...)` to compute REF/RREF once, then call `show.show_layout()`, `show.show_system()`, `show.show_backsubstitution()`, `show.show_solution()`. Access `show.matrices()`, `show.rhs_block(step="final", b_col=None)`, `show.particular_solution()`, `show.homogeneous_solution()`, or `show.solve()`. For inconsistent RHS columns, `ShowGE` records `show.rhs_status`, adds a red **×** in the variable-summary row, renders `0 = rhs` in backsubstitution, and returns empty solutions for those columns.
+- `LAFigureSpecs.ref(show, ...)`: top-level wrapper for `ShowGE.ref(...)`.
+- `LAFigureSpecs.show_layout(show, **render_opts)`: top-level wrapper for `ShowGE.show_layout(...)`.
+- `LAFigureSpecs.show_system(show, **render_opts)`: top-level wrapper for `ShowGE.show_system(...)`.
+- `LAFigureSpecs.show_backsubstitution(show, **render_opts)`: top-level wrapper for `ShowGE.show_backsubstitution(...)`.
+- `LAFigureSpecs.show_solution(show, **render_opts)`: top-level wrapper for `ShowGE.show_solution(...)`.
+- `LAFigureSpecs.rhs_block(show, ...)`: top-level wrapper for `ShowGE.rhs_block(...)`.
+- `LAFigureSpecs.solutions(show, ...)`: returns `(particular, homogeneous)` from `ShowGE.solve(...)`, matching the Julia umbrella shape.
 - `LAFigureSpecs.ge_tbl_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
 - `LAFigureSpecs.ge_tbl_layout_spec(A, **opts)`: build a typed `GEGridSpec` layout spec. Inputs: matrix-like `A`. Returns: typed spec.
 - `LAFigureSpecs.ge_bundle(A, **opts)`: canonical GE bundle helper.

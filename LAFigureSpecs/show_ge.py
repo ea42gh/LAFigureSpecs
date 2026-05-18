@@ -484,3 +484,51 @@ class ShowGE:
             **opts,
         )
         return _show_svg(svg)
+
+
+def ref(show: ShowGE, *, gj: Optional[bool] = None, pivoting: Optional[str] = None):
+    """Top-level wrapper for ``ShowGE.ref(...)``."""
+    return show.ref(gj=gj, pivoting=pivoting)
+
+
+def show_layout(show: ShowGE, **render_opts: Any):
+    """Top-level wrapper for ``ShowGE.show_layout(...)``."""
+    return show.show_layout(**render_opts)
+
+
+def show_system(show: ShowGE, *, var_name: str = "x", **render_opts: Any):
+    """Top-level wrapper for ``ShowGE.show_system(...)``."""
+    return show.show_system(var_name=var_name, **render_opts)
+
+
+def show_backsubstitution(
+    show: ShowGE,
+    *,
+    var_name: str = "x",
+    param_name: str = r"\alpha",
+    **render_opts: Any,
+):
+    """Top-level wrapper for ``ShowGE.show_backsubstitution(...)``."""
+    return show.show_backsubstitution(var_name=var_name, param_name=param_name, **render_opts)
+
+
+def show_solution(
+    show: ShowGE,
+    *,
+    var_name: str = "x",
+    param_name: str = r"\alpha",
+    **render_opts: Any,
+):
+    """Top-level wrapper for ``ShowGE.show_solution(...)``."""
+    return show.show_solution(var_name=var_name, param_name=param_name, **render_opts)
+
+
+def rhs_block(show: ShowGE, *, step: Any = "final", b_col: Optional[int] = None):
+    """Top-level wrapper for ``ShowGE.rhs_block(...)``."""
+    return show.rhs_block(step=step, b_col=b_col)
+
+
+def solutions(show: ShowGE, *, gj: Optional[bool] = None):
+    """Return ``(particular, homogeneous)`` from ``ShowGE.solve(...)``."""
+    sol = show.solve(gj=gj)
+    return sol["particular"], sol["homogeneous"]

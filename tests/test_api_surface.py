@@ -10,6 +10,14 @@ def test_public_api_contains_canonical_render_names():
     assert "qr_bundle" in LAFigureSpecs.__all__
     assert "eig_bundle" in LAFigureSpecs.__all__
     assert "svd_bundle" in LAFigureSpecs.__all__
+    assert "ShowGE" in LAFigureSpecs.__all__
+    assert "ref" in LAFigureSpecs.__all__
+    assert "show_layout" in LAFigureSpecs.__all__
+    assert "show_system" in LAFigureSpecs.__all__
+    assert "show_backsubstitution" in LAFigureSpecs.__all__
+    assert "show_solution" in LAFigureSpecs.__all__
+    assert "rhs_block" in LAFigureSpecs.__all__
+    assert "solutions" in LAFigureSpecs.__all__
     assert "render_ge_svg" in LAFigureSpecs.__all__
     assert "render_qr_svg" in LAFigureSpecs.__all__
     assert "render_eig_svg" in LAFigureSpecs.__all__
