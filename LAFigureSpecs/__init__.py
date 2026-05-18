@@ -1,13 +1,15 @@
-"""LAFigureSpecs: linear algebra algorithms + description objects for matrixlayout.
+"""LAFigureSpecs: linear algebra algorithms + teaching-display facades for matrixlayout.
 
 This package owns *algorithmic decisions* (row reduction, pivot/free-variable
 choices, orthonormalization, eigen/SVD computations, etc.) and returns explicit
 description objects intended to be consumed by :mod:`matrixlayout`.
 
-The core rule is strict layering:
+The core design keeps responsibilities separate:
 
-- LAFigureSpecs does **not** render and does **not** call TeX toolchains.
-- matrixlayout does **not** do linear algebra; it only formats and lays out.
+- LAFigureSpecs owns linear-algebra/spec-building decisions.
+- matrixlayout owns formatting, layout, and rendering mechanics.
+- LAFigureSpecs re-exports selected matrixlayout render helpers so Python users
+  can access the full teaching surface from one top-level package.
 """
 
 from .__about__ import __version__, __build__
