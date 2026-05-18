@@ -9,12 +9,19 @@ Canonical import:
 Use `LAFigureSpecs.*_spec` for algorithm/spec building and `LAFigureSpecs.*_svg` for
 rendered output.
 
+Preferred cross-language top-level names:
+
+- `ge_svg`, `qr_svg`, `qr_figure`
+- `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
+
+The older `_tbl` bundle names remain available for compatibility.
+
 ## Which function should I call?
 
 - If you want compute + render in one call (recommended):
-  - `ge_tbl_svg`, `qr_tbl_svg`, `eig_tbl_svg`, `svd_tbl_svg`
+  - `ge_svg`, `qr_svg`, `eig_tbl_svg`, `svd_tbl_svg`
 - If you want compute + inspect intermediates + render:
-  - `*_tbl_bundle` (returns standardized bundle:
+  - `*_bundle` / `*_tbl_bundle` (returns standardized bundle:
     `{"spec", "tex", "svg", "data", "render_error"}`)
   - Access GE intermediates via `bundle["data"]["..."]` (not top-level keys).
   - Use `bundle_summary(bundle)` for a quick status-only view.
@@ -39,10 +46,12 @@ Use these when you want a lightweight preflight before rendering:
 - `LAFigureSpecs.ShowGE(A, b, **opts)`: stateful helper mirroring Julia `ShowGE`. Use `show.ref(gj=..., pivoting=...)` to compute REF/RREF once, then call `show.show_layout()`, `show.show_system()`, `show.show_backsubstitution()`, `show.show_solution()`. Access `show.matrices()`, `show.rhs_block(step="final", b_col=None)`, `show.particular_solution()`, `show.homogeneous_solution()`, or `show.solve()`. For inconsistent RHS columns, `ShowGE` records `show.rhs_status`, adds a red **×** in the variable-summary row, renders `0 = rhs` in backsubstitution, and returns empty solutions for those columns.
 - `LAFigureSpecs.ge_tbl_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
 - `LAFigureSpecs.ge_tbl_layout_spec(A, **opts)`: build a typed `GEGridSpec` layout spec. Inputs: matrix-like `A`. Returns: typed spec.
-- `LAFigureSpecs.ge_tbl_bundle(A, **opts)`: build a GE bundle. Returns standardized bundle; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
+- `LAFigureSpecs.ge_bundle(A, **opts)`: canonical GE bundle helper.
+- `LAFigureSpecs.ge_tbl_bundle(A, **opts)`: compatibility alias returning the same standardized bundle; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
 - `LAFigureSpecs.ge_tbl_tex(A, **opts)`: render GE TeX from the spec path.
 - `LAFigureSpecs.ge_tbl_svg(A, **opts)`: render GE SVG from the spec path.
-- `LAFigureSpecs.ge(matrices, **opts)`: legacy-friendly GE stack renderer.
+- `LAFigureSpecs.ge_svg(matrices, **opts)`: canonical GE stack renderer.
+- `LAFigureSpecs.ge(matrices, **opts)`: compatibility alias for `ge_svg(...)`.
 
 Example options:
 `ge_tbl_spec(A, show_pivots=True, pivoting="partial", gj=False)`
@@ -58,9 +67,12 @@ Example options:
 - `LAFigureSpecs.qr_matrices_dict_from_grid(mats)`: same as above, but returns a plain dict.
 - `LAFigureSpecs.qr_tbl_tex(A, **opts)`: render QR TeX from the spec path.
 - `LAFigureSpecs.qr_tbl_svg(A, **opts)`: render QR SVG from the spec path.
-- `LAFigureSpecs.qr_tbl_bundle(A, **opts)`: return standardized bundle.
-- `LAFigureSpecs.qr(matrices, **opts)`: render QR SVG from a precomputed matrix stack.
-- `LAFigureSpecs.gram_schmidt_qr(A, **opts)`: compute Gram-Schmidt matrices and render QR SVG.
+- `LAFigureSpecs.qr_bundle(A, **opts)`: canonical QR bundle helper.
+- `LAFigureSpecs.qr_tbl_bundle(A, **opts)`: compatibility alias returning the same standardized bundle.
+- `LAFigureSpecs.qr_svg(matrices, **opts)`: canonical QR SVG renderer for a precomputed matrix stack.
+- `LAFigureSpecs.qr(matrices, **opts)`: compatibility alias for `qr_svg(...)`.
+- `LAFigureSpecs.qr_figure(A, **opts)`: canonical compute+render QR helper.
+- `LAFigureSpecs.gram_schmidt_qr(A, **opts)`: compatibility alias for `qr_figure(...)`.
 
 Example options:
 `qr_tbl_spec(A, array_names=True, rank_deficient=True)`
@@ -74,10 +86,12 @@ Example options:
 - `LAFigureSpecs.svd_matrices_from_spec(spec, reduced=True)`: assemble `(U, Σ, V, rank)` from an SVD spec.
 - `LAFigureSpecs.eig_tbl_tex(A, **opts)`: render eigen table TeX.
 - `LAFigureSpecs.eig_tbl_svg(A, **opts)`: render eigen table SVG.
-- `LAFigureSpecs.eig_tbl_bundle(A, **opts)`: return standardized bundle.
+- `LAFigureSpecs.eig_bundle(A, **opts)`: canonical eigen bundle helper.
+- `LAFigureSpecs.eig_tbl_bundle(A, **opts)`: compatibility alias returning the same standardized bundle.
 - `LAFigureSpecs.svd_tbl_tex(A, **opts)`: render SVD table TeX.
 - `LAFigureSpecs.svd_tbl_svg(A, **opts)`: render SVD table SVG.
-- `LAFigureSpecs.svd_tbl_bundle(A, **opts)`: return standardized bundle.
+- `LAFigureSpecs.svd_bundle(A, **opts)`: canonical SVD bundle helper.
+- `LAFigureSpecs.svd_tbl_bundle(A, **opts)`: compatibility alias returning the same standardized bundle.
 
 ## Re-exported matrixlayout renderers (advanced)
 

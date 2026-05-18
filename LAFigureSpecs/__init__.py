@@ -92,6 +92,16 @@ def px_to_mm(px: float) -> float:
     """Convert px-equivalent SVG units to millimeters (96 px per inch)."""
     return float(px) * 25.4 / 96.0
 
+
+# Canonical cross-language aliases for top-level display/bundle helpers.
+ge_svg = ge
+qr_svg = qr
+qr_figure = gram_schmidt_qr
+ge_bundle = ge_tbl_bundle
+qr_bundle = qr_tbl_bundle
+eig_bundle = eig_tbl_bundle
+svd_bundle = svd_tbl_bundle
+
 __all__ = [
     "__version__",
     "__build__",
@@ -106,9 +116,11 @@ __all__ = [
     "eig_tbl_tex",
     "eig_tbl_svg",
     "eig_tbl_bundle",
+    "eig_bundle",
     "svd_tbl_tex",
     "svd_tbl_svg",
     "svd_tbl_bundle",
+    "svd_bundle",
     "compute_qr_matrices",
     "gram_schmidt_qr_matrices",
     "naive_gram_schmidt_w",
@@ -122,6 +134,9 @@ __all__ = [
     "qr_tbl_svg",
     "qr_tbl_bundle",
     "gram_schmidt_qr",
+    "qr_svg",
+    "qr_figure",
+    "qr_bundle",
     "backsubstitution_tex",
     "linear_system_tex",
     "standard_solution_tex",
@@ -135,6 +150,8 @@ __all__ = [
     "show_ge",
     "ShowGE",
     "ge_tbl_bundle",
+    "ge_svg",
+    "ge_bundle",
     "ge",
     "render_ge_svg",
     "render_ge_tex",

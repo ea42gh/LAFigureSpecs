@@ -104,10 +104,13 @@ def test_ge_tbl_spec_layout_and_bundle_match_tex():
 
 
 def test_ge_tbl_spec_dict_roundtrip_render_ge_svg_accepts_spec():
+    import shutil
     import pytest
 
     pytest.importorskip("matrixlayout")
     pytest.importorskip("jupyter_tikz")
+    if shutil.which("latexmk") is None:
+        pytest.skip("latexmk unavailable")
     import LAFigureSpecs
     from matrixlayout.ge import render_ge_svg
 

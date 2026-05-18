@@ -50,6 +50,12 @@ Execute one item at a time, with tests and docs in the same change:
 
 Maintain Python/Julia interoperability throughout the migration.
 
+For canonical top-level teaching/display capabilities:
+
+- require capability parity with the Julia umbrella surface
+- when the same capability is intentionally exposed in both languages, require
+  name parity as well
+
 This is a first-class constraint, not an afterthought. Any API cleanup in
 `matrixlayout` or `LAFigureSpecs` must preserve, or be migrated in lockstep
 with, the Julia bridge used by `GenLAProblems` and `LATeachingSuite`.

@@ -5,7 +5,8 @@ ready for matrixlayout rendering.
 
 Use high-level wrappers by default:
 
-- `ge_tbl_svg`, `qr_tbl_svg`, `eig_tbl_svg`, `svd_tbl_svg`
+- `ge_svg`, `qr_svg`, `eig_tbl_svg`, `svd_tbl_svg`
+- `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
 - `latex_svg` for standalone LaTeX fragments
 - `latex_document_svg` for full LaTeX documents
 - `lshow_svg` for Julia `LAlatex.L_show(...)` output
@@ -14,7 +15,7 @@ The `render_*` functions are low-level matrixlayout renderer re-exports.
 
 ## Bundle contract
 
-All `*_tbl_bundle(...)` helpers return the same keys:
+All `*_bundle(...)` helpers, and their `_tbl` compatibility aliases, return the same keys:
 
 - `spec`: render spec dictionary
 - `tex`: rendered TeX source

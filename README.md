@@ -14,25 +14,35 @@ figure should follow the actual linear algebra computation.
 
 ## Top-Level Use Functions
 
+Canonical cross-language names:
+
+- render helpers: `ge_svg`, `qr_svg`, `qr_figure`
+- bundle helpers: `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
+
+The older `_tbl` bundle names and historical QR/GE convenience names remain
+available for compatibility, but the names above are the preferred top-level
+surface for parity with `LATeachingSuite`.
+
 | Area | Function | Output |
 |---|---|---|
-| GE | `ge(...)` | Rendered SVG for a row-reduction layout. |
+| GE | `ge(...)` / `ge_svg(...)` | Rendered SVG for a row-reduction layout. |
 | GE | `show_ge(...)` / `ShowGE` | Notebook-friendly row-reduction workflow/display helpers. |
 | GE | `ge_tbl_spec(...)` | Reusable spec dictionary for a GE layout. |
 | GE | `ge_tbl_tex(...)` | TeX source for a GE layout. |
 | GE | `ge_tbl_svg(...)` | Rendered SVG for a GE layout. |
-| GE | `ge_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
-| QR | `gram_schmidt_qr(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
-| QR | `qr(...)` | Renders a precomputed QR matrix stack as SVG. |
+| GE | `ge_bundle(...)` / `ge_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| QR | `gram_schmidt_qr(...)` / `qr_figure(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
+| QR | `qr(...)` / `qr_svg(...)` | Renders a precomputed QR matrix stack as SVG. |
 | QR | `qr_tbl_spec(...)` | Reusable spec dictionary for a QR layout. |
 | QR | `qr_tbl_tex(...)` | TeX source for a QR layout. |
 | QR | `qr_tbl_svg(...)` | Rendered SVG for a QR layout. |
-| QR | `qr_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| QR | `qr_bundle(...)` / `qr_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | Eigen | `eigendecomposition(...)` | Structured eigenvalue/eigenvector data. |
 | Eigen | `eig_tbl_spec(...)` | Reusable spec dictionary for an eigen layout. |
 | Eigen | `eig_tbl_tex(...)` | TeX source for an eigen layout. |
 | Eigen | `eig_tbl_svg(...)` | Rendered SVG for an eigen layout. |
-| Eigen | `eig_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| Eigen | `eig_bundle(...)` / `eig_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
+| SVD | `svd_bundle(...)` / `svd_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 
 ## Try It
 
