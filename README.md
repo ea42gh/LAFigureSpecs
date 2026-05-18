@@ -28,15 +28,15 @@ surface for parity with `LATeachingSuite`.
 
 | Area | Function | Output |
 |---|---|---|
-| GE | `ge(...)` / `ge_svg(...)` | Rendered SVG for a row-reduction layout. |
+| GE | `ge_svg(...)` / `ge(...)` | Rendered SVG for a row-reduction layout. |
 | GE | `show_ge(...)` / `ShowGE` | Notebook-friendly row-reduction workflow/display helpers. |
 | GE | `show_layout(show)` / `show_system(show)` / `show_solution(show)` | Top-level workflow/display wrappers over `ShowGE` methods. |
 | GE | `ge_tbl_spec(...)` | Reusable spec dictionary for a GE layout. |
 | GE | `ge_tbl_tex(...)` | TeX source for a GE layout. |
 | GE | `ge_tbl_svg(...)` | Rendered SVG for a GE layout. |
 | GE | `ge_bundle(...)` / `ge_tbl_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
-| QR | `gram_schmidt_qr(...)` / `qr_figure(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
-| QR | `qr(...)` / `qr_svg(...)` | Renders a precomputed QR matrix stack as SVG. |
+| QR | `qr_figure(...)` / `gram_schmidt_qr(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
+| QR | `qr_svg(...)` / `qr(...)` | Renders a precomputed QR matrix stack as SVG. |
 | QR | `qr_tbl_spec(...)` | Reusable spec dictionary for a QR layout. |
 | QR | `qr_tbl_tex(...)` | TeX source for a QR layout. |
 | QR | `qr_tbl_svg(...)` | Rendered SVG for a QR layout. |
