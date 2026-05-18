@@ -54,7 +54,7 @@ Use these when you want a lightweight preflight before rendering:
 - `LAFigureSpecs.ge_tbl_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
 - `LAFigureSpecs.ge_tbl_layout_spec(A, **opts)`: build a typed `GEGridSpec` layout spec. Inputs: matrix-like `A`. Returns: typed spec.
 - `LAFigureSpecs.ge_bundle(A, **opts)`: canonical GE bundle helper.
-- `LAFigureSpecs.ge_tbl_bundle(A, **opts)`: compatibility alias returning the same standardized bundle; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
+- `LAFigureSpecs.ge_tbl_bundle(A, **opts)`: compatibility alias for `ge_bundle(...)`; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
 - `LAFigureSpecs.ge_tbl_tex(A, **opts)`: render GE TeX from the spec path.
 - `LAFigureSpecs.ge_tbl_svg(A, **opts)`: render GE SVG from the spec path.
 - `LAFigureSpecs.ge_svg(matrices, **opts)`: canonical GE stack renderer.
@@ -75,7 +75,7 @@ Example options:
 - `LAFigureSpecs.qr_tbl_tex(A, **opts)`: render QR TeX from the spec path.
 - `LAFigureSpecs.qr_tbl_svg(A, **opts)`: render QR SVG from the spec path.
 - `LAFigureSpecs.qr_bundle(A, **opts)`: canonical QR bundle helper.
-- `LAFigureSpecs.qr_tbl_bundle(A, **opts)`: compatibility alias returning the same standardized bundle.
+- `LAFigureSpecs.qr_tbl_bundle(A, **opts)`: compatibility alias for `qr_bundle(...)`.
 - `LAFigureSpecs.qr_svg(matrices, **opts)`: canonical QR SVG renderer for a precomputed matrix stack.
 - `LAFigureSpecs.qr(matrices, **opts)`: compatibility alias for `qr_svg(...)`.
 - `LAFigureSpecs.qr_figure(A, **opts)`: canonical compute+render QR helper.
@@ -94,11 +94,11 @@ Example options:
 - `LAFigureSpecs.eig_tbl_tex(A, **opts)`: render eigen table TeX.
 - `LAFigureSpecs.eig_tbl_svg(A, **opts)`: render eigen table SVG.
 - `LAFigureSpecs.eig_bundle(A, **opts)`: canonical eigen bundle helper.
-- `LAFigureSpecs.eig_tbl_bundle(A, **opts)`: compatibility alias returning the same standardized bundle.
+- `LAFigureSpecs.eig_tbl_bundle(A, **opts)`: compatibility alias for `eig_bundle(...)`.
 - `LAFigureSpecs.svd_tbl_tex(A, **opts)`: render SVD table TeX.
 - `LAFigureSpecs.svd_tbl_svg(A, **opts)`: render SVD table SVG.
 - `LAFigureSpecs.svd_bundle(A, **opts)`: canonical SVD bundle helper.
-- `LAFigureSpecs.svd_tbl_bundle(A, **opts)`: compatibility alias returning the same standardized bundle.
+- `LAFigureSpecs.svd_tbl_bundle(A, **opts)`: compatibility alias for `svd_bundle(...)`.
 
 ## Re-exported matrixlayout renderers (advanced)
 
