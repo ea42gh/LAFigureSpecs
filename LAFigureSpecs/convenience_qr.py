@@ -9,6 +9,18 @@ from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render
 from .qr import gram_schmidt_qr_matrices, qr_tbl_spec, qr_tbl_spec_from_matrices
 
 _UNSET = object()
+_QR_SPEC_KEYS = {
+    "array_names",
+    "fig_scale",
+    "preamble",
+    "extension",
+    "nice_options",
+    "label_color",
+    "label_text_color",
+    "known_zero_color",
+    "decorators",
+    "strict",
+}
 
 
 def _render_qr_tex_from_spec(
@@ -179,7 +191,8 @@ def qr_tbl_bundle(
 ) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
 
-    spec = qr_tbl_spec(A, **kwargs)
+    spec_kwargs = {k: kwargs[k] for k in _QR_SPEC_KEYS if k in kwargs}
+    spec = qr_tbl_spec(A, **spec_kwargs)
     tex = _render_qr_tex_from_spec(
         spec,
         formatter=kwargs.get("formatter", latexify),

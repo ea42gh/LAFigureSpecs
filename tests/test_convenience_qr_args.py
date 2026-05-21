@@ -90,6 +90,57 @@ def test_qr_tbl_bundle_success_uses_default_svg_options(monkeypatch):
     assert captured["padding"] == (2, 2, 2, 2)
 
 
+def test_qr_tbl_bundle_keeps_formatter_out_of_spec_builder(monkeypatch):
+    import LAFigureSpecs.convenience_qr as convenience_qr
+
+    captured: Dict[str, Any] = {}
+
+    def fake_spec(A, **kwargs):
+        captured["spec_kwargs"] = dict(kwargs)
+        return {
+            "matrices": [[None, [[1]]]],
+            "array_names": True,
+            "fig_scale": None,
+            "body_preamble": "",
+            "document_preamble": "",
+            "nice_options": "",
+            "label_color": "blue",
+            "label_text_color": "red",
+            "known_zero_color": "brown",
+            "decorators": None,
+            "strict": False,
+        }
+
+    def fake_render_qr_tex_from_spec(spec, *, formatter, strict):
+        captured["tex_formatter"] = formatter
+        return "tex"
+
+    def fake_render_qr_svg_from_spec(spec, **kwargs):
+        captured["svg_formatter"] = kwargs["formatter"]
+        return "<svg/>"
+
+    monkeypatch.setattr(convenience_qr, "qr_tbl_spec", fake_spec)
+    monkeypatch.setattr(
+        convenience_qr,
+        "_render_qr_tex_from_spec",
+        fake_render_qr_tex_from_spec,
+    )
+    monkeypatch.setattr(
+        convenience_qr,
+        "_render_qr_svg_from_spec",
+        fake_render_qr_svg_from_spec,
+    )
+
+    fmt = lambda x: str(x)
+    bundle = convenience_qr.qr_tbl_bundle([[1, 0], [0, 1]], formatter=fmt)
+
+    assert bundle["tex"] == "tex"
+    assert bundle["svg"] == "<svg/>"
+    assert "formatter" not in captured["spec_kwargs"]
+    assert captured["tex_formatter"] is fmt
+    assert captured["svg_formatter"] is fmt
+
+
 def test_qr_render_wrapper_defers_crop_padding_to_render_opts(monkeypatch):
     import LAFigureSpecs.convenience_qr as convenience_qr
 
