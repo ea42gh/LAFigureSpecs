@@ -14,6 +14,9 @@ def test_public_api_contains_canonical_render_names():
     assert "svd_bundle" in LAFigureSpecs.__all__
     assert "ShowGE" in LAFigureSpecs.__all__
     assert "ref" in LAFigureSpecs.__all__
+    assert "lhs_matrix" in LAFigureSpecs.__all__
+    assert "rhs_matrix" in LAFigureSpecs.__all__
+    assert "rhs_column" in LAFigureSpecs.__all__
     assert "show_layout" in LAFigureSpecs.__all__
     assert "show_system" in LAFigureSpecs.__all__
     assert "show_backsubstitution" in LAFigureSpecs.__all__

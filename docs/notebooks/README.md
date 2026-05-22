@@ -10,7 +10,7 @@ Top-level API by problem type
 - `09_eig_svd_top_level_functions.ipynb` — Eigen/SVD top-level API (`eig_bundle`, `svd_bundle`, `eig_tbl_*`, `svd_tbl_*`)
 - `10_backsubstitution_top_level_functions.ipynb` - system/backsub text helpers
 - `11_formatting_and_renderers.ipynb` - formatting selectors + low-level `render_*` entrypoints
-- `12_show_ge_class.ipynb` - stateful `ShowGE` helper (REF/RREF + solutions)
+- `12_show_ge_class.ipynb` - stateful `ShowGE` helper (REF/RREF + solutions + matrix accessors)
 - `13_latex_fragment_rendering.ipynb` - generic `latex_svg`, `latex_document_svg`, and Julia `lshow_svg`
 
 Guidelines

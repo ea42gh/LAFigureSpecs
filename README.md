@@ -20,7 +20,8 @@ Canonical cross-language names:
 - bundle helpers: `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
 - workflow/display helpers on `ShowGE` objects:
   `ref`, `show_layout`, `show_system`, `show_backsubstitution`,
-  `show_solution`, `rhs_block`, `solutions`
+  `show_solution`, `lhs_matrix`, `rhs_matrix`, `rhs_column`, `rhs_block`,
+  `solutions`
 
 The older `_tbl` bundle names and historical QR/GE convenience names remain
 available for compatibility, but the names above are the preferred top-level
@@ -31,6 +32,7 @@ surface for parity with `LATeachingSuite`.
 | GE | `ge_svg(...)` / `ge(...)` | Rendered SVG for a row-reduction layout. |
 | GE | `show_ge(...)` / `ShowGE` | Notebook-friendly row-reduction workflow/display helpers. |
 | GE | `show_layout(show)` / `show_system(show)` / `show_solution(show)` | Top-level workflow/display wrappers over `ShowGE` methods. |
+| GE | `lhs_matrix(show)` / `rhs_matrix(show)` / `rhs_column(show, ...)` | Direct matrix accessors for the current GE stack state. |
 | GE | `ge_tbl_spec(...)` | Reusable spec dictionary for a GE layout. |
 | GE | `ge_tbl_tex(...)` | TeX source for a GE layout. |
 | GE | `ge_tbl_svg(...)` | Rendered SVG for a GE layout. |

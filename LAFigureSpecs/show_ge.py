@@ -194,8 +194,8 @@ class ShowGE:
         """Return the GE layer matrices (augmented)."""
         return list(self._get_layers().get("matrices") or [])
 
-    def rhs_block(self, *, step: Any = "final", b_col: Optional[int] = None):
-        """Return the RHS block from a GE stack (optionally a single column)."""
+    def _step_matrix(self, *, step: Any = "final"):
+        """Return the augmented matrix stored at ``step`` in the GE stack."""
         layers = self._get_layers()
         mats = layers.get("matrices") or []
         if not mats:
@@ -203,14 +203,42 @@ class ShowGE:
         idx = len(mats) - 1 if step in ("final", None) else int(step)
         if idx < 0 or idx >= len(mats):
             raise IndexError("step out of range for GE stack")
-        Ab = mats[idx][1]
+        return mats[idx][1]
+
+    def lhs_matrix(self, *, step: Any = "final"):
+        """Return the left-hand coefficient matrix at ``step``."""
+        Ab = self._step_matrix(step=step)
+        if Ab is None:
+            return None
+        layers = self._get_layers()
+        nrhs = int(layers.get("n_rhs", layers.get("Nrhs")) or 0)
+        if nrhs <= 0:
+            return Ab
+        return Ab[:, :-nrhs]
+
+    def rhs_matrix(self, *, step: Any = "final"):
+        """Return the RHS matrix block at ``step``."""
+        Ab = self._step_matrix(step=step)
+        if Ab is None:
+            return None
+        layers = self._get_layers()
         nrhs = int(layers.get("n_rhs", layers.get("Nrhs")) or 0)
         if nrhs <= 0:
             return None
-        rhs = Ab[:, -nrhs:]
-        if b_col is None:
-            return rhs
+        return Ab[:, -nrhs:]
+
+    def rhs_column(self, b_col: int = 0, *, step: Any = "final"):
+        """Return RHS column ``b_col`` from the GE stack at ``step``."""
+        rhs = self.rhs_matrix(step=step)
+        if rhs is None:
+            return None
         return rhs[:, int(b_col)]
+
+    def rhs_block(self, *, step: Any = "final", b_col: Optional[int] = None):
+        """Return the RHS block from a GE stack (optionally a single column)."""
+        if b_col is None:
+            return self.rhs_matrix(step=step)
+        return self.rhs_column(int(b_col), step=step)
 
     def solve(self, *, gj: Optional[bool] = None) -> Dict[str, Any]:
         """Solve the system and return pivot/free/solution data."""
@@ -526,6 +554,21 @@ def show_solution(
 def rhs_block(show: ShowGE, *, step: Any = "final", b_col: Optional[int] = None):
     """Top-level wrapper for ``ShowGE.rhs_block(...)``."""
     return show.rhs_block(step=step, b_col=b_col)
+
+
+def lhs_matrix(show: ShowGE, *, step: Any = "final"):
+    """Top-level wrapper for ``ShowGE.lhs_matrix(...)``."""
+    return show.lhs_matrix(step=step)
+
+
+def rhs_matrix(show: ShowGE, *, step: Any = "final"):
+    """Top-level wrapper for ``ShowGE.rhs_matrix(...)``."""
+    return show.rhs_matrix(step=step)
+
+
+def rhs_column(show: ShowGE, b_col: int = 0, *, step: Any = "final"):
+    """Top-level wrapper for ``ShowGE.rhs_column(...)``."""
+    return show.rhs_column(b_col, step=step)
 
 
 def solutions(show: ShowGE, *, gj: Optional[bool] = None):

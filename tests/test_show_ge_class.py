@@ -44,6 +44,18 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
             calls.append(("show_solution", var_name, param_name, render_opts))
             return "solution-ok"
 
+        def lhs_matrix(self, *, step="final"):
+            calls.append(("lhs_matrix", step))
+            return "lhs-ok"
+
+        def rhs_matrix(self, *, step="final"):
+            calls.append(("rhs_matrix", step))
+            return "rhs-mat-ok"
+
+        def rhs_column(self, b_col=0, *, step="final"):
+            calls.append(("rhs_column", b_col, step))
+            return "rhs-col-ok"
+
         def rhs_block(self, *, step="final", b_col=None):
             calls.append(("rhs_block", step, b_col))
             return "rhs-ok"
@@ -59,6 +71,9 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
     assert LAFigureSpecs.show_system(show, var_name="y", crop="tight") == "system-ok"
     assert LAFigureSpecs.show_backsubstitution(show, var_name="y", param_name="β") == "backsub-ok"
     assert LAFigureSpecs.show_solution(show, var_name="y", param_name="β") == "solution-ok"
+    assert LAFigureSpecs.lhs_matrix(show, step=1) == "lhs-ok"
+    assert LAFigureSpecs.rhs_matrix(show, step=2) == "rhs-mat-ok"
+    assert LAFigureSpecs.rhs_column(show, 0, step=2) == "rhs-col-ok"
     assert LAFigureSpecs.rhs_block(show, step=2, b_col=0) == "rhs-ok"
     assert LAFigureSpecs.solutions(show, gj=False) == ("xp", "xh")
 
@@ -68,6 +83,9 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
         ("show_system", "y", {"crop": "tight"}),
         ("show_backsubstitution", "y", "β", {}),
         ("show_solution", "y", "β", {}),
+        ("lhs_matrix", 1),
+        ("rhs_matrix", 2),
+        ("rhs_column", 0, 2),
         ("rhs_block", 2, 0),
         ("solve", False),
     ]
@@ -221,6 +239,27 @@ def test_show_ge_rhs_block_accessor():
 
     col = show.rhs_block(b_col=0)
     assert col.shape == (2, 1)
+
+
+def test_show_ge_lhs_rhs_accessors():
+    import LAFigureSpecs
+    import sympy as sym
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    b = sym.Matrix([[5], [6]])
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
+    show.ref()
+
+    lhs = show.lhs_matrix()
+    rhs = show.rhs_matrix()
+    col = show.rhs_column()
+
+    assert lhs.shape == (2, 2)
+    assert rhs.shape == (2, 1)
+    assert col.shape == (2, 1)
+    assert lhs == show.matrices()[-1][1][:, :-1]
+    assert rhs == show.matrices()[-1][1][:, -1:]
+    assert col == rhs
 
 
 def test_show_ge_homogeneous_returns_zero_vector_when_full_rank():
