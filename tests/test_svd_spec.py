@@ -5,6 +5,17 @@ def _flatten_groups(groups):
     return [sym.Matrix(v) for g in groups for v in g]
 
 
+def _has_unexpanded_square_term_inside_radical(x):
+    x = sym.sympify(x)
+    for pow_expr in x.atoms(sym.Pow):
+        if pow_expr.exp in (sym.Rational(1, 2), sym.Rational(-1, 2)):
+            base = sym.expand(pow_expr.base)
+            for nested_pow in base.atoms(sym.Pow):
+                if nested_pow.exp == 2 and isinstance(nested_pow.base, sym.Add):
+                    return True
+    return False
+
+
 def test_svd_spec_from_right_singular_vectors_matches_svd_tbl_spec():
     import LAFigureSpecs
 
@@ -97,3 +108,17 @@ def test_svd_spec_simplifies_rectangular_full_rank_vectors():
     assert U_cols[0][0] == (sym.sqrt(8185) + 155) / (
         sym.sqrt(8185 - 21 * sym.sqrt(8185)) * sym.sqrt(sym.sqrt(8185) + 91)
     )
+
+
+def test_svd_spec_expands_square_terms_inside_radicals_for_display():
+    import LAFigureSpecs
+
+    A = sym.Matrix([[4, 9], [0, 2]])
+    spec = LAFigureSpecs.svd_tbl_spec(A)
+
+    for sigma in spec["sigma"]:
+        assert not _has_unexpanded_square_term_inside_radical(sigma)
+
+    for vec in _flatten_groups(spec["qvecs"]) + _flatten_groups(spec["uvecs"]):
+        for entry in vec:
+            assert not _has_unexpanded_square_term_inside_radical(entry)

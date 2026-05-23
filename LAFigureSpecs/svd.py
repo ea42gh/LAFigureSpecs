@@ -28,10 +28,28 @@ def _svd_eig_pairs(AtA: sym.Matrix) -> List[tuple[Any, int, List[sym.Matrix]]]:
 RightSingularSpaces = Iterable[Tuple[Any, int, Sequence[sym.Matrix]]]
 
 
+def _expand_radical_operands(x: Any) -> Any:
+    """Expand the bases of square-root-like powers without changing structure."""
+
+    x = sym.sympify(x)
+    if not getattr(x, "args", ()):
+        return x
+
+    if isinstance(x, sym.Pow):
+        base = _expand_radical_operands(x.base)
+        exp = _expand_radical_operands(x.exp)
+        if getattr(exp, "is_Rational", False) and abs(int(exp.q)) == 2:
+            base = sym.expand(base)
+        return sym.Pow(base, exp)
+
+    return x.func(*(_expand_radical_operands(arg) for arg in x.args))
+
+
 def _simplify_svd_expr(x: Any) -> Any:
     """Normalize symbolic SVD entries into a more readable exact form."""
 
-    return sym.factor_terms(sym.radsimp(sym.expand(sym.simplify(x))))
+    x = _expand_radical_operands(sym.expand(sym.simplify(x)))
+    return _expand_radical_operands(sym.factor_terms(sym.radsimp(x)))
 
 
 def _simplify_svd_matrix(M: sym.Matrix) -> sym.Matrix:
@@ -43,7 +61,11 @@ def _simplify_svd_matrix(M: sym.Matrix) -> sym.Matrix:
 def _cleanup_svd_vector_entries(v: sym.Matrix) -> sym.Matrix:
     """Keep orthonormal vector entries in a quotient-style exact form."""
 
-    return sym.Matrix(v.rows, v.cols, lambda i, j: sym.factor_terms(sym.cancel(sym.together(v[i, j]))))
+    return sym.Matrix(
+        v.rows,
+        v.cols,
+        lambda i, j: _expand_radical_operands(sym.factor_terms(sym.cancel(sym.together(v[i, j])))),
+    )
 
 
 def svd_tbl_spec_from_right_singular_vectors(
