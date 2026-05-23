@@ -1,6 +1,23 @@
 from typing import Any, Dict
 
 
+def test_legacy_find_artifact_source_base_finds_nested_render_dir(tmp_path):
+    from LAFigureSpecs._ge_legacy_compat import _legacy_find_artifact_source_base
+
+    outer = tmp_path / "outer"
+    inner = outer / "matrixlayout_render_inner"
+    inner.mkdir(parents=True)
+    tex = inner / "ge_debug.tex"
+    tex.write_text("x")
+
+    base = _legacy_find_artifact_source_base(
+        str(outer),
+        "ge_debug",
+        (".svg", ".tex"),
+    )
+    assert str(base).endswith("matrixlayout_render_inner/ge_debug")
+
+
 def test_eig_tbl_svg_uses_tmp_dir_as_output_dir(monkeypatch):
     import LAFigureSpecs
 

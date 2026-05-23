@@ -508,6 +508,9 @@ def _legacy_bg_list_to_codebefore(
 ) -> List[str]:
     codebefore: List[str] = []
 
+    def _medium_coord(coord: str) -> str:
+        return coord[:-1] + "-medium)" if coord.endswith(")") else coord
+
     def _emit_spec(spec: Sequence[Any]) -> None:
         if not spec or len(spec) < 4:
             return
@@ -541,6 +544,9 @@ def _legacy_bg_list_to_codebefore(
                     block_align=block_align,
                     block_valign=block_valign,
                 )
+                if int(j0) == int(j1):
+                    c0 = _medium_coord(c0)
+                    c1 = _medium_coord(c1)
                 cmd_2 = f"{c0} {c1}"
             else:
                 i0, j0 = entry
@@ -572,21 +578,45 @@ def _resolve_legacy_output_targets(
     keep_file: Optional[str],
     tmp_dir: Optional[str],
     output_dir: Optional[Any],
+    output_stem: Optional[str],
 ) -> Tuple[Optional[Any], Optional[str]]:
     from pathlib import Path
 
-    output_stem: Optional[str] = None
-    if keep_file:
+    resolved_output_stem: Optional[str] = output_stem
+    if keep_file and resolved_output_stem is None:
         p = Path(str(keep_file))
         suffix = p.suffix.lower()
-        output_stem = p.stem if suffix in (".tex", ".svg", ".pdf", ".dvi", ".xdv") else p.name
+        resolved_output_stem = p.stem if suffix in (".tex", ".svg", ".pdf", ".dvi", ".xdv") else p.name
     # Always render on a container-local scratch filesystem so latexmk sees
     # consistent mtimes. Legacy tmp_dir/output_dir/keep_file are preserve targets,
     # not the live TeX workdir.
     scratch_root = Path("/tmp/la/run")
     scratch_root.mkdir(parents=True, exist_ok=True)
     render_dir = Path(tempfile.mkdtemp(prefix="matrixlayout_render_", dir=str(scratch_root)))
-    return str(render_dir), output_stem
+    return str(render_dir), resolved_output_stem
+
+
+def _legacy_find_artifact_source_base(
+    output_dir: Any,
+    output_stem: str,
+    artifact_exts: Sequence[str],
+):
+    from pathlib import Path
+
+    root = Path(str(output_dir))
+    direct = root / output_stem
+    if any(direct.with_suffix(ext).exists() for ext in artifact_exts):
+        return direct
+
+    candidates = []
+    for ext in artifact_exts:
+        candidates.extend(root.rglob(f"{output_stem}{ext}"))
+    if not candidates:
+        return direct
+
+    candidates.sort(key=lambda p: (len(p.parts), str(p)))
+    first = candidates[0]
+    return first.with_suffix("")
 
 
 def _preserve_legacy_keep_file_artifacts(
@@ -600,8 +630,8 @@ def _preserve_legacy_keep_file_artifacts(
         return
     from pathlib import Path
 
-    source_base = Path(str(output_dir)) / output_stem
     artifact_exts = (".svg", ".tex", ".pdf", ".dvi", ".xdv", ".log", ".aux", ".fls", ".fdb_latexmk", ".stdout.txt", ".stderr.txt")
+    source_base = _legacy_find_artifact_source_base(output_dir, output_stem, artifact_exts)
 
     if tmp_dir:
         tmp_target_dir = Path(str(tmp_dir))
@@ -776,5 +806,3 @@ class _LegacyFuncAdapter:
                 color=str(color),
             )
         )
-
-

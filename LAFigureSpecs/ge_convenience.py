@@ -548,6 +548,7 @@ def ge(
         keep_file=keep_file,
         tmp_dir=tmp_dir,
         output_dir=output_dir,
+        output_stem=output_stem,
     )
 
     block_align = render_opts.get("block_align")
