@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import shutil
 import tempfile
+from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .formatting import make_decorator
@@ -601,14 +602,12 @@ def _legacy_find_artifact_source_base(
     output_stem: str,
     artifact_exts: Sequence[str],
 ):
-    from pathlib import Path
-
     root = Path(str(output_dir))
     direct = root / output_stem
     if any(direct.with_suffix(ext).exists() for ext in artifact_exts):
         return direct
 
-    candidates = []
+    candidates: List[Path] = []
     for ext in artifact_exts:
         candidates.extend(root.rglob(f"{output_stem}{ext}"))
     if not candidates:
