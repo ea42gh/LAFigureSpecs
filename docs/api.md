@@ -105,6 +105,29 @@ Example options:
 - `LAFigureSpecs.svd_bundle(A, **opts)`: canonical SVD bundle helper.
 - `LAFigureSpecs.svd_tbl_bundle(A, **opts)`: compatibility alias for `svd_bundle(...)`.
 
+Selected eig/SVD matrix blocks can factor out a common scalar for display with
+`matrix_factor_out`. Accepted forms are:
+
+- `True` to enable factoring for every eligible matrix block
+- `False` or `None` to disable it
+- a list such as `["u", "v"]`
+- a per-matrix mapping such as
+  `{"u": True, "v": True, "sigma_matrix": False}`
+
+Example:
+
+```python
+A = sym.Matrix([[4, 9], [0, 2]])
+svg = LAFigureSpecs.svd_tbl_svg(
+    A,
+    matrix_factor_out={"u": True, "v": True, "sigma_matrix": False},
+)
+```
+
+In that example, the rendered `V` matrix gets a leading
+`\frac{\sqrt{2}}{2}` factor, `U` gets a leading `4`, and `\Sigma` stays
+entrywise.
+
 ## Re-exported matrixlayout renderers (advanced)
 
 These are re-exported for convenience and parity with matrixlayout:

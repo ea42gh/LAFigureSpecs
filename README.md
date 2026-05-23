@@ -99,6 +99,21 @@ A = sym.Matrix([[2, 1], [0, 3]])
 svg = lf.eig_svg(A)
 ```
 
+Selective SVD matrix factoring:
+
+```python
+A = sym.Matrix([[4, 9], [0, 2]])
+svg = lf.svd_tbl_svg(
+    A,
+    matrix_factor_out={"u": True, "v": True, "sigma_matrix": False},
+)
+```
+
+This factors any common scalar that exists for the selected displayed matrices.
+For this example, `V` is rendered with a leading `\frac{\sqrt{2}}{2}` factor,
+`U` with a leading `4`, and `\Sigma` remains entrywise because
+`sigma_matrix=False`.
+
 ## Decorators
 
 The convenience wrappers pass decorator specs through to `matrixlayout`. Use
