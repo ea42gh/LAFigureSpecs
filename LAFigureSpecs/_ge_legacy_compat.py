@@ -512,6 +512,9 @@ def _legacy_bg_list_to_codebefore(
     def _rule_coord(row: int, col: int) -> str:
         return f"({row}-|{col})"
 
+    def _medium_coord(row: int, col: int) -> str:
+        return f"({row}-{col}-medium)"
+
     def _emit_spec(spec: Sequence[Any]) -> None:
         if not spec or len(spec) < 4:
             return
@@ -547,7 +550,12 @@ def _legacy_bg_list_to_codebefore(
                 )
                 r0, c0_idx = (int(part) for part in c0.strip("()").split("-"))
                 r1, c1_idx = (int(part) for part in c1.strip("()").split("-"))
-                cmd_2 = f"{_rule_coord(r0, c0_idx)} {_rule_coord(r1 + 1, c1_idx + 1)}"
+                if r0 == r1 and c0_idx == c1_idx:
+                    cmd_2 = _medium_coord(r0, c0_idx)
+                elif c0_idx == c1_idx:
+                    cmd_2 = f"{_medium_coord(r0, c0_idx)} {_medium_coord(r1, c1_idx)}"
+                else:
+                    cmd_2 = f"{_rule_coord(r0, c0_idx)} {_rule_coord(r1 + 1, c1_idx + 1)}"
             else:
                 i0, j0 = entry
                 c0 = _grid_cell_coord(
@@ -561,7 +569,7 @@ def _legacy_bg_list_to_codebefore(
                     block_valign=block_valign,
                 )
                 r0, c0_idx = (int(part) for part in c0.strip("()").split("-"))
-                cmd_2 = f"{_rule_coord(r0, c0_idx)} {_rule_coord(r0 + 1, c0_idx + 1)}"
+                cmd_2 = _medium_coord(r0, c0_idx)
             codebefore.append(cmd_1 + cmd_2 + " ] {} ;")
 
     for spec in bg_list:

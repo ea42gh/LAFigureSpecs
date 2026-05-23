@@ -12,17 +12,18 @@ def test_legacy_bg_uses_block_padding_for_right_align():
     assert codebefore
     # Column 0 has width 3 (from row 1), but row 2 col 0 is width 2.
     # With default block_align=auto (right), the leftmost entry is shifted by 1.
-    assert "fit = (3-|2) (4-|3)" in codebefore[0]
+    assert "fit = (3-2-medium)" in codebefore[0]
 
 
-def test_legacy_vertical_column_highlights_use_rule_corners():
+def test_legacy_vertical_column_highlights_stay_inside_column_bounds():
     matrices = [
         [None, [[1, 2], [3, 4], [5, 6]]],
     ]
     bg_list = [[0, 1, [((0, 1), (2, 1))], "yellow!40", 1]]
     codebefore = _legacy_bg_list_to_codebefore(matrices, bg_list)
     assert codebefore
-    assert "fit = (1-|5) (4-|6)" in codebefore[0]
+    assert "fit = (1-5-medium) (3-5-medium)" in codebefore[0]
+    assert "(1-|5) (4-|6)" not in codebefore[0]
 
 
 def test_legacy_ge_disables_format_nrhs_when_using_decorations(monkeypatch):
