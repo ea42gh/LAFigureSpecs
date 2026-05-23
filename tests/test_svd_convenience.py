@@ -59,6 +59,24 @@ def test_svd_tbl_svg_defaults_exact_bbox(monkeypatch):
     assert calls["kwargs"]["exact_bbox"] is True
 
 
+def test_svd_tbl_tex_passes_matrix_factor_out(monkeypatch):
+    import LAFigureSpecs.convenience as conv
+
+    calls = {}
+
+    def fake_render(spec, **kwargs):
+        calls["spec"] = spec
+        calls["kwargs"] = kwargs
+        return "tex"
+
+    monkeypatch.setattr(conv, "_render_eig_tex_from_spec", fake_render)
+
+    tex = conv.svd_tbl_tex([[1, 0], [0, 0]], matrix_factor_out={"u": True})
+
+    assert tex == "tex"
+    assert calls["kwargs"]["matrix_factor_out"] == {"u": True}
+
+
 @pytest.mark.render
 def test_svd_tbl_svg_smoke():
     pytest.importorskip("jupyter_tikz")
