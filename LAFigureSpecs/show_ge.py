@@ -336,6 +336,9 @@ class ShowGE:
             trace = self._get_trace()
             layers = self._get_layers()
             decor = decorate_ge(trace, index_base=self.index_base)
+            bg_for_entries = decor.get("bg_for_entries")
+            if bg_for_entries is None:
+                bg_for_entries = decor.get("bg_list")
             var_summary = self.variable_summary
             if var_summary is None:
                 var_summary = decor.get("basic_var")
@@ -353,7 +356,7 @@ class ShowGE:
                 layers.get("matrices"),
                 n_rhs=layers.get("n_rhs", layers.get("Nrhs")) or 0,
                 pivot_list=decor.get("pivot_list") if self.show_pivots else None,
-                bg_for_entries=decor.get("bg_for_entries"),
+                bg_for_entries=bg_for_entries,
                 ref_path_list=decor.get("ref_path_list"),
                 variable_summary=var_summary,
                 variable_colors=self.variable_colors,
@@ -377,6 +380,9 @@ class ShowGE:
 
                 trace = self._get_trace()
                 decor = decorate_ge(trace, index_base=self.index_base)
+                bg_for_entries = decor.get("bg_for_entries")
+                if bg_for_entries is None:
+                    bg_for_entries = decor.get("bg_list")
                 var_summary = self.variable_summary
                 if var_summary is None:
                     var_summary = decor.get("basic_var")
@@ -386,7 +392,7 @@ class ShowGE:
                     mats,
                     n_rhs=layers.get("n_rhs", layers.get("Nrhs")) or 0,
                     pivot_list=decor.get("pivot_list") if self.show_pivots else None,
-                    bg_for_entries=decor.get("bg_for_entries"),
+                    bg_for_entries=bg_for_entries,
                     ref_path_list=decor.get("ref_path_list"),
                     variable_summary=var_summary,
                     variable_colors=self.variable_colors,

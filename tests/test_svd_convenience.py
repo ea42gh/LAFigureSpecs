@@ -26,6 +26,39 @@ def test_svd_tbl_tex_smoke():
     assert "\\Sigma" in tex
 
 
+def test_svd_tbl_tex_factors_orthonormal_vectors_for_default_formatter():
+    import sympy as sym
+    import LAFigureSpecs
+
+    tex = LAFigureSpecs.svd_tbl_tex(sym.Matrix([[4, 2], [0, 9]]))
+
+    vector_row = next(
+        line
+        for line in tex.splitlines()
+        if r"\frac{\sqrt{2}}{2 \sqrt{5017 - 69 \sqrt{5017}}}\,\begin{pNiceArray}{r}-69 + \sqrt{5017}" in line
+    )
+    assert r"\frac{\sqrt{2}}{2 \sqrt{5017 - 69 \sqrt{5017}}}\,\begin{pNiceArray}{r}-69 + \sqrt{5017}" in vector_row
+    assert r"\frac{8 \sqrt{2}}{\sqrt{5017 - 69 \sqrt{5017}}}" not in vector_row
+
+
+def test_svd_tbl_svg_defaults_exact_bbox(monkeypatch):
+    import LAFigureSpecs.convenience as conv
+
+    calls = {}
+
+    def fake_render(spec, **kwargs):
+        calls["spec"] = spec
+        calls["kwargs"] = kwargs
+        return "<svg/>"
+
+    monkeypatch.setattr(conv, "_render_eig_svg_from_spec", fake_render)
+
+    svg = conv.svd_tbl_svg([[1, 0], [0, 0]])
+
+    assert svg == "<svg/>"
+    assert calls["kwargs"]["exact_bbox"] is True
+
+
 @pytest.mark.render
 def test_svd_tbl_svg_smoke():
     pytest.importorskip("jupyter_tikz")

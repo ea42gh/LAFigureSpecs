@@ -75,3 +75,25 @@ def test_svd_spec_from_right_singular_vectors_respects_Ascale():
     got = LAFigureSpecs.svd_tbl_spec_from_right_singular_vectors(A, G.eigenvects(), Ascale=2)
     expected = LAFigureSpecs.svd_tbl_spec(A, Ascale=2)
     assert got["sigma"] == expected["sigma"]
+
+
+def test_svd_spec_simplifies_rectangular_full_rank_vectors():
+    import LAFigureSpecs
+
+    A = sym.Matrix([[1, 2], [3, 4], [5, 6]])
+    spec = LAFigureSpecs.svd_tbl_spec(A)
+
+    sigma0 = spec["sigma"][0]
+    assert sym.simplify(sigma0**2 - spec["lambda"][0]) == 0
+
+    V_cols = _flatten_groups(spec["qvecs"])
+    U_cols = _flatten_groups(spec["uvecs"])
+    assert all(sym.simplify(v.dot(v) - 1) == 0 for v in V_cols)
+    assert all(sym.simplify(u.dot(u) - 1) == 0 for u in U_cols)
+
+    # The displayed vectors should keep a readable quotient-style exact form,
+    # not the fully exploded product-of-radicals entries from plain radsimp().
+    assert V_cols[0][1] == 44 * sym.sqrt(2) / sym.sqrt(8185 - 21 * sym.sqrt(8185))
+    assert U_cols[0][0] == (sym.sqrt(8185) + 155) / (
+        sym.sqrt(8185 - 21 * sym.sqrt(8185)) * sym.sqrt(sym.sqrt(8185) + 91)
+    )

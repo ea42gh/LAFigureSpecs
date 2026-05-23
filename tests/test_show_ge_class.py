@@ -225,6 +225,27 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
     assert captured["mats_len"] > 1
 
 
+def test_show_ge_layout_forwards_python_decorate_ge_backgrounds(monkeypatch):
+    import LAFigureSpecs
+    import sympy as sym
+
+    captured = {}
+
+    def fake_ge(mats, **kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr("LAFigureSpecs.ge_convenience.ge", fake_ge)
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    b = sym.Matrix([[5], [6]])
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
+    show.ref()
+    show.show_layout()
+
+    assert captured.get("bg_for_entries")
+
+
 def test_show_ge_rhs_block_accessor():
     import LAFigureSpecs
     import sympy as sym

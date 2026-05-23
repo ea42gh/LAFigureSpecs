@@ -422,6 +422,8 @@ def svd_tbl_svg(
         padding=padding,
         render_opts=render_opts,
     )
+    if exact_bbox is None:
+        exact_bbox = True
 
     return _render_eig_svg_from_spec(
         spec,

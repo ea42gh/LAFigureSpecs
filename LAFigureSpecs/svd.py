@@ -28,6 +28,24 @@ def _svd_eig_pairs(AtA: sym.Matrix) -> List[tuple[Any, int, List[sym.Matrix]]]:
 RightSingularSpaces = Iterable[Tuple[Any, int, Sequence[sym.Matrix]]]
 
 
+def _simplify_svd_expr(x: Any) -> Any:
+    """Normalize symbolic SVD entries into a more readable exact form."""
+
+    return sym.factor_terms(sym.radsimp(sym.expand(sym.simplify(x))))
+
+
+def _simplify_svd_matrix(M: sym.Matrix) -> sym.Matrix:
+    """Apply the SVD simplifier elementwise to a SymPy matrix."""
+
+    return sym.Matrix(M.shape[0], M.shape[1], lambda i, j: _simplify_svd_expr(M[i, j]))
+
+
+def _cleanup_svd_vector_entries(v: sym.Matrix) -> sym.Matrix:
+    """Keep orthonormal vector entries in a quotient-style exact form."""
+
+    return sym.Matrix(v.rows, v.cols, lambda i, j: sym.factor_terms(sym.cancel(sym.together(v[i, j]))))
+
+
 def svd_tbl_spec_from_right_singular_vectors(
     A: Any,
     right_singular_spaces: RightSingularSpaces,
@@ -86,9 +104,11 @@ def svd_tbl_spec_from_right_singular_vectors(
         sigma2_scaled = _maybe_round(sigma2_scaled, sigma2_digits)
         sigma = sym.sqrt(sigma2_scaled)
         sigma = _maybe_round(sigma, sigma_digits)
+        sigma = _simplify_svd_expr(sigma)
 
         vecs2 = _maybe_round_vectors(vecs, vec_digits)
-        vvecs = q_gram_schmidt(vecs2)
+        vecs2 = [_simplify_svd_matrix(sym.Matrix(v)) for v in vecs2]
+        vvecs = [_cleanup_svd_vector_entries(sym.Matrix(v)) for v in q_gram_schmidt(vecs2)]
 
         eig["lambda"].append(sigma2_scaled)
         eig["sigma"].append(sigma)
@@ -98,12 +118,14 @@ def svd_tbl_spec_from_right_singular_vectors(
 
         if not getattr(sigma, "is_zero", False):
             s_inv = (1 / sigma) if Ascale is None else (1 / (sigma * Ascale))
-            eig["uvecs"].append([s_inv * A * v for v in vvecs])
+            eig["uvecs"].append([_cleanup_svd_vector_entries(s_inv * A * v) for v in vvecs])
 
     # Complement U with an orthonormal basis for null(A^T) when rank-deficient.
     ns = A.T.nullspace()
     if ns:
-        eig["uvecs"].append(q_gram_schmidt([sym.Matrix(v) for v in ns]))
+        eig["uvecs"].append(
+            [_cleanup_svd_vector_entries(sym.Matrix(v)) for v in q_gram_schmidt([sym.Matrix(v) for v in ns])]
+        )
 
     return eig
 
