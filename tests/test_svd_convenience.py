@@ -77,6 +77,26 @@ def test_svd_tbl_tex_passes_matrix_factor_out(monkeypatch):
     assert calls["kwargs"]["matrix_factor_out"] == {"u": True}
 
 
+def test_svd_tbl_tex_selective_matrix_factoring_example():
+    import sympy as sym
+    import LAFigureSpecs
+
+    tex = LAFigureSpecs.svd_tbl_tex(
+        sym.Matrix([[4, 9], [0, 2]]),
+        matrix_factor_out={"u": True, "v": True, "sigma_matrix": False},
+    )
+
+    assert r"\frac{\sqrt{2}}{2}\,\begin{pNiceArray}{r@{\hspace{4mm}}r}" in tex
+    assert r"$4\,\begin{pNiceArray}{r@{\hspace{4mm}}r}" in tex
+    assert (
+        r"\color{blue}{ \Sigma =}$ & \multicolumn{2}{c}{"
+        "\n"
+        r"$\begin{pNiceArray}{c@{\hspace{8mm}}c}\frac{\sqrt{2} \sqrt{3 \sqrt{1105} + 101}}{2}"
+    ) in tex
+    assert r"\begin{pNiceArray}{r@{\hspace{4mm}}r}\frac{\sqrt{2}}{2}\," not in tex
+    assert r"\begin{pNiceArray}{r@{\hspace{4mm}}r}4\," not in tex
+
+
 @pytest.mark.render
 def test_svd_tbl_svg_smoke():
     pytest.importorskip("jupyter_tikz")
