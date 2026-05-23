@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/ea42gh/LAFigureSpecs/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/ea42gh/LAFigureSpecs/actions/workflows/ci.yml)
 [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/ea42gh/LAFigureSpecs/master?labpath=LAFigureSpecs_demo.ipynb)
-[![Docs](https://img.shields.io/badge/docs-live-blue.svg)](https://ea42gh.github.io/LAFigureSpecs/)
+[![Docs](https://img.shields.io/badge/docs-index-blue.svg)](https://github.com/ea42gh/LAFigureSpecs/blob/master/docs/index.md)
 
 `LAFigureSpecs` is the algorithm layer for linear-algebra teaching figures. It
 computes Gaussian-elimination traces, back-substitution fragments, QR layouts,
