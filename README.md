@@ -121,6 +121,7 @@ package:
 svg = lf.latex_svg(
     r'\begin{tikzcd} V \arrow[r, "T"] & W \end{tikzcd}',
     tex_packages="amsmath,amssymb,tikz-cd",
+    toolchain_name="pdftex_pdftocairo",
 )
 ```
 
