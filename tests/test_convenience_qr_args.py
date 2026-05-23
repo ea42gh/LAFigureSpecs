@@ -131,7 +131,9 @@ def test_qr_tbl_bundle_keeps_formatter_out_of_spec_builder(monkeypatch):
         fake_render_qr_svg_from_spec,
     )
 
-    fmt = lambda x: str(x)
+    def fmt(x):
+        return str(x)
+
     bundle = convenience_qr.qr_tbl_bundle([[1, 0], [0, 1]], formatter=fmt)
 
     assert bundle["tex"] == "tex"
