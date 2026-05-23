@@ -118,9 +118,12 @@ Pass `tex_packages="..."` when the fragment uses another installed LaTeX
 package:
 
 ```python
-svg = lf.latex_svg(
-    r'\begin{tikzcd} V \arrow[r, "T"] & W \end{tikzcd}',
-    tex_packages="amsmath,amssymb,tikz-cd",
+svg = lf.latex_document_svg(
+    r"""\documentclass{standalone}
+\usepackage{amsmath,amssymb,tikz-cd}
+\begin{document}
+\begin{tikzcd} V \arrow[r, "T"] & W \end{tikzcd}
+\end{document}""",
     toolchain_name="pdftex_pdftocairo",
 )
 ```

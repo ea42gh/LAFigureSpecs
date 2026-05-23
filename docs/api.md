@@ -157,8 +157,9 @@ Fragment-specific options on `latex_svg(...)`:
 `nicematrix`. Pass `tex_packages="..."` to use a different package set, for
 example `tex_packages="amsmath,amssymb,tikz-cd"`.
 
-For `tikz-cd` fragments, prefer a PDF-based SVG converter such as
-`toolchain_name="pdftex_pdftocairo"` instead of the DVI-based toolchains.
+For `tikz-cd`, prefer `latex_document_svg(...)` with a PDF-based SVG converter
+such as `toolchain_name="pdftex_pdftocairo"` instead of the fragment path on a
+DVI-based toolchain.
 
 Passing `preamble=...` selects the explicit-preamble path and bypasses
 `tex_packages`, `tikz_libraries`, and the default package list. Include every
