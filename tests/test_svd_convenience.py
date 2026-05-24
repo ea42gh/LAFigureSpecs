@@ -77,6 +77,49 @@ def test_svd_tbl_tex_passes_matrix_factor_out(monkeypatch):
     assert calls["kwargs"]["matrix_factor_out"] == {"u": True}
 
 
+def test_svd_tbl_svg_passes_matrix_factor_out(monkeypatch):
+    import LAFigureSpecs.convenience as conv
+
+    calls = {}
+
+    def fake_render(spec, **kwargs):
+        calls["spec"] = spec
+        calls["kwargs"] = kwargs
+        return "<svg/>"
+
+    monkeypatch.setattr(conv, "_render_eig_svg_from_spec", fake_render)
+
+    svg = conv.svd_tbl_svg(
+        [[1, 0], [0, 0]],
+        matrix_factor_out={"sigma_matrix": True, "u": True},
+    )
+
+    assert svg == "<svg/>"
+    assert calls["kwargs"]["matrix_factor_out"] == {"sigma_matrix": True, "u": True}
+
+
+def test_svd_svg_alias_passes_matrix_factor_out(monkeypatch):
+    import LAFigureSpecs
+    import LAFigureSpecs.convenience as conv
+
+    calls = {}
+
+    def fake_render(spec, **kwargs):
+        calls["spec"] = spec
+        calls["kwargs"] = kwargs
+        return "<svg/>"
+
+    monkeypatch.setattr(conv, "_render_eig_svg_from_spec", fake_render)
+
+    svg = LAFigureSpecs.svd_svg(
+        [[1, 0], [0, 0]],
+        matrix_factor_out={"sigma_matrix": True, "u": True},
+    )
+
+    assert svg == "<svg/>"
+    assert calls["kwargs"]["matrix_factor_out"] == {"sigma_matrix": True, "u": True}
+
+
 def test_svd_tbl_tex_selective_matrix_factoring_example():
     import sympy as sym
     import LAFigureSpecs
