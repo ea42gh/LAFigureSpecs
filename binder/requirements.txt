@@ -1,8 +1,8 @@
-jupyter-tikz @ git+https://github.com/ea42gh/jupyter-tikz.git@47ca7ea885075871631852eda1433a695260490a
+jupyter-tikz @ git+https://github.com/ea42gh/jupyter-tikz.git@8e18e495934c907e9e6568135d2e84d55762ae91
 matrixlayout[render] @ git+https://github.com/ea42gh/matrixlayout.git@main
 -e .
 ipython
 ipykernel
 nbconvert
-numpy
-sympy
+numpy>=2,<3
+sympy>=1.12
