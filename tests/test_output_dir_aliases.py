@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Any, Dict
 
 
@@ -15,7 +16,7 @@ def test_legacy_find_artifact_source_base_finds_nested_render_dir(tmp_path):
         "ge_debug",
         (".svg", ".tex"),
     )
-    assert str(base).endswith("matrixlayout_render_inner/ge_debug")
+    assert Path(base).parts[-2:] == ("matrixlayout_render_inner", "ge_debug")
 
 
 def test_eig_tbl_svg_uses_tmp_dir_as_output_dir(monkeypatch):

@@ -527,6 +527,7 @@ def ge(
     output_stem: Optional[str] = None,
     frame: Any = None,
     decorators: Optional[Sequence[Any]] = None,
+    decorations: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
     **render_opts: Any,
 ) -> str:
@@ -593,7 +594,7 @@ def ge(
             rhs_status=rhs_status,
         )
 
-    decorations: List[Dict[str, Any]] = []
+    generated_decorations: List[Dict[str, Any]] = []
     nrhs_total: int
     nrhs_splits: Optional[List[int]] = None
     if isinstance(n_rhs, (list, tuple)):
@@ -625,12 +626,17 @@ def ge(
                         splits.append(split)
                 if not splits:
                     continue
-                decorations.append({"grid": (br, last_col), "vlines": splits})
+                generated_decorations.append({"grid": (br, last_col), "vlines": splits})
             else:
                 split = w - nrhs_total
                 if split <= 0 or split >= w:
                     continue
-                decorations.append({"grid": (br, last_col), "vlines": split})
+                generated_decorations.append({"grid": (br, last_col), "vlines": split})
+
+    render_decorations: List[Any] = []
+    if decorations:
+        render_decorations.extend(list(decorations))
+    render_decorations.extend(generated_decorations)
 
     rowechelon_paths: List[str] = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
 
@@ -675,8 +681,8 @@ def ge(
         callouts=callouts or None,
         create_extra_nodes=True if (ref_path_list or needs_medium_nodes) else None,
         create_medium_nodes=True if (ref_path_list or needs_medium_nodes) else None,
-        decorations=decorations or None,
-        format_nrhs=False if decorations else True,
+        decorations=render_decorations or None,
+        format_nrhs=False if generated_decorations else True,
         fig_scale=fig_scale,
         body_preamble=body_preamble or "",
         document_preamble=document_preamble or "",

@@ -59,6 +59,36 @@ def test_ge_legacy_wrapper_supports_backgrounds_and_comments():
     assert captured["txt_with_locs"]
 
 
+def test_ge_legacy_wrapper_forwards_structured_decorations(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    matrices = [[None, A]]
+    decorations = [
+        {
+            "grid": (0, 1),
+            "rows": (0, 0),
+            "cols": (0, 3),
+            "background": "yellow!35",
+            "padding_pt": 1,
+        }
+    ]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    out = ge(matrices, decorations=decorations)
+
+    assert out == "<svg/>"
+    assert captured["decorations"] == decorations
+    assert captured["format_nrhs"] is True
+
+
 def test_ge_legacy_wrapper_supports_ref_path_list():
     from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
