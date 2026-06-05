@@ -26,11 +26,11 @@ def test_svd_tbl_tex_smoke():
     assert "\\Sigma" in tex
 
 
-def test_svd_tbl_tex_factors_orthonormal_vectors_for_default_formatter():
+def test_svd_tbl_tex_factors_orthonormal_vectors_when_requested():
     import sympy as sym
     import LAFigureSpecs
 
-    tex = LAFigureSpecs.svd_tbl_tex(sym.Matrix([[4, 2], [0, 9]]))
+    tex = LAFigureSpecs.svd_tbl_tex(sym.Matrix([[4, 2], [0, 9]]), factor_out={"qvecs": True})
 
     vector_row = next(
         line
@@ -59,7 +59,7 @@ def test_svd_tbl_svg_defaults_exact_bbox(monkeypatch):
     assert calls["kwargs"]["exact_bbox"] is True
 
 
-def test_svd_tbl_tex_passes_matrix_factor_out(monkeypatch):
+def test_svd_tbl_tex_passes_factor_out(monkeypatch):
     import LAFigureSpecs.convenience as conv
 
     calls = {}
@@ -71,13 +71,13 @@ def test_svd_tbl_tex_passes_matrix_factor_out(monkeypatch):
 
     monkeypatch.setattr(conv, "_render_eig_tex_from_spec", fake_render)
 
-    tex = conv.svd_tbl_tex([[1, 0], [0, 0]], matrix_factor_out={"u": True})
+    tex = conv.svd_tbl_tex([[1, 0], [0, 0]], factor_out={"u": True})
 
     assert tex == "tex"
-    assert calls["kwargs"]["matrix_factor_out"] == {"u": True}
+    assert calls["kwargs"]["factor_out"] == {"u": True}
 
 
-def test_svd_tbl_svg_passes_matrix_factor_out(monkeypatch):
+def test_svd_tbl_svg_passes_factor_out(monkeypatch):
     import LAFigureSpecs.convenience as conv
 
     calls = {}
@@ -91,14 +91,14 @@ def test_svd_tbl_svg_passes_matrix_factor_out(monkeypatch):
 
     svg = conv.svd_tbl_svg(
         [[1, 0], [0, 0]],
-        matrix_factor_out={"sigma_matrix": True, "u": True},
+        factor_out={"sigma": True, "u": True},
     )
 
     assert svg == "<svg/>"
-    assert calls["kwargs"]["matrix_factor_out"] == {"sigma_matrix": True, "u": True}
+    assert calls["kwargs"]["factor_out"] == {"sigma": True, "u": True}
 
 
-def test_svd_svg_alias_passes_matrix_factor_out(monkeypatch):
+def test_svd_svg_alias_passes_factor_out(monkeypatch):
     import LAFigureSpecs
     import LAFigureSpecs.convenience as conv
 
@@ -113,11 +113,11 @@ def test_svd_svg_alias_passes_matrix_factor_out(monkeypatch):
 
     svg = LAFigureSpecs.svd_svg(
         [[1, 0], [0, 0]],
-        matrix_factor_out={"sigma_matrix": True, "u": True},
+        factor_out={"sigma": True, "u": True},
     )
 
     assert svg == "<svg/>"
-    assert calls["kwargs"]["matrix_factor_out"] == {"sigma_matrix": True, "u": True}
+    assert calls["kwargs"]["factor_out"] == {"sigma": True, "u": True}
 
 
 def test_svd_tbl_tex_selective_matrix_factoring_example():
@@ -126,7 +126,7 @@ def test_svd_tbl_tex_selective_matrix_factoring_example():
 
     tex = LAFigureSpecs.svd_tbl_tex(
         sym.Matrix([[4, 9], [0, 2]]),
-        matrix_factor_out={"u": True, "v": True, "sigma_matrix": False},
+        factor_out={"u": True, "v": True, "sigma": False},
     )
 
     assert r"\frac{\sqrt{2}}{2}\,\begin{pNiceArray}{r@{\hspace{4mm}}r}" in tex

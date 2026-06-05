@@ -105,7 +105,7 @@ Selective SVD matrix factoring:
 A = sym.Matrix([[4, 9], [0, 2]])
 svg = lf.svd_tbl_svg(
     A,
-    matrix_factor_out={"u": True, "v": True, "sigma_matrix": False},
+    factor_out={"u": True, "v": True, "sigma": False},
 )
 ```
 

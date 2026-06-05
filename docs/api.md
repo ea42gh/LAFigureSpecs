@@ -105,14 +105,25 @@ Example options:
 - `LAFigureSpecs.svd_bundle(A, **opts)`: canonical SVD bundle helper.
 - `LAFigureSpecs.svd_tbl_bundle(A, **opts)`: compatibility alias for `svd_bundle(...)`.
 
-Selected eig/SVD matrix blocks can factor out a common scalar for display with
-`matrix_factor_out`. Accepted forms are:
+Selected eig/SVD basis vectors and matrix blocks can factor out a common scalar
+for display with `factor_out`. Accepted forms are:
 
-- `True` to enable factoring for every eligible matrix block
+- `True` to enable factoring for every eligible vector row and matrix block
 - `False` or `None` to disable it
-- a list such as `["u", "v"]`
-- a per-matrix mapping such as
-  `{"u": True, "v": True, "sigma_matrix": False}`
+- a list such as `["evecs", "qvecs", "u", "v"]`
+- a per-target mapping such as
+  `{"evecs": True, "qvecs": True, "u": True, "v": True, "sigma": False}`
+
+Target ids are:
+
+- `evecs`: displayed ordinary eigenbasis vectors
+- `qvecs`: displayed orthonormal basis vectors
+- `s`: assembled ordinary eigenbasis matrix
+- `q`: assembled orthonormal basis matrix
+- `lambda` or `Lambda`: diagonal eigenvalue matrix
+- `sigma`: SVD singular-value matrix
+- `u`: SVD left singular-vector matrix
+- `v`: SVD right singular-vector matrix
 
 Example:
 
@@ -120,13 +131,13 @@ Example:
 A = sym.Matrix([[4, 9], [0, 2]])
 svg = LAFigureSpecs.svd_tbl_svg(
     A,
-    matrix_factor_out={"u": True, "v": True, "sigma_matrix": False},
+    factor_out={"qvecs": True, "u": True, "v": True, "sigma": False},
 )
 ```
 
-In that example, the rendered `V` matrix gets a leading
-`\frac{\sqrt{2}}{2}` factor, `U` gets a leading `4`, and `\Sigma` stays
-entrywise.
+In that example, displayed right singular vectors can factor out common scalar
+prefixes, the rendered `U` and `V` matrices factor out common scalar prefixes,
+and `\Sigma` stays entrywise.
 
 ## Re-exported matrixlayout renderers (advanced)
 
