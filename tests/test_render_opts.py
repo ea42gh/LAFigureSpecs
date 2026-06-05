@@ -83,3 +83,18 @@ def test_ge_tbl_svg_passes_render_opts(monkeypatch):
     assert recorded["crop"] == "tight"
     assert recorded["padding"] == (2, 2, 2, 2)
     assert recorded["exact_bbox"] is True
+
+
+def test_ge_tbl_svg_defaults_to_tight_crop(monkeypatch):
+    recorded: Dict[str, Any] = {}
+
+    def fake_render_ge_svg(*args, **kwargs):
+        recorded.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_render_ge_svg)
+
+    svg = lf_ge.ge_tbl_svg([[1, 0], [0, 1]])
+
+    assert svg == "<svg/>"
+    assert recorded["crop"] == "tight"

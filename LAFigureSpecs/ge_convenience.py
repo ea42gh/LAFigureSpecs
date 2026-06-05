@@ -945,7 +945,6 @@ def ge_tbl_svg(
         padding_is_unset=padding is _UNSET,
         padding=padding,
         render_opts=render_opts,
-        crop_default=None,
     )
 
     from matrixlayout.ge import render_ge_svg
