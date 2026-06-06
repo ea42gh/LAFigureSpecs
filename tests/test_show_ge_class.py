@@ -40,8 +40,8 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
             calls.append(("show_backsubstitution", var_name, param_name, render_opts))
             return "backsub-ok"
 
-        def show_solution(self, *, var_name="x", param_name=r"\alpha", **render_opts):
-            calls.append(("show_solution", var_name, param_name, render_opts))
+        def show_solution(self, *, b_col=None, var_name="x", param_name=r"\alpha", **render_opts):
+            calls.append(("show_solution", b_col, var_name, param_name, render_opts))
             return "solution-ok"
 
         def lhs_matrix(self, *, step="final"):
@@ -70,7 +70,7 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
     assert LAFigureSpecs.show_layout(show, crop="tight") == "layout-ok"
     assert LAFigureSpecs.show_system(show, var_name="y", crop="tight") == "system-ok"
     assert LAFigureSpecs.show_backsubstitution(show, var_name="y", param_name="β") == "backsub-ok"
-    assert LAFigureSpecs.show_solution(show, var_name="y", param_name="β") == "solution-ok"
+    assert LAFigureSpecs.show_solution(show, b_col=1, var_name="y", param_name="β") == "solution-ok"
     assert LAFigureSpecs.lhs_matrix(show, step=1) == "lhs-ok"
     assert LAFigureSpecs.rhs_matrix(show, step=2) == "rhs-mat-ok"
     assert LAFigureSpecs.rhs_column(show, 0, step=2) == "rhs-col-ok"
@@ -82,13 +82,66 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
         ("show_layout", {"crop": "tight"}),
         ("show_system", "y", {"crop": "tight"}),
         ("show_backsubstitution", "y", "β", {}),
-        ("show_solution", "y", "β", {}),
+        ("show_solution", 1, "y", "β", {}),
         ("lhs_matrix", 1),
         ("rhs_matrix", 2),
         ("rhs_column", 0, 2),
         ("rhs_block", 2, 0),
         ("solve", False),
     ]
+
+
+def test_show_ge_show_solution_selects_rhs_column(monkeypatch):
+    import LAFigureSpecs
+    import sympy as sym
+
+    captured = {}
+
+    def fake_standard_solution_tex(ref_A, ref_rhs, *, var_name="x", param_name=r"\alpha"):
+        captured["ref_A"] = ref_A
+        captured["ref_rhs"] = ref_rhs
+        captured["var_name"] = var_name
+        captured["param_name"] = param_name
+        return "solution-ok"
+
+    def fake_backsubst_svg(**kwargs):
+        captured["render_opts"] = kwargs
+        return "<svg/>"
+
+    def fake_show_svg(svg):
+        captured["svg"] = svg
+        return "<display/>"
+
+    monkeypatch.setattr("LAFigureSpecs.show_ge.standard_solution_tex", fake_standard_solution_tex)
+    monkeypatch.setattr("matrixlayout.backsubst.backsubst_svg", fake_backsubst_svg)
+    monkeypatch.setattr("LAFigureSpecs.show_ge._show_svg", fake_show_svg)
+
+    A = sym.Matrix([[1, 0], [0, 1]])
+    b = sym.Matrix([[1, 2], [3, 4]])
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
+    show.ref()
+
+    result = show.show_solution(b_col=1, var_name="y", param_name="β", crop="tight")
+    assert result == "<display/>"
+    assert captured["ref_rhs"] == sym.Matrix([[2], [4]])
+    assert captured["var_name"] == "y"
+    assert captured["param_name"] == "β"
+    assert captured["render_opts"]["solution_txt"] == "solution-ok"
+    assert captured["svg"] == "<svg/>"
+
+
+def test_show_ge_show_solution_requires_b_col_for_multi_rhs():
+    import LAFigureSpecs
+    import pytest
+    import sympy as sym
+
+    A = sym.Matrix([[1, 0], [0, 1]])
+    b = sym.Matrix([[1, 2], [3, 4]])
+    show = LAFigureSpecs.ShowGE(A, b, gj=True)
+    show.ref()
+
+    with pytest.raises(ValueError, match="requires b_col"):
+        show.show_solution()
 
 
 def test_show_ge_solve_returns_particular_and_homogeneous():

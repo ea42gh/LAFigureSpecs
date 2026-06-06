@@ -496,13 +496,30 @@ class ShowGE:
         )
         return _show_svg(svg)
 
-    def show_solution(self, *, var_name: str = "x", param_name: str = r"\alpha", **render_opts: Any):
+    def show_solution(
+        self,
+        *,
+        b_col: Optional[int] = None,
+        var_name: str = "x",
+        param_name: str = r"\alpha",
+        **render_opts: Any,
+    ):
         ref_A, ref_rhs = self._final_ref_mats()
         if ref_rhs is None:
             raise ValueError("show_solution requires a RHS.")
-        if self.rhs_status and any(s == "inconsistent" for s in self.rhs_status):
+
+        rhs_cols = int(ref_rhs.shape[1]) if hasattr(ref_rhs, "shape") and len(ref_rhs.shape) > 1 else 1
+        if b_col is None:
+            if rhs_cols != 1:
+                raise ValueError("show_solution requires b_col when the RHS has multiple columns.")
+            b_col = 0
+        b_col = int(b_col)
+        if b_col < 0 or b_col >= rhs_cols:
+            raise IndexError("b_col out of range for the RHS block.")
+        if self.rhs_status and b_col < len(self.rhs_status) and self.rhs_status[b_col] == "inconsistent":
             return []
-        solution_txt = standard_solution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
+
+        solution_txt = standard_solution_tex(ref_A, ref_rhs[:, b_col], var_name=var_name, param_name=param_name)
         from matrixlayout.backsubst import backsubst_svg
 
         opts = dict(render_opts)
@@ -549,12 +566,13 @@ def show_backsubstitution(
 def show_solution(
     show: ShowGE,
     *,
+    b_col: Optional[int] = None,
     var_name: str = "x",
     param_name: str = r"\alpha",
     **render_opts: Any,
 ):
     """Top-level wrapper for ``ShowGE.show_solution(...)``."""
-    return show.show_solution(var_name=var_name, param_name=param_name, **render_opts)
+    return show.show_solution(b_col=b_col, var_name=var_name, param_name=param_name, **render_opts)
 
 
 def rhs_block(show: ShowGE, *, step: Any = "final", b_col: Optional[int] = None):

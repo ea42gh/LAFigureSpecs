@@ -77,7 +77,7 @@ show = lf.ShowGE(A, b, gj=True)
 lf.ref(show, pivoting="partial")
 lf.show_layout(show)
 lf.show_backsubstitution(show)
-lf.show_solution(show)
+lf.show_solution(show, b_col=0)
 lhs = lf.lhs_matrix(show)
 rhs_mat = lf.rhs_matrix(show)
 rhs_col = lf.rhs_column(show, 0)
@@ -90,7 +90,7 @@ pass `output_dir` or `tmp_dir`.
 
 If the system is inconsistent, `ShowGE` marks the offending RHS columns with a
 red **×** in the variable-summary row, `show_backsubstitution()` reduces the
-cascade to `0 = rhs` with **No Solution**, and `show_solution()` returns an
+cascade to `0 = rhs` with **No Solution**, and `show_solution(b_col=0)` returns an
 empty list.
 
 ## QR spec
