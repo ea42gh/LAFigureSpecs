@@ -7,6 +7,7 @@ def test_ge_trace_pivots_and_steps():
     A = sym.Matrix([[1, 2], [3, 4]])
     trace = LAFigureSpecs.ge_trace(A, pivoting="none")
 
+    assert trace.n_rhs == 0
     assert trace.Nrhs == 0
     assert trace.pivot_cols == (0, 1)
     assert trace.free_cols == ()
@@ -14,7 +15,7 @@ def test_ge_trace_pivots_and_steps():
 
     layers = LAFigureSpecs.trace_to_layer_matrices(trace)
     assert layers["n_rhs"] == 0
-    assert layers["Nrhs"] == 0
+    assert "Nrhs" not in layers
     assert layers["matrices"][0][0] is None
     assert layers["matrices"][0][1] == trace.initial
     assert layers["matrices"][1][0] is not None

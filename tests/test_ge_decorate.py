@@ -27,6 +27,7 @@ def test_decorate_ge_excludes_rhs_from_variable_types():
     rhs = sym.Matrix([[5], [6]])
 
     tr = ge_mod.ge_trace(A, rhs, pivoting="partial")
+    assert tr.n_rhs == 1
     assert tr.Nrhs == 1
 
     decor = ge_mod.decorate_ge(tr, index_base=1)

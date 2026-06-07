@@ -78,7 +78,7 @@ class GETrace:
         Non-pivot columns in the coefficient block.
     pivot_positions:
         Pivot positions as ``(row, col)`` pairs.
-    Nrhs:
+    n_rhs:
         Number of right-hand-side columns appended to ``A`` (0 if none).
     meta:
         Miscellaneous metadata (shapes, pivoting mode, etc.).
@@ -90,8 +90,14 @@ class GETrace:
     pivot_cols: Sequence[int]
     free_cols: Sequence[int]
     pivot_positions: Sequence[Tuple[int, int]]
-    Nrhs: int
+    n_rhs: int
     meta: Mapping[str, Any]
+
+    @property
+    def Nrhs(self) -> int:
+        """Compatibility alias for the canonical ``n_rhs`` field."""
+
+        return self.n_rhs
 
 
     def events_as_dicts(self) -> List[Dict[str, Any]]:
@@ -292,13 +298,13 @@ def ge_trace(
     rhs = to_sympy_matrix(ref_rhs)
     if rhs is None:
         Ab = sym.Matrix(A)
-        Nrhs = 0
+        n_rhs = 0
     else:
         # Accept vectors and matrix RHS.
         if rhs.rows != A.rows:
             raise ValueError(f"rhs has {rhs.rows} rows but A has {A.rows}")
         Ab = sym.Matrix(A).row_join(sym.Matrix(rhs))
-        Nrhs = rhs.cols
+        n_rhs = rhs.cols
 
     m, n_aug = Ab.shape
     n_coef = A.cols
@@ -450,7 +456,7 @@ def ge_trace(
         pivot_cols=tuple(pivot_cols),
         free_cols=tuple(free_cols),
         pivot_positions=tuple(pivot_positions),
-        Nrhs=Nrhs,
+        n_rhs=n_rhs,
         meta={
             "shape": tuple(A.shape),
             "aug_shape": tuple(Ab.shape),
@@ -495,7 +501,7 @@ def trace_to_layer_matrices(
 
     n_coef = trace.meta.get("shape", (None, None))[1]
     if n_coef is None:
-        n_coef = trace.initial.cols - trace.Nrhs
+        n_coef = trace.initial.cols - trace.n_rhs
 
     def _coef_block(M: sym.Matrix) -> sym.Matrix:
         return M[:, :n_coef]
@@ -511,8 +517,7 @@ def trace_to_layer_matrices(
 
     return {
         "matrices": layers,
-        "n_rhs": trace.Nrhs,
-        "Nrhs": trace.Nrhs,
+        "n_rhs": trace.n_rhs,
         "pivot_positions": list(trace.pivot_positions),
         "pivot_cols": list(trace.pivot_cols),
         "free_cols": list(trace.free_cols),
@@ -573,7 +578,7 @@ def decorate_ge(
     if shp and len(shp) == 2:
         n_coef = int(shp[1])
     if n_coef is None:
-        n_coef = int(trace.initial.cols - int(trace.Nrhs or 0))
+        n_coef = int(trace.initial.cols - int(trace.n_rhs or 0))
 
     pivot_set = {int(c) for c in trace.pivot_cols}
     variable_types: List[bool] = [(j in pivot_set) for j in range(n_coef)]

@@ -243,7 +243,7 @@ def _build_ge_bundle(
             lhs, rhs_list = "E", ["A"]
         rhs_list = [str(x) for x in rhs_list]
         if not explicit_names:
-            rhs_list = _coerce_rhs_labels(rhs_list, tr.Nrhs)
+            rhs_list = _coerce_rhs_labels(rhs_list, tr.n_rhs)
         name_specs = _legacy_array_name_specs(len(layers["matrices"]), str(lhs), rhs_list, start_index=index_base)
         extra_callouts = _legacy_name_specs_to_callouts(
             layers["matrices"],
@@ -304,7 +304,7 @@ def _build_ge_bundle(
         )
 
     decorations: List[Dict[str, Any]] = []
-    nrhs = int(tr.Nrhs or 0)
+    nrhs = int(tr.n_rhs or 0)
     if nrhs > 0:
         n_block_rows = len(layers["matrices"] or [])
         n_block_cols = max((len(r) for r in (layers["matrices"] or [])), default=0)
@@ -320,7 +320,7 @@ def _build_ge_bundle(
 
     spec: Dict[str, Any] = {
         "matrices": layers["matrices"],
-        "n_rhs": int(tr.Nrhs or 0),
+        "n_rhs": int(tr.n_rhs or 0),
         "body_preamble": preamble,
         "document_preamble": extension,
         "nice_options": nice_options,
@@ -481,7 +481,7 @@ def ge_tbl_layout_spec(
 
     spec = {
         "matrices": bundle["layers"]["matrices"],
-        "n_rhs": int(bundle["trace"].Nrhs or 0),
+        "n_rhs": int(bundle["trace"].n_rhs or 0),
         "layout": bundle["typed_layout"],
         "outer_hspace_mm": int(outer_hspace_mm),
         "cell_align": str(cell_align),
