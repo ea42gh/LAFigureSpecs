@@ -4,8 +4,8 @@
 `*_layout_spec` functions return typed layout objects (use `.to_dict()` for dict access).
 
 Specs emitted for matrixlayout use `body_preamble` for document-body setup and
-`document_preamble` for true LaTeX preamble insertion. GE computed wrappers use
-those same canonical keyword names.
+`document_preamble` for true LaTeX preamble insertion. GE and QR computed
+wrappers use those same canonical keyword names.
 
 Selectors and decorators use 0-based entry indices within each matrix block.
 Grid positions are addressed by (row, column) in the outer list.
@@ -98,8 +98,8 @@ vertical lines only appear in the matrix rows.
 | `W` | matrix | required | Computed internally via naive Gram–Schmidt (LCD-scaled, no normalization). |
 | `array_names` | bool/list | True | Enable labels or custom list. |
 | `fig_scale` | float | None | Figure scale. |
-| `preamble` | str | nicematrix opts | Public alias for emitted `body_preamble`. |
-| `extension` | str | "" | Public alias for emitted `document_preamble`. |
+| `body_preamble` | str | nicematrix opts | Document-body setup emitted to matrixlayout. |
+| `document_preamble` | str | "" | True LaTeX preamble insertion emitted to matrixlayout. |
 | `nice_options` | str | "vlines-in-sub-matrix = I" | NiceArray options. |
 | `label_color` | str | "blue" | Label color. |
 | `label_text_color` | str | "red" | Label text color. |
