@@ -527,6 +527,13 @@ def ge(
     **render_opts: Any,
 ) -> str:
     """Convenience wrapper for the GE rendering surface."""
+    removed_tex_hooks = {"preamble", "extension"} & set(render_opts)
+    if removed_tex_hooks:
+        names = ", ".join(sorted(removed_tex_hooks))
+        raise TypeError(
+            f"Removed GE TeX hook alias(es): {names}. "
+            "Use body_preamble= for document-body setup and document_preamble= for true LaTeX preamble insertion."
+        )
     n_rhs = _resolve_n_rhs(n_rhs=n_rhs)
     body_preamble = render_opts.pop("body_preamble", None)
     document_preamble = render_opts.pop("document_preamble", None)

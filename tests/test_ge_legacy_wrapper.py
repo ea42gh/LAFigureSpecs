@@ -253,22 +253,25 @@ def test_ge_legacy_wrapper_uses_canonical_tex_hook_names(monkeypatch):
     assert captured["document_preamble"] == "%doc"
 
 
-def test_ge_legacy_wrapper_does_not_translate_removed_tex_hook_aliases(monkeypatch):
+def test_ge_legacy_wrapper_rejects_removed_tex_hook_aliases(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
-    captured = {}
 
     def fake_svg(**kwargs):
-        captured.update(kwargs)
+        raise AssertionError("render_ge_svg should not be called")
         return "<svg/>"
 
     monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
 
-    assert ge(matrices, preamble="%old-body", extension="%old-doc") == "<svg/>"
-
-    assert captured["body_preamble"] == ""
-    assert captured["document_preamble"] == ""
-    assert captured["preamble"] == "%old-body"
-    assert captured["extension"] == "%old-doc"
+    try:
+        ge(matrices, preamble="%old-body", extension="%old-doc")
+    except TypeError as exc:
+        msg = str(exc)
+        assert "preamble" in msg
+        assert "extension" in msg
+        assert "body_preamble" in msg
+        assert "document_preamble" in msg
+    else:
+        raise AssertionError("expected removed GE TeX hook aliases to be rejected")
