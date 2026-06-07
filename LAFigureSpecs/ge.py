@@ -524,8 +524,7 @@ def decorate_ge(
     index_base: int = 1,
     pivot_style: str = "",
     ref_path_case: str = "vh",
-    ref_path_block_col: int = 1,
-    pivot_block_col: int = 1,
+    ref_path_grid: Tuple[int, int] = (-1, 1),
     pivot_color: str = "yellow!40",
     missing_pivot_color: str = "gray!20",
     path_color: str = "blue,line width=0.5mm",
@@ -548,6 +547,10 @@ def decorate_ge(
     pivot_style:
         Optional TikZ style fragment appended to pivot "fit" nodes when the
         decoration is rendered (e.g. ``"thick, draw=red"``).
+    ref_path_grid:
+        ``(block_row, block_col)`` grid position for the defensive fallback
+        reference path when the event stream does not produce explicit paths.
+        A negative row selects the final GE layer.
 
     Returns
     -------
@@ -588,10 +591,13 @@ def decorate_ge(
 
     ref_path_list: List[Tuple[int, int, List[Tuple[int, int]], str]] = []
     if trace.pivot_positions:
+        ref_path_row, ref_path_col = int(ref_path_grid[0]), int(ref_path_grid[1])
+        if ref_path_row < 0:
+            ref_path_row = len(trace.steps)
         ref_path_list.append(
             (
-                len(trace.steps),
-                int(ref_path_block_col),
+                ref_path_row,
+                ref_path_col,
                 list(trace.pivot_positions),
                 str(ref_path_case),
             )
