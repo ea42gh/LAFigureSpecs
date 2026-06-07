@@ -457,10 +457,10 @@ def _legacy_pivot_list_to_pivot_locs(
     for spec in pivot_list:
         if not spec or len(spec) < 2:
             continue
-        grid_pos, pivots = spec[0], spec[1]
-        if not isinstance(grid_pos, (list, tuple)) or len(grid_pos) != 2:
+        grid, pivots = spec[0], spec[1]
+        if not isinstance(grid, (list, tuple)) or len(grid) != 2:
             continue
-        gM, gN = int(grid_pos[0]), int(grid_pos[1])
+        gM, gN = int(grid[0]), int(grid[1])
         if gM < 0 or gN < 0:
             continue
         if gM >= len(row_starts) or gN >= len(col_starts):
@@ -490,10 +490,10 @@ def _pivot_list_to_decorators(
     for spec in pivot_list:
         if not spec or len(spec) < 2:
             continue
-        grid_pos, pivots = spec[0], spec[1]
-        if not isinstance(grid_pos, (list, tuple)) or len(grid_pos) != 2:
+        grid, pivots = spec[0], spec[1]
+        if not isinstance(grid, (list, tuple)) or len(grid) != 2:
             continue
-        gM, gN = int(grid_pos[0]), int(grid_pos[1])
+        gM, gN = int(grid[0]), int(grid[1])
         if not isinstance(pivots, (list, tuple)):
             continue
         decorators.append({"grid": (gM, gN), "entries": list(pivots), "decorator": dec})
