@@ -696,7 +696,7 @@ def _legacy_bg_for_entries_to_codebefore(
     )
 
 
-def _legacy_comment_list_to_txt_with_locs(
+def _legacy_comment_list_to_text_annotations(
     matrices: Sequence[Sequence[Any]],
     comment_list: Optional[Any],
     *,
@@ -769,7 +769,7 @@ class _LegacyFuncAdapter:
         *,
         matrices: Sequence[Sequence[Any]],
         codebefore: List[str],
-        txt_with_locs: List[Tuple[str, str, str]],
+        text_annotations: List[Tuple[str, str, str]],
         rowechelon_paths: List[str],
         comment_shift_x_mm: float,
         comment_shift_y_mm: float,
@@ -777,7 +777,7 @@ class _LegacyFuncAdapter:
     ) -> None:
         self._matrices = matrices
         self.codebefore = codebefore
-        self.txt_with_locs = txt_with_locs
+        self.text_annotations = text_annotations
         self.rowechelon_paths = rowechelon_paths
         self._comment_shift_x_mm = comment_shift_x_mm
         self._comment_shift_y_mm = comment_shift_y_mm
@@ -804,8 +804,8 @@ class _LegacyFuncAdapter:
         )
 
     def nm_text(self, txt_list: Any, color: str = "violet") -> None:
-        self.txt_with_locs.extend(
-            _legacy_comment_list_to_txt_with_locs(
+        self.text_annotations.extend(
+            _legacy_comment_list_to_text_annotations(
                 self._matrices,
                 txt_list,
                 comment_shift_x_mm=self._comment_shift_x_mm,

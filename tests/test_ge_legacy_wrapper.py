@@ -56,7 +56,7 @@ def test_ge_legacy_wrapper_supports_backgrounds_and_comments():
 
     assert out == "<svg/>"
     assert captured["codebefore"]
-    assert captured["txt_with_locs"]
+    assert captured["text_annotations"]
 
 
 def test_ge_legacy_wrapper_forwards_structured_decorations(monkeypatch):

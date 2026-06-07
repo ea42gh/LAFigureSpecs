@@ -28,7 +28,7 @@ from ._ge_legacy_compat import (
     _legacy_array_name_specs,
     _legacy_bg_for_entries_to_codebefore,
     _legacy_bg_list_to_codebefore,
-    _legacy_comment_list_to_txt_with_locs,
+    _legacy_comment_list_to_text_annotations,
     _legacy_name_specs_to_callouts,
     _legacy_pivot_list_to_pivot_locs,
     _legacy_ref_path_list_to_rowechelon_paths,
@@ -106,7 +106,7 @@ def _variable_summary_label_rows(
 def _build_typed_layout_spec(
     *,
     pivot_locs: Optional[Any],
-    txt_with_locs: Optional[Any],
+    text_annotations: Optional[Any],
     rowechelon_paths: Optional[Any],
     callouts: Optional[Any],
     nice_options: str,
@@ -118,7 +118,7 @@ def _build_typed_layout_spec(
     from matrixlayout.specs import GELayoutSpec, PivotBox, RowEchelonPath, TextAt
 
     typed_pivots = [PivotBox(*item) for item in (pivot_locs or [])]
-    typed_txt = [TextAt(*item) for item in (txt_with_locs or [])]
+    typed_text_annotations = [TextAt(*item) for item in (text_annotations or [])]
     typed_paths = [RowEchelonPath(str(p)) for p in (rowechelon_paths or [])]
 
     return GELayoutSpec(
@@ -126,7 +126,7 @@ def _build_typed_layout_spec(
         body_preamble=body_preamble,
         document_preamble=document_preamble,
         pivot_locs=typed_pivots,
-        txt_with_locs=typed_txt,
+        text_annotations=typed_text_annotations,
         rowechelon_paths=typed_paths,
         callouts=callouts,
         outer_delims=outer_delims,
@@ -286,7 +286,7 @@ def _build_ge_bundle(
         else:
             decorators = list(decorators) + pivot_decorators
 
-    txt_with_locs = list(decor.get("txt_with_locs") or [])
+    text_annotations = list(decor.get("text_annotations") or [])
     variable_labels: Optional[List[Dict[str, Any]]] = None
     eff_variable_summary = variable_summary
     if eff_variable_summary is None:
@@ -321,7 +321,7 @@ def _build_ge_bundle(
         "document_preamble": document_preamble,
         "nice_options": nice_options,
         "pivot_locs": pivot_locs,
-        "txt_with_locs": txt_with_locs,
+        "text_annotations": text_annotations,
         "variable_labels": variable_labels,
         "rowechelon_paths": rowechelon_paths,
         "callouts": callouts,
@@ -341,7 +341,7 @@ def _build_ge_bundle(
 
     typed_layout = _build_typed_layout_spec(
         pivot_locs=pivot_locs,
-        txt_with_locs=txt_with_locs,
+        text_annotations=text_annotations,
         rowechelon_paths=rowechelon_paths,
         callouts=callouts,
         nice_options=nice_options,
@@ -579,7 +579,7 @@ def ge(
     )
     needs_medium_nodes = bool(codebefore)
 
-    txt_with_locs = _legacy_comment_list_to_txt_with_locs(
+    text_annotations = _legacy_comment_list_to_text_annotations(
         matrices,
         comment_list,
         comment_shift_x_mm=comment_shift_x_mm,
@@ -658,7 +658,7 @@ def ge(
             _LegacyFuncAdapter(
                 matrices=matrices,
                 codebefore=codebefore,
-                txt_with_locs=txt_with_locs,
+                text_annotations=text_annotations,
                 rowechelon_paths=rowechelon_paths,
                 comment_shift_x_mm=comment_shift_x_mm,
                 comment_shift_y_mm=comment_shift_y_mm,
@@ -677,7 +677,7 @@ def ge(
         legacy_format=True,
         pivot_locs=pivot_locs,
         codebefore=codebefore,
-        txt_with_locs=txt_with_locs,
+        text_annotations=text_annotations,
         variable_labels=variable_labels,
         rowechelon_paths=rowechelon_paths,
         callouts=callouts or None,

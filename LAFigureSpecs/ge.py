@@ -564,7 +564,7 @@ def decorate_ge(
 
         Additional keys mirror the Julia ``decorate_ge`` helper:
         ``pivot_list``, ``bg_list``, ``path_list`` (aka ``ref_path_list``),
-        ``variable_summary``. Placeholder keys ``txt_with_locs`` and
+        ``variable_summary``. Placeholder keys ``text_annotations`` and
         ``rowechelon_paths`` are included for future increments.
     """
 
@@ -730,7 +730,7 @@ def decorate_ge(
         "pivot_cols": list(trace.pivot_cols),
         "free_cols": list(trace.free_cols),
         # Placeholders for later GE decoration increments.
-        "txt_with_locs": [],
+        "text_annotations": [],
         "rowechelon_paths": [],
         "callouts": [],
     }
