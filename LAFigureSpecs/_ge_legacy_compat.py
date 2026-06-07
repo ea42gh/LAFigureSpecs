@@ -242,27 +242,27 @@ def _legacy_array_name_specs(
     return terms
 
 
-def _nrhs_count(Nrhs: Any) -> int:
-    if Nrhs is None:
+def _n_rhs_count(n_rhs: Any) -> int:
+    if n_rhs is None:
         return 0
-    if isinstance(Nrhs, (list, tuple)):
-        return int(sum(int(x) for x in Nrhs))
+    if isinstance(n_rhs, (list, tuple)):
+        return int(sum(int(x) for x in n_rhs))
     try:
         import numpy as np
 
-        if isinstance(Nrhs, np.ndarray):
-            return int(np.sum(Nrhs))
+        if isinstance(n_rhs, np.ndarray):
+            return int(np.sum(n_rhs))
     except Exception:
         pass
     try:
-        return int(Nrhs)
+        return int(n_rhs)
     except Exception:
         return 0
 
 
-def _coerce_rhs_labels(rhs_list: Sequence[str], Nrhs: Any) -> List[str]:
+def _coerce_rhs_labels(rhs_list: Sequence[str], n_rhs: Any) -> List[str]:
     labels = list(rhs_list)
-    count = _nrhs_count(Nrhs)
+    count = _n_rhs_count(n_rhs)
     if count <= 0:
         return labels
     default_rhs = "b" if count == 1 else "B"
@@ -739,7 +739,7 @@ def _legacy_array_name_callouts(
     matrices: Sequence[Sequence[Any]],
     *,
     array_names: Optional[Any],
-    Nrhs: Any,
+    n_rhs: Any,
     start_index: Optional[int],
 ) -> List[Dict[str, Any]]:
     if array_names is None:
@@ -755,7 +755,7 @@ def _legacy_array_name_callouts(
         lhs, rhs_list = "E", ["A"]
     rhs_list = [str(x) for x in rhs_list]
     if not explicit_names:
-        rhs_list = _coerce_rhs_labels(rhs_list, Nrhs)
+        rhs_list = _coerce_rhs_labels(rhs_list, n_rhs)
     n_rows = len(matrices or [])
     name_specs = _legacy_array_name_specs(n_rows, str(lhs), rhs_list, start_index=start_index)
     return _legacy_name_specs_to_callouts(matrices, name_specs, color="blue")

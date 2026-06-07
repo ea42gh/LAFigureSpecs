@@ -8,7 +8,6 @@ def test_ge_trace_pivots_and_steps():
     trace = LAFigureSpecs.ge_trace(A, pivoting="none")
 
     assert trace.n_rhs == 0
-    assert trace.Nrhs == 0
     assert trace.pivot_cols == (0, 1)
     assert trace.free_cols == ()
     assert len(trace.steps) == 1

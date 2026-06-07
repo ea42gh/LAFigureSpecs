@@ -196,17 +196,17 @@ def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        ge(matrices, array_names=True, Nrhs=1)
+        ge(matrices, array_names=True, n_rhs=1)
         labels = _extract_labels(captured.get("callouts"))
         assert any(r"\mid  b" in label for label in labels)
 
         captured.clear()
-        ge(matrices, array_names=True, Nrhs=2)
+        ge(matrices, array_names=True, n_rhs=2)
         labels = _extract_labels(captured.get("callouts"))
         assert any(r"\mid  B" in label for label in labels)
 
         captured.clear()
-        ge(matrices, array_names=["E", ["A", "b"]], Nrhs=2)
+        ge(matrices, array_names=["E", ["A", "b"]], n_rhs=2)
         labels = _extract_labels(captured.get("callouts"))
         assert any(r"\mid  b" in label for label in labels)
     finally:

@@ -93,13 +93,6 @@ class GETrace:
     n_rhs: int
     meta: Mapping[str, Any]
 
-    @property
-    def Nrhs(self) -> int:
-        """Compatibility alias for the canonical ``n_rhs`` field."""
-
-        return self.n_rhs
-
-
     def events_as_dicts(self) -> List[Dict[str, Any]]:
         """Return the event stream as JSON-friendly dictionaries."""
 

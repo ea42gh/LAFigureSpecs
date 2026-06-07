@@ -44,7 +44,7 @@ def test_legacy_ge_disables_format_nrhs_when_using_decorations(monkeypatch):
     ]
     ge_conv.ge(
         matrices,
-        Nrhs=1,
+        n_rhs=1,
         variable_summary=[True, False],
     )
     assert captured.get("format_nrhs") is False
@@ -69,7 +69,7 @@ def test_legacy_ge_supports_nrhs_list(monkeypatch):
     ]
     ge_conv.ge(
         matrices,
-        Nrhs=[2, 3, 1],
+        n_rhs=[2, 3, 1],
         variable_summary=[True, False, False, False, False],
     )
     decorations = captured.get("decorations") or []

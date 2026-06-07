@@ -47,15 +47,11 @@ if TYPE_CHECKING:
 _UNSET = object()
 
 
-def _resolve_n_rhs_alias(*, n_rhs: Any = _UNSET, Nrhs: Any = _UNSET) -> Any:
-    """Resolve canonical ``n_rhs`` while keeping the legacy ``Nrhs`` keyword."""
+def _resolve_n_rhs(*, n_rhs: Any = _UNSET) -> Any:
+    """Resolve the canonical ``n_rhs`` keyword default."""
 
-    if n_rhs is not _UNSET and Nrhs is not _UNSET and n_rhs != Nrhs:
-        raise TypeError("Use either n_rhs or Nrhs, not both.")
     if n_rhs is not _UNSET:
         return n_rhs
-    if Nrhs is not _UNSET:
-        return Nrhs
     return 0
 
 
@@ -503,7 +499,6 @@ def ge(
     matrices: Sequence[Sequence[Any]],
     *,
     n_rhs: Any = _UNSET,
-    Nrhs: Any = _UNSET,
     formatter: Any = latexify,
     pivot_list: Optional[Sequence[Any]] = None,
     bg_for_entries: Optional[Any] = None,
@@ -532,7 +527,7 @@ def ge(
     **render_opts: Any,
 ) -> str:
     """Convenience wrapper for the GE rendering surface."""
-    n_rhs = _resolve_n_rhs_alias(n_rhs=n_rhs, Nrhs=Nrhs)
+    n_rhs = _resolve_n_rhs(n_rhs=n_rhs)
     body_preamble = render_opts.pop("body_preamble", render_opts.pop("preamble", None))
     document_preamble = render_opts.pop("document_preamble", render_opts.pop("extension", None))
 
@@ -643,7 +638,7 @@ def ge(
     callouts = _legacy_array_name_callouts(
         matrices,
         array_names=array_names,
-        Nrhs=n_rhs,
+        n_rhs=n_rhs,
         start_index=start_index,
     )
 

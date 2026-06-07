@@ -4,20 +4,20 @@ import pytest
 import sympy as sym
 
 
-def _legacy_ge_tex(matrices, *, Nrhs=0):
+def _legacy_ge_tex(matrices, *, n_rhs=0):
     itikz = pytest.importorskip("itikz")
     import numpy as np
 
     nM = itikz.nicematrix
     m = nM.MatrixGridLayout(matrices, extra_rows=None, extra_cols=None)
 
-    if isinstance(Nrhs, np.ndarray):
-        Nrhs = list(Nrhs.flatten())
+    if isinstance(n_rhs, np.ndarray):
+        n_rhs = list(n_rhs.flatten())
 
-    if not isinstance(Nrhs, list):
-        partitions = {} if Nrhs == 0 else {1: [m.mat_col_width[-1] - Nrhs]}
+    if not isinstance(n_rhs, list):
+        partitions = {} if n_rhs == 0 else {1: [m.mat_col_width[-1] - n_rhs]}
     else:
-        nrhs = Nrhs.copy()
+        nrhs = n_rhs.copy()
         cuts = [m.mat_col_width[-1] - sum(nrhs)]
         for cut in nrhs[0:-1]:
             cuts.append(cuts[-1] + cut)
@@ -46,7 +46,7 @@ def test_ge_submatrix_names_match_legacy_no_rhs():
     tr = LAFigureSpecs.ge_trace(A, pivoting="none")
     layers = LAFigureSpecs.trace_to_layer_matrices(tr, augmented=True)["matrices"]
 
-    legacy = _legacy_ge_tex(layers, Nrhs=0)
+    legacy = _legacy_ge_tex(layers, n_rhs=0)
     new = render_ge_tex(matrices=layers, n_rhs=0)
 
     legacy_names = _submatrix_names(legacy)
@@ -67,7 +67,7 @@ def test_ge_submatrix_names_match_legacy_with_rhs():
     tr = LAFigureSpecs.ge_trace(A, rhs, pivoting="none")
     layers = LAFigureSpecs.trace_to_layer_matrices(tr, augmented=True)["matrices"]
 
-    legacy = _legacy_ge_tex(layers, Nrhs=1)
+    legacy = _legacy_ge_tex(layers, n_rhs=1)
     new = render_ge_tex(matrices=layers, n_rhs=1)
 
     legacy_names = _submatrix_names(legacy)

@@ -141,7 +141,7 @@ class ShowGE:
         if not mats:
             return self.A, self.rhs
         last = mats[-1][1]
-        nrhs = int(layers.get("n_rhs", layers.get("Nrhs")) or 0)
+        nrhs = int(layers.get("n_rhs") or 0)
         if nrhs <= 0:
             return last, None
         return last[:, :-nrhs], last[:, -nrhs:]
@@ -211,7 +211,7 @@ class ShowGE:
         if Ab is None:
             return None
         layers = self._get_layers()
-        nrhs = int(layers.get("n_rhs", layers.get("Nrhs")) or 0)
+        nrhs = int(layers.get("n_rhs") or 0)
         if nrhs <= 0:
             return Ab
         return Ab[:, :-nrhs]
@@ -222,7 +222,7 @@ class ShowGE:
         if Ab is None:
             return None
         layers = self._get_layers()
-        nrhs = int(layers.get("n_rhs", layers.get("Nrhs")) or 0)
+        nrhs = int(layers.get("n_rhs") or 0)
         if nrhs <= 0:
             return None
         return Ab[:, -nrhs:]
@@ -354,7 +354,7 @@ class ShowGE:
                 array_names = {"name_specs": name_specs}
             svg = legacy_ge(
                 layers.get("matrices"),
-                n_rhs=layers.get("n_rhs", layers.get("Nrhs")) or 0,
+                n_rhs=layers.get("n_rhs") or 0,
                 pivot_list=decor.get("pivot_list") if self.show_pivots else None,
                 bg_for_entries=bg_for_entries,
                 ref_path_list=decor.get("ref_path_list"),
@@ -390,7 +390,7 @@ class ShowGE:
                     var_summary = decor.get("basic_var") if var_summary else None
                 svg = legacy_ge(
                     mats,
-                    n_rhs=layers.get("n_rhs", layers.get("Nrhs")) or 0,
+                    n_rhs=layers.get("n_rhs") or 0,
                     pivot_list=decor.get("pivot_list") if self.show_pivots else None,
                     bg_for_entries=bg_for_entries,
                     ref_path_list=decor.get("ref_path_list"),
