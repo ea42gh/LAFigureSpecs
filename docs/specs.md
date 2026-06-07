@@ -4,8 +4,8 @@
 `*_layout_spec` functions return typed layout objects (use `.to_dict()` for dict access).
 
 Specs emitted for matrixlayout use `body_preamble` for document-body setup and
-`document_preamble` for true LaTeX preamble insertion. GE and QR computed
-wrappers use those same canonical keyword names.
+`document_preamble` for true LaTeX preamble insertion. GE, QR, eigen, and SVD
+computed wrappers use those same canonical keyword names where TeX hooks apply.
 
 Selectors and decorators use 0-based entry indices within each matrix block.
 Grid positions are addressed by (row, column) in the outer list.
