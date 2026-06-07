@@ -232,3 +232,43 @@ def test_ge_legacy_wrapper_supports_canonical_n_rhs_keyword():
         ml_ge.render_ge_svg = ge_svg_orig
 
     assert captured["n_rhs"] == 1
+
+
+def test_ge_legacy_wrapper_uses_canonical_tex_hook_names(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
+
+    matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    assert ge(matrices, body_preamble="%body", document_preamble="%doc") == "<svg/>"
+
+    assert captured["body_preamble"] == "%body"
+    assert captured["document_preamble"] == "%doc"
+
+
+def test_ge_legacy_wrapper_does_not_translate_removed_tex_hook_aliases(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
+
+    matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    assert ge(matrices, preamble="%old-body", extension="%old-doc") == "<svg/>"
+
+    assert captured["body_preamble"] == ""
+    assert captured["document_preamble"] == ""
+    assert captured["preamble"] == "%old-body"
+    assert captured["extension"] == "%old-doc"
