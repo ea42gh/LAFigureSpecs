@@ -59,8 +59,8 @@ class ShowGE:
     index_base: int = 0
     pivot_style: str = ""
     pivot_text_color: str = "red"
-    preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n"
-    extension: str = ""
+    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n"
+    document_preamble: str = ""
     row_stretch: Optional[float] = None
     nice_options: str = ""
     outer_delims: bool = False
@@ -362,8 +362,8 @@ class ShowGE:
                 variable_colors=self.variable_colors,
                 array_names=array_names,
                 fig_scale=self.fig_scale,
-                preamble=self.preamble,
-                extension=self.extension,
+                body_preamble=self.body_preamble,
+                document_preamble=self.document_preamble,
                 nice_options=self.nice_options,
                 outer_hspace_mm=self.outer_hspace_mm,
                 cell_align=self.cell_align,
@@ -398,8 +398,8 @@ class ShowGE:
                     variable_colors=self.variable_colors,
                     array_names=array_names,
                     fig_scale=self.fig_scale,
-                    preamble=self.preamble,
-                    extension=self.extension,
+                    body_preamble=self.body_preamble,
+                    document_preamble=self.document_preamble,
                     nice_options=self.nice_options,
                     outer_hspace_mm=self.outer_hspace_mm,
                     cell_align=self.cell_align,
@@ -417,8 +417,8 @@ class ShowGE:
                     index_base=self.index_base,
                     pivot_style=self.pivot_style,
                     pivot_text_color=self.pivot_text_color,
-                    preamble=self.preamble,
-                    extension=self.extension,
+                    body_preamble=self.body_preamble,
+                    document_preamble=self.document_preamble,
                     row_stretch=self.row_stretch,
                     nice_options=self.nice_options,
                     outer_delims=self.outer_delims,

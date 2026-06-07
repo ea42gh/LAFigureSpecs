@@ -110,8 +110,8 @@ def _build_typed_layout_spec(
     rowechelon_paths: Optional[Any],
     callouts: Optional[Any],
     nice_options: str,
-    preamble: str,
-    extension: str,
+    body_preamble: str,
+    document_preamble: str,
     fig_scale: Optional[Any],
     outer_delims: bool,
 ) -> "GELayoutSpec":
@@ -123,8 +123,8 @@ def _build_typed_layout_spec(
 
     return GELayoutSpec(
         nice_options=nice_options,
-        body_preamble=preamble,
-        document_preamble=extension,
+        body_preamble=body_preamble,
+        document_preamble=document_preamble,
         pivot_locs=typed_pivots,
         txt_with_locs=typed_txt,
         rowechelon_paths=typed_paths,
@@ -133,11 +133,11 @@ def _build_typed_layout_spec(
     )
 
 
-def _merge_extension(extension: str, row_stretch: Optional[float]) -> str:
+def _merge_document_preamble(document_preamble: str, row_stretch: Optional[float]) -> str:
     if row_stretch is None:
-        return extension
+        return document_preamble
     cmd = rf"\renewcommand{{\arraystretch}}{{{row_stretch}}}"
-    ext = extension or ""
+    ext = document_preamble or ""
     if cmd in ext:
         return ext
     if ext and not ext.endswith("\n"):
@@ -158,8 +158,8 @@ def _build_ge_bundle(
     index_base: int = 1,
     pivot_style: str = "",
     pivot_text_color: str = "red",
-    preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
-    extension: str = "",
+    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
+    document_preamble: str = "",
     row_stretch: Optional[float] = None,
     nice_options: str = "",
     outer_delims: bool = False,
@@ -181,7 +181,7 @@ def _build_ge_bundle(
     if ref_rhs is None:
         ref_rhs = rhs
 
-    extension = _merge_extension(extension, row_stretch)
+    document_preamble = _merge_document_preamble(document_preamble, row_stretch)
 
     tr: GETrace = ge_trace(ref_A, ref_rhs, pivoting=cast(Literal["none", "partial"], pivoting), gj=gj)
 
@@ -317,8 +317,8 @@ def _build_ge_bundle(
     spec: Dict[str, Any] = {
         "matrices": layers["matrices"],
         "n_rhs": int(tr.n_rhs or 0),
-        "body_preamble": preamble,
-        "document_preamble": extension,
+        "body_preamble": body_preamble,
+        "document_preamble": document_preamble,
         "nice_options": nice_options,
         "pivot_locs": pivot_locs,
         "txt_with_locs": txt_with_locs,
@@ -345,8 +345,8 @@ def _build_ge_bundle(
         rowechelon_paths=rowechelon_paths,
         callouts=callouts,
         nice_options=nice_options,
-        preamble=preamble,
-        extension=extension,
+        body_preamble=body_preamble,
+        document_preamble=document_preamble,
         fig_scale=fig_scale,
         outer_delims=bool(outer_delims),
     )
@@ -371,8 +371,8 @@ def ge_tbl_spec(
     index_base: int = 0,
     pivot_style: str = "",
     pivot_text_color: str = "red",
-    preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
-    extension: str = "",
+    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
+    document_preamble: str = "",
     row_stretch: Optional[float] = None,
     nice_options: str = "",
     outer_delims: bool = False,
@@ -402,8 +402,8 @@ def ge_tbl_spec(
         index_base=index_base,
         pivot_style=pivot_style,
         pivot_text_color=pivot_text_color,
-        preamble=preamble,
-        extension=extension,
+        body_preamble=body_preamble,
+        document_preamble=document_preamble,
         row_stretch=row_stretch,
         nice_options=nice_options,
         outer_delims=outer_delims,
@@ -431,8 +431,8 @@ def ge_tbl_layout_spec(
     index_base: int = 0,
     pivot_style: str = "",
     pivot_text_color: str = "red",
-    preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
-    extension: str = "",
+    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
+    document_preamble: str = "",
     row_stretch: Optional[float] = None,
     nice_options: str = "",
     outer_delims: bool = False,
@@ -458,8 +458,8 @@ def ge_tbl_layout_spec(
         show_pivots=show_pivots,
         index_base=index_base,
         pivot_style=pivot_style,
-        preamble=preamble,
-        extension=extension,
+        body_preamble=body_preamble,
+        document_preamble=document_preamble,
         row_stretch=row_stretch,
         nice_options=nice_options,
         outer_delims=outer_delims,
@@ -719,8 +719,8 @@ def ge_tbl_bundle(
     index_base: int = 1,
     pivot_style: str = "",
     pivot_text_color: str = "red",
-    preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
-    extension: str = "",
+    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
+    document_preamble: str = "",
     row_stretch: Optional[float] = None,
     nice_options: str = "",
     outer_delims: bool = False,
@@ -747,8 +747,8 @@ def ge_tbl_bundle(
         index_base=index_base,
         pivot_style=pivot_style,
         pivot_text_color=pivot_text_color,
-        preamble=preamble,
-        extension=extension,
+        body_preamble=body_preamble,
+        document_preamble=document_preamble,
         row_stretch=row_stretch,
         nice_options=nice_options,
         outer_delims=outer_delims,
@@ -826,8 +826,8 @@ def ge_tbl_tex(
     index_base: int = 1,
     pivot_style: str = "",
     pivot_text_color: str = "red",
-    preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
-    extension: str = "",
+    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
+    document_preamble: str = "",
     row_stretch: Optional[float] = None,
     nice_options: str = "",
     outer_delims: bool = False,
@@ -853,8 +853,8 @@ def ge_tbl_tex(
         show_pivots=show_pivots,
         index_base=index_base,
         pivot_style=pivot_style,
-        preamble=preamble,
-        extension=extension,
+        body_preamble=body_preamble,
+        document_preamble=document_preamble,
         row_stretch=row_stretch,
         nice_options=nice_options,
         outer_delims=outer_delims,
@@ -882,8 +882,8 @@ def ge_tbl_svg(
     index_base: int = 1,
     pivot_style: str = "",
     pivot_text_color: str = "red",
-    preamble: str = r" \NiceMatrixOptions{cell-space-limits = 1pt}" + "\n",
-    extension: str = "",
+    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 1pt}" + "\n",
+    document_preamble: str = "",
     row_stretch: Optional[float] = None,
     nice_options: str = "",
     outer_delims: bool = False,
@@ -918,8 +918,8 @@ def ge_tbl_svg(
         index_base=index_base,
         pivot_style=pivot_style,
         pivot_text_color=pivot_text_color,
-        preamble=preamble,
-        extension=extension,
+        body_preamble=body_preamble,
+        document_preamble=document_preamble,
         row_stretch=row_stretch,
         nice_options=nice_options,
         outer_delims=outer_delims,
