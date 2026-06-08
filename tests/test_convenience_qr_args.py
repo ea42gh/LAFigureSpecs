@@ -36,6 +36,16 @@ def test_qr_tbl_spec_sets_create_extra_nodes_for_array_names():
     assert spec.get("create_extra_nodes") is True
 
 
+def test_qr_tbl_spec_sets_create_extra_nodes_for_callouts():
+    A = sym.Matrix([[1, 2], [3, 4]])
+    callouts = [{"grid": (0, 2), "label": "A", "side": "right"}]
+
+    spec = LAFigureSpecs.qr_tbl_spec(A, array_names=False, callouts=callouts)
+
+    assert spec.get("callouts") == callouts
+    assert spec.get("create_extra_nodes") is True
+
+
 def test_qr_tbl_tex_passes_strict_override(monkeypatch):
     import LAFigureSpecs.convenience_qr as convenience_qr
 
@@ -58,6 +68,28 @@ def test_qr_tbl_tex_passes_strict_override(monkeypatch):
     assert tex == "tex"
     assert captured["strict"] is True
     assert captured["spec"]["array_names"] is True
+
+
+def test_qr_tbl_tex_forwards_callouts(monkeypatch):
+    import LAFigureSpecs.convenience_qr as convenience_qr
+
+    captured: Dict[str, Any] = {}
+    callouts = [{"grid": (0, 2), "label": "A", "side": "right"}]
+
+    def fake_render_qr_tex_from_spec(spec, *, formatter, strict):
+        captured["spec"] = spec
+        return "tex"
+
+    monkeypatch.setattr(
+        convenience_qr,
+        "_render_qr_tex_from_spec",
+        fake_render_qr_tex_from_spec,
+    )
+
+    tex = convenience_qr.qr_tbl_tex([[1, 0], [0, 1]], array_names=False, callouts=callouts)
+
+    assert tex == "tex"
+    assert captured["spec"]["callouts"] == callouts
 
 
 def test_qr_tbl_bundle_success_uses_default_svg_options(monkeypatch):

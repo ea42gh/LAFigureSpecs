@@ -258,6 +258,7 @@ def naive_qr(
 def qr_tbl_spec(
     A: Any,
     *,
+    callouts: Optional[Sequence[Any]] = None,
     array_names: Any = True,
     fig_scale: Optional[Any] = None,
     body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt}" + "\n",
@@ -274,6 +275,7 @@ def qr_tbl_spec(
     matrices = compute_qr_matrices(A)
     return {
         "matrices": matrices,
+        "callouts": callouts,
         "array_names": array_names,
         "fig_scale": fig_scale,
         "body_preamble": body_preamble,
@@ -284,13 +286,14 @@ def qr_tbl_spec(
         "known_zero_color": known_zero_color,
         "decorators": decorators,
         "strict": strict,
-        "create_extra_nodes": True if array_names else None,
+        "create_extra_nodes": True if (array_names or callouts) else None,
     }
 
 
 def qr_tbl_layout_spec(
     A: Any,
     *,
+    callouts: Optional[Sequence[Any]] = None,
     array_names: Any = True,
     fig_scale: Optional[Any] = None,
     body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt}" + "\n",
@@ -308,6 +311,7 @@ def qr_tbl_layout_spec(
 
     spec = qr_tbl_spec(
         A,
+        callouts=callouts,
         array_names=array_names,
         fig_scale=fig_scale,
         body_preamble=body_preamble,
@@ -325,6 +329,7 @@ def qr_tbl_layout_spec(
 def qr_tbl_spec_from_matrices(
     matrices: Sequence[Sequence[Any]],
     *,
+    callouts: Optional[Sequence[Any]] = None,
     array_names: Any = True,
     fig_scale: Optional[Any] = None,
     body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt}" + "\n",
@@ -340,6 +345,7 @@ def qr_tbl_spec_from_matrices(
 
     return {
         "matrices": matrices,
+        "callouts": callouts,
         "array_names": array_names,
         "fig_scale": fig_scale,
         "body_preamble": body_preamble,

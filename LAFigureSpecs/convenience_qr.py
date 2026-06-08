@@ -10,6 +10,7 @@ from .qr import gram_schmidt_qr_matrices, qr_tbl_spec, qr_tbl_spec_from_matrices
 
 _UNSET = object()
 _QR_SPEC_KEYS = {
+    "callouts",
     "array_names",
     "fig_scale",
     "body_preamble",
@@ -34,6 +35,7 @@ def _render_qr_tex_from_spec(
     return render_qr_tex(
         matrices=spec["matrices"],
         formatter=formatter,
+        callouts=spec.get("callouts"),
         array_names=spec["array_names"],
         fig_scale=spec["fig_scale"],
         body_preamble=spec.get("body_preamble") or "",
@@ -76,6 +78,7 @@ def _render_qr_svg_from_spec(
     return render_qr_svg(
         matrices=spec["matrices"],
         formatter=formatter,
+        callouts=spec.get("callouts"),
         array_names=spec["array_names"],
         fig_scale=spec["fig_scale"],
         body_preamble=spec.get("body_preamble") or "",
@@ -93,6 +96,7 @@ def _render_qr_svg_from_spec(
 def qr_tbl_tex(
     A: Any,
     *,
+    callouts: Optional[Any] = None,
     array_names: Any = True,
     formatter: Any = latexify,
     fig_scale: Optional[Any] = None,
@@ -109,6 +113,7 @@ def qr_tbl_tex(
 
     spec = qr_tbl_spec(
         A,
+        callouts=callouts,
         array_names=array_names,
         fig_scale=fig_scale,
         body_preamble=body_preamble,
@@ -127,6 +132,7 @@ def qr_tbl_tex(
 def qr_tbl_svg(
     A: Any,
     *,
+    callouts: Optional[Any] = None,
     array_names: Any = True,
     formatter: Any = latexify,
     fig_scale: Optional[Any] = None,
@@ -151,6 +157,7 @@ def qr_tbl_svg(
 
     spec = qr_tbl_spec(
         A,
+        callouts=callouts,
         array_names=array_names,
         fig_scale=fig_scale,
         body_preamble=body_preamble,
@@ -232,6 +239,7 @@ def qr(
     matrices: Any,
     *,
     formatter: Any = latexify,
+    callouts: Optional[Any] = None,
     array_names: Any = True,
     fig_scale: Optional[Any] = None,
     body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt}" + "\n",
@@ -255,6 +263,7 @@ def qr(
 
     spec = qr_tbl_spec_from_matrices(
         matrices,
+        callouts=callouts,
         array_names=array_names,
         fig_scale=fig_scale,
         body_preamble=body_preamble,
@@ -293,6 +302,7 @@ def gram_schmidt_qr(
     A: Any,
     *,
     formatter: Any = latexify,
+    callouts: Optional[Any] = None,
     array_names: Any = True,
     allow_rank_deficient: bool = False,
     rank_deficient: Optional[str] = None,
@@ -323,6 +333,7 @@ def gram_schmidt_qr(
     )
     spec = qr_tbl_spec_from_matrices(
         matrices,
+        callouts=callouts,
         array_names=array_names,
         fig_scale=fig_scale,
         body_preamble=body_preamble,

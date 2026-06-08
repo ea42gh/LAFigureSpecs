@@ -87,5 +87,7 @@ def test_qr_specs_from_matrices_and_layout_spec():
     assert spec["array_names"] is False
     assert spec["fig_scale"] == 1.2
 
-    layout = qr_tbl_layout_spec([[1, 0], [1, 1]])
+    callouts = [{"grid": (0, 2), "label": "A", "side": "right"}]
+    layout = qr_tbl_layout_spec([[1, 0], [1, 1]], callouts=callouts, array_names=False)
     assert layout.matrices
+    assert layout.callouts == callouts

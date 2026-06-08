@@ -102,6 +102,7 @@ vertical lines only appear in the matrix rows.
 | --- | --- | --- | --- |
 | `A` | matrix | required | Input matrix. |
 | `W` | matrix | required | Computed internally via naive Gram–Schmidt (LCD-scaled, no normalization). |
+| `callouts` | list | None | Explicit matrix labels/annotations. |
 | `array_names` | bool/list | True | Enable labels or custom list. |
 | `fig_scale` | float | None | Figure scale. |
 | `body_preamble` | str | nicematrix opts | Document-body setup emitted to matrixlayout. |
