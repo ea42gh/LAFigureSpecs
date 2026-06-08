@@ -226,7 +226,7 @@ def test_show_ge_inconsistent_rhs_status_and_solution(monkeypatch):
     assert captured["show_cascade"] is True
 
 
-def test_show_ge_normal_eq_name_specs(monkeypatch):
+def test_show_ge_normal_eq_uses_callouts(monkeypatch):
     import LAFigureSpecs
     import sympy as sym
 
@@ -244,10 +244,9 @@ def test_show_ge_normal_eq_name_specs(monkeypatch):
     show.ref()
     show.show_layout()
 
-    array_names = captured.get("array_names")
-    assert isinstance(array_names, dict)
-    specs = array_names.get("name_specs") or []
-    labels = [entry[2] for entry in specs]
+    assert captured.get("array_names") is None
+    callouts = captured.get("callouts") or []
+    labels = [entry.get("label", "") for entry in callouts]
     assert any("A^T" in lbl for lbl in labels)
 
 
@@ -260,6 +259,7 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
     def fake_ge(mats, **kwargs):
         captured["legacy"] += 1
         captured["mats_len"] = len(mats)
+        captured.update(kwargs)
         return "<svg/>"
 
     def fail_ge_tbl_svg(*args, **kwargs):
@@ -270,12 +270,14 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
-    show = LAFigureSpecs.ShowGE(A, b, gj=True)
+    callouts = [{"name": "M-0-1", "label": "A", "side": "above"}]
+    show = LAFigureSpecs.ShowGE(A, b, gj=True, callouts=callouts)
     show.ref()
     show.show_layout()
 
     assert captured["legacy"] == 1
     assert captured["mats_len"] > 1
+    assert captured["callouts"] == callouts
 
 
 def test_show_ge_layout_forwards_python_decorate_ge_backgrounds(monkeypatch):

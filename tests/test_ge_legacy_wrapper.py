@@ -212,6 +212,63 @@ def test_ge_legacy_wrapper_can_suppress_array_name_indices():
     assert any(r"E A \mid  E b" in label for label in labels)
 
 
+def test_ge_legacy_wrapper_forwards_explicit_callouts():
+    from LAFigureSpecs.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
+
+    A0 = sym.Matrix([[1, 2], [3, 4]])
+    E1 = sym.eye(2)
+    A1 = sym.Matrix([[1, 2], [0, 1]])
+    matrices = [[None, A0], [E1, A1]]
+    callouts = [{"name": "M-0-1", "label": "A", "side": "above"}]
+
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    ge_svg_orig = ml_ge.render_ge_svg
+    ml_ge.render_ge_svg = fake_svg
+    try:
+        out = ge(matrices, callouts=callouts)
+    finally:
+        ml_ge.render_ge_svg = ge_svg_orig
+
+    assert out == "<svg/>"
+    assert captured["callouts"] == callouts
+
+
+def test_ge_legacy_wrapper_keeps_name_specs_compatibility():
+    from LAFigureSpecs.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
+
+    A0 = sym.Matrix([[1, 2], [3, 4]])
+    E1 = sym.eye(2)
+    A1 = sym.Matrix([[1, 2], [0, 1]])
+    matrices = [[None, A0], [E1, A1]]
+
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    ge_svg_orig = ml_ge.render_ge_svg
+    ml_ge.render_ge_svg = fake_svg
+    try:
+        out = ge(
+            matrices,
+            array_names={"name_specs": [((0, 1), "ar", "$A$")]},
+        )
+    finally:
+        ml_ge.render_ge_svg = ge_svg_orig
+
+    assert out == "<svg/>"
+    labels = [c.get("label", "") for c in captured["callouts"]]
+    assert labels == ["A"]
+
+
 def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():
     from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge

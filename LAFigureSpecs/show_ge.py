@@ -6,6 +6,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 from .ge import Pivoting, ge_trace, trace_to_layer_matrices
 from .backsub import backsubstitution_tex, linear_system_tex, standard_solution_tex
 from .ge_convenience import ge_tbl_svg
+from ._ge_legacy_compat import _name_specs_to_callouts
 from ._sympy_utils import to_sympy_col, to_sympy_matrix
 
 
@@ -344,14 +345,20 @@ class ShowGE:
                 var_summary = decor.get("basic_var")
             elif isinstance(var_summary, bool):
                 var_summary = decor.get("basic_var") if var_summary else None
-            if not isinstance(array_names, dict):
+            callouts = self.callouts
+            if callouts is None and not isinstance(array_names, dict):
                 try:
                     _, rhs = array_names
                     rhs_labels = [str(x) for x in rhs]
                 except Exception:
                     rhs_labels = ["A"]
                 name_specs = _normal_eq_name_specs(len(layers.get("matrices") or []), rhs_labels)
-                array_names = {"name_specs": name_specs}
+                callouts = _name_specs_to_callouts(
+                    layers.get("matrices") or [],
+                    name_specs,
+                    color="blue",
+                    legacy_submatrix_names=True,
+                )
             svg = legacy_ge(
                 layers.get("matrices"),
                 n_rhs=layers.get("n_rhs") or 0,
@@ -360,7 +367,8 @@ class ShowGE:
                 ref_path_list=decor.get("ref_path_list"),
                 variable_summary=var_summary,
                 variable_colors=self.variable_colors,
-                array_names=array_names,
+                callouts=callouts,
+                array_names=array_names if callouts is None else None,
                 fig_scale=self.fig_scale,
                 body_preamble=self.body_preamble,
                 document_preamble=self.document_preamble,
@@ -396,6 +404,7 @@ class ShowGE:
                     ref_path_list=decor.get("ref_path_list"),
                     variable_summary=var_summary,
                     variable_colors=self.variable_colors,
+                    callouts=self.callouts,
                     array_names=array_names,
                     fig_scale=self.fig_scale,
                     body_preamble=self.body_preamble,

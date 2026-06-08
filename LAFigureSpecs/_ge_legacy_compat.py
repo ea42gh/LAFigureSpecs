@@ -288,7 +288,7 @@ def _coerce_rhs_labels(rhs_list: Sequence[str], n_rhs: Any) -> List[str]:
     return labels
 
 
-def _legacy_name_specs_to_callouts(
+def _name_specs_to_callouts(
     matrices: Sequence[Sequence[Any]],
     name_specs: Sequence[Tuple[Tuple[int, int], str, str]],
     *,
@@ -336,6 +336,21 @@ def _legacy_name_specs_to_callouts(
             }
         )
     return out
+
+
+def _legacy_name_specs_to_callouts(
+    matrices: Sequence[Sequence[Any]],
+    name_specs: Sequence[Tuple[Tuple[int, int], str, str]],
+    *,
+    color: str = "blue",
+    legacy_submatrix_names: bool = True,
+) -> List[Dict[str, Any]]:
+    return _name_specs_to_callouts(
+        matrices,
+        name_specs,
+        color=color,
+        legacy_submatrix_names=legacy_submatrix_names,
+    )
 
 
 def _legacy_ref_path_list_to_rowechelon_paths(
@@ -759,7 +774,7 @@ def _array_name_callouts(
         return []
     if isinstance(array_names, dict) and "name_specs" in array_names:
         name_specs = array_names.get("name_specs") or []
-        return _legacy_name_specs_to_callouts(matrices, name_specs, color="blue")
+        return _name_specs_to_callouts(matrices, name_specs, color="blue")
     explicit_names = array_names is not True
     try:
         lhs, rhs = array_names
@@ -777,7 +792,7 @@ def _array_name_callouts(
         start_index=start_index,
         array_name_indices=array_name_indices,
     )
-    return _legacy_name_specs_to_callouts(matrices, name_specs, color="blue")
+    return _name_specs_to_callouts(matrices, name_specs, color="blue")
 
 
 def _legacy_array_name_callouts(

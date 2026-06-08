@@ -41,6 +41,10 @@ Grid positions are addressed by (row, column) in the outer list.
 | `variable_colors` | tuple | ("red","black") | Colors for pivot/free indicators. |
 | `strict` | bool | None | Error on invalid decorators. |
 
+Use `callouts` for explicit matrix labels/annotations. `array_names` is a
+convenience shorthand that expands to callouts; `array_name_indices=false`
+suppresses the generated step indices.
+
 When `strict=True`, invalid decorator selectors raise errors instead of being ignored.
 
 Pivot rendering:

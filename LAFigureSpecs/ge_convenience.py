@@ -29,7 +29,7 @@ from ._ge_legacy_compat import (
     _legacy_bg_for_entries_to_codebefore,
     _legacy_bg_list_to_codebefore,
     _legacy_comment_list_to_text_annotations,
-    _legacy_name_specs_to_callouts,
+    _name_specs_to_callouts,
     _legacy_pivot_list_to_pivot_locs,
     _legacy_ref_path_list_to_rowechelon_paths,
     _legacy_ref_paths_to_rowechelon_paths,
@@ -248,7 +248,7 @@ def _build_ge_bundle(
             start_index=index_base,
             array_name_indices=array_name_indices,
         )
-        extra_callouts = _legacy_name_specs_to_callouts(
+        extra_callouts = _name_specs_to_callouts(
             layers["matrices"],
             name_specs,
             color="blue",
@@ -521,6 +521,7 @@ def ge(
     comment_shift_y_mm: float = 0.0,
     variable_summary: Optional[Any] = None,
     rhs_status: Optional[Sequence[Any]] = None,
+    callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
     array_name_indices: bool = True,
     specs: Optional[Any] = None,
@@ -654,13 +655,19 @@ def ge(
 
     rowechelon_paths: List[str] = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
 
-    callouts = _array_name_callouts(
+    generated_callouts = _array_name_callouts(
         matrices,
         array_names=array_names,
         n_rhs=n_rhs,
         start_index=start_index,
         array_name_indices=array_name_indices,
     )
+    if callouts is None:
+        render_callouts = generated_callouts
+    elif isinstance(callouts, list) and generated_callouts:
+        render_callouts = list(callouts) + generated_callouts
+    else:
+        render_callouts = callouts
 
     if func is not None:
         def _mark_medium_nodes() -> None:
@@ -693,7 +700,7 @@ def ge(
         text_annotations=text_annotations,
         variable_labels=variable_labels,
         rowechelon_paths=rowechelon_paths,
-        callouts=callouts or None,
+        callouts=render_callouts or None,
         create_extra_nodes=True if (ref_path_list or needs_medium_nodes) else None,
         create_medium_nodes=True if (ref_path_list or needs_medium_nodes) else None,
         decorations=render_decorations or None,
