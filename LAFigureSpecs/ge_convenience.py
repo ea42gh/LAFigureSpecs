@@ -22,10 +22,10 @@ from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify
 from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
 from ._ge_legacy_compat import (
+    _array_name_callouts,
+    _array_name_specs,
     _coerce_rhs_labels,
     _grid_offsets,
-    _legacy_array_name_callouts,
-    _legacy_array_name_specs,
     _legacy_bg_for_entries_to_codebefore,
     _legacy_bg_list_to_codebefore,
     _legacy_comment_list_to_text_annotations,
@@ -167,6 +167,7 @@ def _build_ge_bundle(
     cell_align: str = "r",
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
+    array_name_indices: bool = True,
     decorators: Optional[Sequence[Any]] = None,
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
@@ -240,7 +241,13 @@ def _build_ge_bundle(
         rhs_list = [str(x) for x in rhs_list]
         if not explicit_names:
             rhs_list = _coerce_rhs_labels(rhs_list, tr.n_rhs)
-        name_specs = _legacy_array_name_specs(len(layers["matrices"]), str(lhs), rhs_list, start_index=index_base)
+        name_specs = _array_name_specs(
+            len(layers["matrices"]),
+            str(lhs),
+            rhs_list,
+            start_index=index_base,
+            array_name_indices=array_name_indices,
+        )
         extra_callouts = _legacy_name_specs_to_callouts(
             layers["matrices"],
             name_specs,
@@ -380,6 +387,7 @@ def ge_tbl_spec(
     cell_align: str = "r",
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
+    array_name_indices: bool = True,
     decorators: Optional[Sequence[Any]] = None,
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
@@ -411,6 +419,7 @@ def ge_tbl_spec(
         cell_align=cell_align,
         callouts=callouts,
         array_names=array_names,
+        array_name_indices=array_name_indices,
         decorators=decorators,
         fig_scale=fig_scale,
         variable_summary=variable_summary,
@@ -440,6 +449,7 @@ def ge_tbl_layout_spec(
     cell_align: str = "r",
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
+    array_name_indices: bool = True,
     decorators: Optional[Sequence[Any]] = None,
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
@@ -467,6 +477,7 @@ def ge_tbl_layout_spec(
         cell_align=cell_align,
         callouts=callouts,
         array_names=array_names,
+        array_name_indices=array_name_indices,
         decorators=decorators,
         fig_scale=fig_scale,
         variable_summary=variable_summary,
@@ -511,6 +522,7 @@ def ge(
     variable_summary: Optional[Any] = None,
     rhs_status: Optional[Sequence[Any]] = None,
     array_names: Optional[Any] = None,
+    array_name_indices: bool = True,
     specs: Optional[Any] = None,
     start_index: Optional[int] = 1,
     func: Optional[Any] = None,
@@ -642,11 +654,12 @@ def ge(
 
     rowechelon_paths: List[str] = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
 
-    callouts = _legacy_array_name_callouts(
+    callouts = _array_name_callouts(
         matrices,
         array_names=array_names,
         n_rhs=n_rhs,
         start_index=start_index,
+        array_name_indices=array_name_indices,
     )
 
     if func is not None:
@@ -735,6 +748,7 @@ def ge_tbl_bundle(
     cell_align: str = "r",
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
+    array_name_indices: bool = True,
     decorators: Optional[Sequence[Any]] = None,
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
@@ -763,6 +777,7 @@ def ge_tbl_bundle(
         cell_align=cell_align,
         callouts=callouts,
         array_names=array_names,
+        array_name_indices=array_name_indices,
         decorators=decorators,
         fig_scale=fig_scale,
         variable_summary=variable_summary,
@@ -842,6 +857,7 @@ def ge_tbl_tex(
     cell_align: str = "r",
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
+    array_name_indices: bool = True,
     decorators: Optional[Sequence[Any]] = None,
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
@@ -869,6 +885,7 @@ def ge_tbl_tex(
         cell_align=cell_align,
         callouts=callouts,
         array_names=array_names,
+        array_name_indices=array_name_indices,
         decorators=decorators,
         fig_scale=fig_scale,
         variable_summary=variable_summary,
@@ -906,6 +923,7 @@ def ge_tbl_svg(
     render_opts: Optional[Dict[str, Any]] = None,
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
+    array_name_indices: bool = True,
     decorators: Optional[Sequence[Any]] = None,
     fig_scale: Optional[Any] = None,
     variable_summary: Optional[Any] = None,
@@ -934,6 +952,7 @@ def ge_tbl_svg(
         cell_align=cell_align,
         callouts=callouts,
         array_names=array_names,
+        array_name_indices=array_name_indices,
         decorators=decorators,
         fig_scale=fig_scale,
         variable_summary=variable_summary,

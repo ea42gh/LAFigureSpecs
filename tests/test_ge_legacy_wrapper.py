@@ -173,6 +173,43 @@ def test_ge_legacy_wrapper_supports_array_names():
 
     assert out == "<svg/>"
     assert captured["callouts"]
+    labels = [c.get("label", "") for c in captured["callouts"]]
+    assert any("E_1" in label for label in labels)
+
+
+def test_ge_legacy_wrapper_can_suppress_array_name_indices():
+    from LAFigureSpecs.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
+
+    A0 = sym.Matrix([[1, 2], [3, 4]])
+    E1 = sym.eye(2)
+    A1 = sym.Matrix([[1, 2], [0, 1]])
+    matrices = [[None, A0], [E1, A1]]
+
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    ge_svg_orig = ml_ge.render_ge_svg
+    ml_ge.render_ge_svg = fake_svg
+    try:
+        out = ge(
+            matrices,
+            array_names=["E", ["A", "b"]],
+            array_name_indices=False,
+        )
+    finally:
+        ml_ge.render_ge_svg = ge_svg_orig
+
+    assert out == "<svg/>"
+    labels = [c.get("label", "") for c in captured["callouts"]]
+    assert labels
+    assert not any("E_{" in label for label in labels)
+    assert not any("E_1" in label for label in labels)
+    assert any(r"\mathbf{ E }" in label for label in labels)
+    assert any(r"E A \mid  E b" in label for label in labels)
 
 
 def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():

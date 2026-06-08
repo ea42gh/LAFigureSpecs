@@ -198,19 +198,21 @@ def _grid_cell_coord(
     return f"({rr}-{cc})"
 
 
-def _legacy_array_name_specs(
+def _array_name_specs(
     n_rows: int,
     lhs: str,
     rhs: Sequence[str],
     *,
     start_index: Optional[int],
+    array_name_indices: bool = True,
 ) -> List[Tuple[Tuple[int, int], str, str]]:
     names: List[List[str]] = [["", ""] for _ in range(n_rows)]
+    label_start_index = start_index if array_name_indices else None
 
     def _pe(i: int) -> str:
-        if start_index is None:
+        if label_start_index is None:
             return " ".join([f" {lhs}" for _ in range(i, 0, -1)])
-        return " ".join([f" {lhs}_{k + start_index - 1}" for k in range(i, 0, -1)])
+        return " ".join([f" {lhs}_{k + label_start_index - 1}" for k in range(i, 0, -1)])
 
     def _pa(e_prod: str, i: int) -> str:
         rr = list(rhs)
@@ -219,10 +221,10 @@ def _legacy_array_name_specs(
         return r" \mid ".join([e_prod + " " + k for k in rr])
 
     for i in range(n_rows):
-        if start_index is None:
+        if label_start_index is None:
             names[i][0] = f"{lhs}"
         else:
-            names[i][0] = f"{lhs}_{start_index + i - 1}"
+            names[i][0] = f"{lhs}_{label_start_index + i - 1}"
 
         e_prod = _pe(i)
         names[i][1] = _pa(e_prod, i)
@@ -240,6 +242,16 @@ def _legacy_array_name_specs(
         terms.append(((i, 0), "al", "$" + names[i][0] + "$"))
         terms.append(((i, 1), "ar", "$" + names[i][1] + "$"))
     return terms
+
+
+def _legacy_array_name_specs(
+    n_rows: int,
+    lhs: str,
+    rhs: Sequence[str],
+    *,
+    start_index: Optional[int],
+) -> List[Tuple[Tuple[int, int], str, str]]:
+    return _array_name_specs(n_rows, lhs, rhs, start_index=start_index)
 
 
 def _n_rhs_count(n_rhs: Any) -> int:
@@ -735,12 +747,13 @@ def _legacy_ref_paths_to_rowechelon_paths(
     return _legacy_ref_path_list_to_rowechelon_paths(matrices, specs, legacy_submatrix_names=True)
 
 
-def _legacy_array_name_callouts(
+def _array_name_callouts(
     matrices: Sequence[Sequence[Any]],
     *,
     array_names: Optional[Any],
     n_rhs: Any,
     start_index: Optional[int],
+    array_name_indices: bool = True,
 ) -> List[Dict[str, Any]]:
     if array_names is None:
         return []
@@ -757,8 +770,29 @@ def _legacy_array_name_callouts(
     if not explicit_names:
         rhs_list = _coerce_rhs_labels(rhs_list, n_rhs)
     n_rows = len(matrices or [])
-    name_specs = _legacy_array_name_specs(n_rows, str(lhs), rhs_list, start_index=start_index)
+    name_specs = _array_name_specs(
+        n_rows,
+        str(lhs),
+        rhs_list,
+        start_index=start_index,
+        array_name_indices=array_name_indices,
+    )
     return _legacy_name_specs_to_callouts(matrices, name_specs, color="blue")
+
+
+def _legacy_array_name_callouts(
+    matrices: Sequence[Sequence[Any]],
+    *,
+    array_names: Optional[Any],
+    n_rhs: Any,
+    start_index: Optional[int],
+) -> List[Dict[str, Any]]:
+    return _array_name_callouts(
+        matrices,
+        array_names=array_names,
+        n_rhs=n_rhs,
+        start_index=start_index,
+    )
 
 
 class _LegacyFuncAdapter:

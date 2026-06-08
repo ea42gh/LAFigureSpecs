@@ -22,6 +22,11 @@ def test_ge_tbl_spec_and_tex_smoke():
     spec = LAFigureSpecs.ge_tbl_spec(A, array_names=True)
     assert spec.get("callouts")
 
+    spec = LAFigureSpecs.ge_tbl_spec(A, array_names=True, array_name_indices=False)
+    labels = [c.get("label", "") for c in spec.get("callouts") or []]
+    assert labels
+    assert not any("E_{" in label for label in labels)
+
     spec = LAFigureSpecs.ge_tbl_spec(A, show_pivots=True)
     assert spec.get("codebefore")
     assert spec.get("rowechelon_paths")

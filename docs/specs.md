@@ -31,6 +31,7 @@ Grid positions are addressed by (row, column) in the outer list.
 | `nice_options` | str | "" | NiceArray options. |
 | `callouts` | list/bool | None | Matrix labels/callouts. |
 | `array_names` | list/bool | None | Matrix name labels. |
+| `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
 | `decorators` | list | None | Entry decorators. |
 | `format_nrhs` | bool | True | Use format-level RHS separators (disabled when line decorations are emitted). |
 | `fig_scale` | float | None | Figure scale. |
@@ -70,6 +71,7 @@ For most users, prefer `ge_tbl_svg(...)` over direct `render_ge_svg(...)`.
 | `ref_path_list` | list | None | Row‑echelon paths. |
 | `comment_list` | list | None | Right‑side comments. |
 | `array_names` | list/bool | None | Matrix labels. |
+| `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
 | `decorators` | list | None | Entry decorators. |
 
 `ge_tbl_tex`, `ge_tbl_svg`, `ge_bundle` accept the same algorithmic
