@@ -87,7 +87,7 @@ xp, xh = lf.solutions(show)
 ```
 
 By default, LAFigureSpecs renders to a subdirectory under `/tmp/la` unless you
-pass `output_dir` or `tmp_dir`.
+pass `output_dir`.
 
 If the system is inconsistent, `ShowGE` marks the offending RHS columns with a
 red **×** in the variable-summary row, `show_backsubstitution()` reduces the
@@ -190,9 +190,8 @@ svg = LAFigureSpecs.ge_tbl_svg(A, output_dir="./_out", output_stem="ge_min")
 
 All high-level SVG helpers accept `render_opts`, which is forwarded to
 `jupyter_tikz.render_svg`. Explicit kwargs override keys in `render_opts`.
-The wrappers resolve `output_dir`/`tmp_dir` once, then apply the shared render
-option merge path. `output_dir` is canonical; `tmp_dir` is retained only as a
-compatibility alias.
+The wrappers resolve `output_dir` once, then apply the shared render option
+merge path.
 Padding tuples use the order `(left, right, top, bottom)` in SVG units; use
 `LAFigureSpecs.mm_to_px` to convert millimeters.
 

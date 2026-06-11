@@ -21,8 +21,7 @@ Custom matrix arrow labels     | matrixlayout.*_svg with callouts          | Att
 Note: all SVG renderers accept `render_opts`, which is forwarded to
 `jupyter_tikz.render_svg` (e.g., `crop`, `padding`, `toolchain_name`, `frame`).
 Explicit kwargs override keys in `render_opts`. The wrappers resolve
-`output_dir`/`tmp_dir` once before rendering, with `output_dir` preferred for
-new code and `tmp_dir` kept for compatibility.
+`output_dir` once before rendering.
 
 ## GE with pivots
 

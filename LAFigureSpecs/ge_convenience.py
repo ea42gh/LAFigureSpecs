@@ -529,7 +529,6 @@ def ge(
     func: Optional[Any] = None,
     fig_scale: Optional[Any] = None,
     outer_hspace_mm: int = 9,
-    tmp_dir: Optional[str] = None,
     keep_file: Optional[str] = None,
     output_dir: Optional[Any] = None,
     output_stem: Optional[str] = None,
@@ -559,10 +558,9 @@ def ge(
     ):
         matrices = [[None, matrices]]
 
-    preserve_dir = output_dir if output_dir is not None else tmp_dir
     output_dir, output_stem = _resolve_legacy_output_targets(
         keep_file=keep_file,
-        tmp_dir=tmp_dir,
+        tmp_dir=None,
         output_dir=output_dir,
         output_stem=output_stem,
     )
@@ -717,7 +715,7 @@ def ge(
     )
     _preserve_legacy_keep_file_artifacts(
         keep_file=keep_file,
-        tmp_dir=preserve_dir,
+        tmp_dir=output_dir,
         output_dir=output_dir,
         output_stem=output_stem or "output",
     )
@@ -925,7 +923,6 @@ def ge_tbl_svg(
     padding: Any = _UNSET,
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
-    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
     render_opts: Optional[Dict[str, Any]] = None,
     callouts: Optional[Any] = None,
@@ -984,7 +981,6 @@ def ge_tbl_svg(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
-        tmp_dir=tmp_dir,
         render_opts=render_opts,
     )
     return render_ge_svg(**spec, **opts)

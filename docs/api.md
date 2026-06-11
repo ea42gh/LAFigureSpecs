@@ -171,10 +171,9 @@ Shared render options:
 - `output_stem`
 - `render_opts`
 
-The SVG wrappers resolve `output_dir`/`tmp_dir` once and then merge the shared
-render options; explicit keyword arguments win over values in `render_opts`.
-Use `output_dir` for new code. `tmp_dir` remains available as a compatibility
-alias.
+The SVG wrappers resolve `output_dir` once and then merge the shared render
+options; explicit keyword arguments win over values in `render_opts`.
+Use `output_dir` for all new code.
 
 Fragment-specific options on `latex_svg(...)`:
 

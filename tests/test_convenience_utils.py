@@ -32,9 +32,8 @@ def test_norm_padding_passthrough_none():
 
 
 def test_resolve_output_dir_alias_rules():
-    assert resolve_output_dir(output_dir="out", tmp_dir="tmp") == "out"
-    assert resolve_output_dir(output_dir=None, tmp_dir="tmp") == "tmp"
-    assert resolve_output_dir(output_dir=None, tmp_dir=None) == "/tmp/la/run"
+    assert resolve_output_dir(output_dir="out") == "out"
+    assert resolve_output_dir(output_dir=None) == "/tmp/la/run"
 
 
 def test_make_bundle_contract_defaults():
@@ -68,7 +67,6 @@ def test_resolve_render_svg_opts_combines_aliases_and_output_stem():
         frame=True,
         exact_bbox=True,
         output_dir=None,
-        tmp_dir="/tmp/work",
         output_stem="demo",
         render_opts={"crop": "page"},
     )
@@ -77,7 +75,7 @@ def test_resolve_render_svg_opts_combines_aliases_and_output_stem():
     assert opts["padding"] == (1, 2, 3, 4)
     assert opts["frame"] is True
     assert opts["exact_bbox"] is True
-    assert opts["output_dir"] == "/tmp/work"
+    assert opts["output_dir"] == "/tmp/la/run"
     assert opts["output_stem"] == "demo"
 
 

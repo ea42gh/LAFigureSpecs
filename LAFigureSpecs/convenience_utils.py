@@ -39,16 +39,10 @@ def norm_padding(padding: Any) -> Any:
     return tuple(seq)
 
 
-def resolve_output_dir(*, output_dir: Any = None, tmp_dir: Any = None) -> Any:
-    """Resolve output directory aliases.
-
-    ``output_dir`` is canonical. When omitted, ``tmp_dir`` is treated as a
-    synonym for backward compatibility.
-    """
+def resolve_output_dir(*, output_dir: Any = None) -> Any:
+    """Resolve the canonical output directory."""
     if output_dir is not None:
         return output_dir
-    if tmp_dir is not None:
-        return tmp_dir
     return "/tmp/la/run"
 
 
@@ -87,13 +81,12 @@ def resolve_render_svg_opts(
     frame: Any = None,
     exact_bbox: Any = None,
     output_dir: Any = None,
-    tmp_dir: Any = None,
     output_stem: Any = None,
     render_opts: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Resolve SVG render kwargs with canonical alias handling."""
 
-    resolved_output_dir = resolve_output_dir(output_dir=output_dir, tmp_dir=tmp_dir)
+    resolved_output_dir = resolve_output_dir(output_dir=output_dir)
     opts = merge_render_opts(
         toolchain_name=toolchain_name,
         crop=crop,

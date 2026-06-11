@@ -33,7 +33,6 @@ def _filter_tex_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     skip = {
         "output_dir",
         "output_stem",
-        "tmp_dir",
         "toolchain_name",
         "crop",
         "padding",
@@ -117,7 +116,6 @@ def _render_eig_svg_from_spec(
     padding: Any,
     frame: Any,
     exact_bbox: Optional[bool],
-    tmp_dir: Optional[Any],
     output_dir: Optional[Any],
     render_opts: Optional[Dict[str, Any]],
 ) -> str:
@@ -129,7 +127,6 @@ def _render_eig_svg_from_spec(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
-        tmp_dir=tmp_dir,
         render_opts=render_opts,
     )
     return render_eig_svg(
@@ -219,7 +216,6 @@ def eig_tbl_svg(
     padding: Any = _UNSET,
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
-    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
@@ -261,7 +257,6 @@ def eig_tbl_svg(
         padding=padding,
         frame=frame,
         exact_bbox=exact_bbox,
-        tmp_dir=tmp_dir,
         output_dir=output_dir,
         render_opts=render_opts,
     )
@@ -329,7 +324,6 @@ def eig_tbl_bundle(
             padding=padding,
             frame=kwargs.get("frame"),
             exact_bbox=kwargs.get("exact_bbox"),
-            tmp_dir=kwargs.get("tmp_dir"),
             output_dir=kwargs.get("output_dir"),
             render_opts=render_opts,
         )
@@ -412,7 +406,6 @@ def svd_tbl_svg(
     padding: Any = _UNSET,
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
-    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
@@ -456,7 +449,6 @@ def svd_tbl_svg(
         padding=padding,
         frame=frame,
         exact_bbox=exact_bbox,
-        tmp_dir=tmp_dir,
         output_dir=output_dir,
         render_opts=render_opts,
     )
@@ -517,7 +509,6 @@ def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
             padding=padding,
             frame=kwargs.get("frame"),
             exact_bbox=kwargs.get("exact_bbox"),
-            tmp_dir=kwargs.get("tmp_dir"),
             output_dir=kwargs.get("output_dir"),
             render_opts=render_opts,
         )

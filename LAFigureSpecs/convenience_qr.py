@@ -60,7 +60,6 @@ def _render_qr_svg_from_spec(
     frame: Any,
     exact_bbox: Optional[bool],
     output_dir: Optional[Any],
-    tmp_dir: Optional[Any],
     render_opts: Optional[Dict[str, Any]],
 ) -> str:
     from matrixlayout.qr import render_qr_svg
@@ -72,7 +71,6 @@ def _render_qr_svg_from_spec(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
-        tmp_dir=tmp_dir,
         render_opts=render_opts,
     )
     return render_qr_svg(
@@ -149,7 +147,6 @@ def qr_tbl_svg(
     padding: Any = _UNSET,
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
-    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
@@ -187,7 +184,6 @@ def qr_tbl_svg(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
-        tmp_dir=tmp_dir,
         render_opts=render_opts,
     )
 
@@ -226,7 +222,6 @@ def qr_tbl_bundle(
             frame=kwargs.get("frame"),
             exact_bbox=kwargs.get("exact_bbox"),
             output_dir=kwargs.get("output_dir"),
-            tmp_dir=kwargs.get("tmp_dir"),
             render_opts=render_opts,
         )
     except Exception as e:
@@ -255,7 +250,6 @@ def qr(
     padding: Any = _UNSET,
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
-    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
@@ -293,7 +287,6 @@ def qr(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
-        tmp_dir=tmp_dir,
         render_opts=render_opts,
     )
 
@@ -320,7 +313,6 @@ def gram_schmidt_qr(
     padding: Any = _UNSET,
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
-    tmp_dir: Optional[Any] = None,
     output_dir: Optional[Any] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
@@ -363,6 +355,5 @@ def gram_schmidt_qr(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
-        tmp_dir=tmp_dir,
         render_opts=render_opts,
     )
