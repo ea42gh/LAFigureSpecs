@@ -149,7 +149,6 @@ def _build_ge_bundle(
     ref_A: Any,
     ref_rhs: Any = None,
     *,
-    rhs: Any = None,
     # Default pivoting strategy must match expected behavior:
     # no pivoting unless explicitly requested.
     pivoting: str = "none",
@@ -175,13 +174,6 @@ def _build_ge_bundle(
     rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
 ) -> Dict[str, Any]:
-    # Julia interop typically passes the RHS as a keyword named `rhs`.
-    # Keep the internal naming (`ref_rhs`) but accept `rhs` as an alias.
-    if (ref_rhs is not None) and (rhs is not None):
-        raise TypeError("Provide only one of ref_rhs or rhs")
-    if ref_rhs is None:
-        ref_rhs = rhs
-
     document_preamble = _merge_document_preamble(document_preamble, row_stretch)
 
     tr: GETrace = ge_trace(ref_A, ref_rhs, pivoting=cast(Literal["none", "partial"], pivoting), gj=gj)
@@ -371,7 +363,6 @@ def ge_tbl_spec(
     ref_A: Any,
     ref_rhs: Any = None,
     *,
-    rhs: Any = None,
     pivoting: str = "none",
     gj: bool = False,
     show_pivots: Optional[bool] = True,
@@ -403,7 +394,6 @@ def ge_tbl_spec(
     return _build_ge_bundle(
         ref_A,
         ref_rhs,
-        rhs=rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,
@@ -433,7 +423,6 @@ def ge_tbl_layout_spec(
     ref_A: Any,
     ref_rhs: Any = None,
     *,
-    rhs: Any = None,
     pivoting: str = "none",
     gj: bool = False,
     show_pivots: Optional[bool] = True,
@@ -462,7 +451,6 @@ def ge_tbl_layout_spec(
     bundle = _build_ge_bundle(
         ref_A,
         ref_rhs,
-        rhs=rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,
@@ -736,7 +724,6 @@ def ge_tbl_bundle(
     ref_A: Any,
     ref_rhs: Any = None,
     *,
-    rhs: Any = None,
     pivoting: str = "none",
     gj: bool = False,
     show_pivots: Optional[bool] = True,
@@ -765,7 +752,6 @@ def ge_tbl_bundle(
     computed = _build_ge_bundle(
         ref_A,
         ref_rhs,
-        rhs=rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,
@@ -845,7 +831,6 @@ def ge_tbl_tex(
     ref_A: Any,
     ref_rhs: Any = None,
     *,
-    rhs: Any = None,
     pivoting: str = "none",
     gj: bool = False,
     show_pivots: Optional[bool] = True,
@@ -874,7 +859,6 @@ def ge_tbl_tex(
     return ge_tbl_bundle(
         ref_A,
         ref_rhs,
-        rhs=rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,
@@ -903,7 +887,6 @@ def ge_tbl_svg(
     ref_A: Any,
     ref_rhs: Any = None,
     *,
-    rhs: Any = None,
     pivoting: str = "none",
     gj: bool = False,
     show_pivots: Optional[bool] = False,
@@ -939,7 +922,6 @@ def ge_tbl_svg(
     spec = ge_tbl_spec(
         ref_A,
         ref_rhs,
-        rhs=rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,

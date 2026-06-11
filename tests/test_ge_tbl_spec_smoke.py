@@ -78,11 +78,20 @@ def test_ge_tbl_spec_rhs_vline():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=[5, 6])
+    spec = LAFigureSpecs.ge_tbl_spec(A, ref_rhs=[5, 6])
 
     decorations = spec.get("decorations") or []
     assert {"grid": (0, 1), "vlines": 2} in decorations
     assert {"grid": (1, 1), "vlines": 2} in decorations
+
+
+def test_ge_tbl_spec_rejects_removed_rhs_alias():
+    import pytest
+    import LAFigureSpecs
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    with pytest.raises(TypeError, match="rhs"):
+        LAFigureSpecs.ge_tbl_spec(A, rhs=[5, 6])
 
 
 def test_ge_tbl_spec_layout_and_bundle_match_tex():
