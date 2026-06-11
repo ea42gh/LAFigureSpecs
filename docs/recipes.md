@@ -2,7 +2,8 @@
 
 Compact examples for common tasks. Specs are passed directly to matrixlayout
 renderers (e.g., `render_ge_svg`, `render_qr_svg`). You can also pass extra
-label/callout targets via the `annotations` argument to the matrixlayout QR/GE renderers.
+row/column labels via `annotations` and matrix arrow labels via `callouts` to
+the matrixlayout QR/GE renderers.
 Use specs when you want consistent layout across TeX and SVG; use renderers when
 you only need the final output.
 
@@ -13,7 +14,8 @@ Goal                          | Use                                    | Notes
 ------------------------------|----------------------------------------|------------------------------
 Reuse a spec for TeX + SVG     | LAFigureSpecs.*_spec + matrixlayout.*_svg | Stable layout across outputs
 Quick render, no extra edits   | LAFigureSpecs.*_svg wrappers              | Shortest path
-Custom labels/callouts         | matrixlayout.*_svg with annotations    | Avoid manual label rows/cols
+Custom row/column labels       | matrixlayout.*_svg with annotations       | Avoid manual label rows/cols
+Custom matrix arrow labels     | matrixlayout.*_svg with callouts          | Attach labels to matrix blocks
 ```
 
 Note: all SVG renderers accept `render_opts`, which is forwarded to
@@ -68,6 +70,19 @@ W = sym.eye(2)
 spec = qr_tbl_spec(A)
 annotations = [{"grid": (0, 2), "side": "above", "labels": ["x_1", "x_2"]}]
 svg = render_qr_svg(spec=spec, annotations=annotations)
+```
+
+## QR with custom callouts
+
+```python
+import sympy as sym
+from LAFigureSpecs import qr_tbl_spec
+from matrixlayout.qr import render_qr_svg
+
+A = sym.Matrix([[1, 2], [3, 4]])
+spec = qr_tbl_spec(A, array_names=False)
+callouts = [{"grid": (0, 2), "label": r"$A$", "side": "right"}]
+svg = render_qr_svg(spec=spec, callouts=callouts)
 ```
 
 ## Eigen/SVD

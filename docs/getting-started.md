@@ -32,8 +32,8 @@ Common defaults:
 ## What is a spec?
 
 A spec is a plain dictionary that describes which matrices to render and which
-labels/lines/callouts to attach. You can pass it to `matrixlayout` to emit TeX
-or SVG.
+row/column labels, matrix callouts, and visual lines/highlights to attach. You
+can pass it to `matrixlayout` to emit TeX or SVG.
 
 ```python
 import sympy as sym
@@ -43,7 +43,8 @@ A = sym.Matrix([[1, 2], [3, 4]])
 spec = LAFigureSpecs.ge_tbl_spec(A)
 # spec["decorations"] includes RHS separators (if present) as vline specs.
 # spec["matrices"] holds the matrix grid
-# pass extra label/callout targets with annotations=...
+# pass extra row/column labels with annotations=...
+# pass explicit matrix arrow labels with callouts=...
 ```
 
 ## GE spec

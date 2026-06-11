@@ -29,7 +29,7 @@ Grid positions are addressed by (row, column) in the outer list.
 | `document_preamble` | str | "" | True LaTeX preamble insertion emitted to matrixlayout. |
 | `row_stretch` | float | None | Row spacing multiplier. |
 | `nice_options` | str | "" | NiceArray options. |
-| `callouts` | list/bool | None | Matrix labels/callouts. |
+| `callouts` | list/bool | None | Explicit matrix arrow labels. |
 | `array_names` | list/bool | None | Matrix name labels. |
 | `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
 | `decorators` | list | None | Entry decorators. |
@@ -41,7 +41,7 @@ Grid positions are addressed by (row, column) in the outer list.
 | `variable_colors` | tuple | ("red","black") | Colors for pivot/free indicators. |
 | `strict` | bool | None | Error on invalid decorators. |
 
-Use `callouts` for explicit matrix labels/annotations. `array_names` is a
+Use `callouts` for explicit matrix arrow labels. `array_names` is a
 convenience shorthand that expands to callouts; `array_name_indices=false`
 suppresses the generated step indices.
 
@@ -102,7 +102,7 @@ vertical lines only appear in the matrix rows.
 | --- | --- | --- | --- |
 | `A` | matrix | required | Input matrix. |
 | `W` | matrix | required | Computed internally via naive Gram–Schmidt (LCD-scaled, no normalization). |
-| `callouts` | list | None | Explicit matrix labels/annotations. |
+| `callouts` | list | None | Explicit matrix arrow labels. |
 | `array_names` | bool/list | True | Enable labels or custom list. |
 | `fig_scale` | float | None | Figure scale. |
 | `body_preamble` | str | nicematrix opts | Document-body setup emitted to matrixlayout. |
