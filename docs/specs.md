@@ -16,9 +16,8 @@ Grid positions are addressed by (row, column) in the outer list.
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
-| `ref_A` | matrix | required | Reference matrix. |
-| `ref_rhs` | matrix | None | Reference RHS (augmented). |
-| `rhs` | matrix | None | RHS to eliminate. |
+| `A` | matrix | required | Coefficient matrix. |
+| `rhs` | matrix | None | Right-hand side columns for the system. |
 | `pivoting` | str | "none" | "none", "partial", or "full". |
 | `gj` | bool | False | Use Gauss-Jordan. |
 | `show_pivots` | bool | True | Emit pivot boxes (entry decorators). |

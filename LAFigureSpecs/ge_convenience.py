@@ -146,8 +146,8 @@ def _merge_document_preamble(document_preamble: str, row_stretch: Optional[float
 
 
 def _build_ge_bundle(
-    ref_A: Any,
-    ref_rhs: Any = None,
+    A: Any,
+    rhs: Any = None,
     *,
     # Default pivoting strategy must match expected behavior:
     # no pivoting unless explicitly requested.
@@ -176,7 +176,7 @@ def _build_ge_bundle(
 ) -> Dict[str, Any]:
     document_preamble = _merge_document_preamble(document_preamble, row_stretch)
 
-    tr: GETrace = ge_trace(ref_A, ref_rhs, pivoting=cast(Literal["none", "partial"], pivoting), gj=gj)
+    tr: GETrace = ge_trace(A, rhs, pivoting=cast(Literal["none", "partial"], pivoting), gj=gj)
 
     # Decorations are produced in *coefficient-matrix* coordinates.
     # We rebase pivot boxes to the final (last-layer) A-block in the GE grid.
@@ -360,8 +360,8 @@ def _build_ge_bundle(
 
 
 def ge_tbl_spec(
-    ref_A: Any,
-    ref_rhs: Any = None,
+    A: Any,
+    rhs: Any = None,
     *,
     pivoting: str = "none",
     gj: bool = False,
@@ -392,8 +392,8 @@ def ge_tbl_spec(
     """
 
     return _build_ge_bundle(
-        ref_A,
-        ref_rhs,
+        A,
+        rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,
@@ -420,8 +420,8 @@ def ge_tbl_spec(
 
 
 def ge_tbl_layout_spec(
-    ref_A: Any,
-    ref_rhs: Any = None,
+    A: Any,
+    rhs: Any = None,
     *,
     pivoting: str = "none",
     gj: bool = False,
@@ -449,8 +449,8 @@ def ge_tbl_layout_spec(
     """Return a typed GE grid spec (``GEGridSpec``) for matrixlayout."""
 
     bundle = _build_ge_bundle(
-        ref_A,
-        ref_rhs,
+        A,
+        rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,
@@ -721,8 +721,8 @@ def show_ge(*args: Any, **kwargs: Any) -> Any:
 
 
 def ge_tbl_bundle(
-    ref_A: Any,
-    ref_rhs: Any = None,
+    A: Any,
+    rhs: Any = None,
     *,
     pivoting: str = "none",
     gj: bool = False,
@@ -750,8 +750,8 @@ def ge_tbl_bundle(
     """Bundle: compute once, then return a standardized bundle contract."""
 
     computed = _build_ge_bundle(
-        ref_A,
-        ref_rhs,
+        A,
+        rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,
@@ -828,8 +828,8 @@ def ge_tbl_bundle(
 
 
 def ge_tbl_tex(
-    ref_A: Any,
-    ref_rhs: Any = None,
+    A: Any,
+    rhs: Any = None,
     *,
     pivoting: str = "none",
     gj: bool = False,
@@ -857,8 +857,8 @@ def ge_tbl_tex(
     """Compute + render: build GE data from reference inputs and return TeX."""
 
     return ge_tbl_bundle(
-        ref_A,
-        ref_rhs,
+        A,
+        rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,
@@ -884,8 +884,8 @@ def ge_tbl_tex(
 
 
 def ge_tbl_svg(
-    ref_A: Any,
-    ref_rhs: Any = None,
+    A: Any,
+    rhs: Any = None,
     *,
     pivoting: str = "none",
     gj: bool = False,
@@ -920,8 +920,8 @@ def ge_tbl_svg(
     """Compute + render: build GE data from reference inputs and return SVG."""
 
     spec = ge_tbl_spec(
-        ref_A,
-        ref_rhs,
+        A,
+        rhs,
         pivoting=pivoting,
         gj=gj,
         show_pivots=show_pivots,

@@ -255,8 +255,8 @@ def _has_nonzero_entry(Ab: sym.Matrix, pivot_row: int, pivot_col: int, *, gj: bo
 
 
 def ge_trace(
-    ref_A: Any,
-    ref_rhs: Any = None,
+    A: Any,
+    rhs: Any = None,
     *,
     pivoting: Pivoting = "none",
     gj: bool = False,
@@ -266,9 +266,9 @@ def ge_trace(
 
     Parameters
     ----------
-    ref_A:
+    A:
         Coefficient matrix ``A``.
-    ref_rhs:
+    rhs:
         Optional RHS. May be a vector (m,) or (m,1) or a matrix (m,k).
     pivoting:
         Pivot selection strategy. ``"partial"`` uses max-abs pivoting for numeric
@@ -284,11 +284,11 @@ def ge_trace(
         matrices and intermediate states, and pivot/free variable metadata.
     """
 
-    A = to_sympy_matrix(ref_A)
+    A = to_sympy_matrix(A)
     if A is None:
-        raise ValueError("ref_A must not be None")
+        raise ValueError("A must not be None")
 
-    rhs = to_sympy_matrix(ref_rhs)
+    rhs = to_sympy_matrix(rhs)
     if rhs is None:
         Ab = sym.Matrix(A)
         n_rhs = 0

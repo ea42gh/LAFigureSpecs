@@ -78,20 +78,20 @@ def test_ge_tbl_spec_rhs_vline():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    spec = LAFigureSpecs.ge_tbl_spec(A, ref_rhs=[5, 6])
+    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=[5, 6])
 
     decorations = spec.get("decorations") or []
     assert {"grid": (0, 1), "vlines": 2} in decorations
     assert {"grid": (1, 1), "vlines": 2} in decorations
 
 
-def test_ge_tbl_spec_rejects_removed_rhs_alias():
+def test_ge_tbl_spec_rejects_removed_ref_rhs_alias():
     import pytest
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    with pytest.raises(TypeError, match="rhs"):
-        LAFigureSpecs.ge_tbl_spec(A, rhs=[5, 6])
+    with pytest.raises(TypeError, match="ref_rhs"):
+        LAFigureSpecs.ge_tbl_spec(A, ref_rhs=[5, 6])
 
 
 def test_ge_tbl_spec_layout_and_bundle_match_tex():
@@ -105,9 +105,9 @@ def test_ge_tbl_spec_layout_and_bundle_match_tex():
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, ref_rhs=rhs, show_pivots=True)
-    layout_spec = ge_tbl_layout_spec(A, ref_rhs=rhs, show_pivots=True)
-    bundle = LAFigureSpecs.ge_tbl_bundle(A, ref_rhs=rhs, show_pivots=True)
+    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=rhs, show_pivots=True)
+    layout_spec = ge_tbl_layout_spec(A, rhs=rhs, show_pivots=True)
+    bundle = LAFigureSpecs.ge_tbl_bundle(A, rhs=rhs, show_pivots=True)
 
     tex_spec = render_ge_tex(**spec)
     tex_layout = render_ge_tex(spec=layout_spec)
@@ -131,7 +131,7 @@ def test_ge_tbl_spec_dict_roundtrip_render_ge_svg_accepts_spec():
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, ref_rhs=rhs, show_pivots=True, array_names=True)
+    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=rhs, show_pivots=True, array_names=True)
     svg = render_ge_svg(spec=spec, toolchain_name="pdftex_dvisvgm", crop="tight", padding=(1, 1, 1, 1))
     assert isinstance(svg, str)
     assert "<svg" in svg
@@ -143,7 +143,7 @@ def test_ge_tbl_spec_sets_create_extra_nodes_for_array_names():
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, ref_rhs=rhs, show_pivots=True, array_names=True)
+    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=rhs, show_pivots=True, array_names=True)
     assert spec.get("create_extra_nodes") is True
 
 
