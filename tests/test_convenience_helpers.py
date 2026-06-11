@@ -3,7 +3,6 @@ def test_filter_tex_kwargs_removes_svg_only_options():
 
     kwargs = {
         "output_dir": "out",
-        "tmp_dir": "tmp",
         "toolchain_name": "pdftex_dvisvgm",
         "crop": "tight",
         "padding": (1, 1, 1, 1),
@@ -13,7 +12,6 @@ def test_filter_tex_kwargs_removes_svg_only_options():
     }
     out = conv._filter_tex_kwargs(kwargs)
     assert "output_dir" not in out
-    assert "tmp_dir" not in out
     assert "toolchain_name" not in out
     assert "crop" not in out
     assert "padding" not in out

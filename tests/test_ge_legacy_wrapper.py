@@ -119,6 +119,27 @@ def test_ge_legacy_wrapper_supports_ref_path_list():
     assert captured["rowechelon_paths"]
 
 
+def test_ge_legacy_wrapper_preserves_output_dir_artifacts(monkeypatch, tmp_path):
+    from pathlib import Path
+
+    from LAFigureSpecs.convenience_ge import ge
+    from matrixlayout import ge as ml_ge
+
+    matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
+    preserve_dir = tmp_path / "preserve"
+
+    def fake_svg(**kwargs):
+        render_dir = Path(kwargs["output_dir"])
+        render_dir.mkdir(parents=True, exist_ok=True)
+        (render_dir / "demo.svg").write_text("<svg/>", encoding="utf-8")
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    assert ge(matrices, output_dir=preserve_dir, output_stem="demo") == "<svg/>"
+    assert (preserve_dir / "demo.svg").read_text(encoding="utf-8") == "<svg/>"
+
+
 def test_ge_legacy_wrapper_supports_variable_summary():
     from LAFigureSpecs.convenience_ge import ge
     from matrixlayout import ge as ml_ge

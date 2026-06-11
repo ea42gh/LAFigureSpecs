@@ -36,8 +36,8 @@ from ._ge_legacy_compat import (
     _LegacyFuncAdapter,
     _matrix_shape,
     _pivot_list_to_decorators,
-    _preserve_legacy_keep_file_artifacts,
-    _resolve_legacy_output_targets,
+    _preserve_output_artifacts,
+    _resolve_output_targets,
 )
 
 
@@ -558,9 +558,8 @@ def ge(
     ):
         matrices = [[None, matrices]]
 
-    output_dir, output_stem = _resolve_legacy_output_targets(
+    render_dir, preserve_output_dir, output_stem = _resolve_output_targets(
         keep_file=keep_file,
-        tmp_dir=None,
         output_dir=output_dir,
         output_stem=output_stem,
     )
@@ -708,15 +707,15 @@ def ge(
         document_preamble=document_preamble or "",
         decorators=decorators,
         strict=bool(strict) if strict is not None else False,
-        output_dir=output_dir,
+        output_dir=render_dir,
         output_stem=output_stem or "output",
         frame=frame,
         **render_opts,
     )
-    _preserve_legacy_keep_file_artifacts(
+    _preserve_output_artifacts(
         keep_file=keep_file,
-        tmp_dir=output_dir,
-        output_dir=output_dir,
+        render_dir=render_dir,
+        output_dir=preserve_output_dir,
         output_stem=output_stem or "output",
     )
     return svg

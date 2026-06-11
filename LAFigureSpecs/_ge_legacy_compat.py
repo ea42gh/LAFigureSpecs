@@ -244,16 +244,6 @@ def _array_name_specs(
     return terms
 
 
-def _legacy_array_name_specs(
-    n_rows: int,
-    lhs: str,
-    rhs: Sequence[str],
-    *,
-    start_index: Optional[int],
-) -> List[Tuple[Tuple[int, int], str, str]]:
-    return _array_name_specs(n_rows, lhs, rhs, start_index=start_index)
-
-
 def _n_rhs_count(n_rhs: Any) -> int:
     if n_rhs is None:
         return 0
@@ -336,21 +326,6 @@ def _name_specs_to_callouts(
             }
         )
     return out
-
-
-def _legacy_name_specs_to_callouts(
-    matrices: Sequence[Sequence[Any]],
-    name_specs: Sequence[Tuple[Tuple[int, int], str, str]],
-    *,
-    color: str = "blue",
-    legacy_submatrix_names: bool = True,
-) -> List[Dict[str, Any]]:
-    return _name_specs_to_callouts(
-        matrices,
-        name_specs,
-        color=color,
-        legacy_submatrix_names=legacy_submatrix_names,
-    )
 
 
 def _legacy_ref_path_list_to_rowechelon_paths(
@@ -609,13 +584,12 @@ def _legacy_bg_list_to_codebefore(
 
 
 
-def _resolve_legacy_output_targets(
+def _resolve_output_targets(
     *,
     keep_file: Optional[str],
-    tmp_dir: Optional[str],
     output_dir: Optional[Any],
     output_stem: Optional[str],
-) -> Tuple[Optional[Any], Optional[str]]:
+) -> Tuple[Optional[Any], Optional[Any], Optional[str]]:
     from pathlib import Path
 
     resolved_output_stem: Optional[str] = output_stem
@@ -624,12 +598,12 @@ def _resolve_legacy_output_targets(
         suffix = p.suffix.lower()
         resolved_output_stem = p.stem if suffix in (".tex", ".svg", ".pdf", ".dvi", ".xdv") else p.name
     # Always render on a container-local scratch filesystem so latexmk sees
-    # consistent mtimes. Legacy tmp_dir/output_dir/keep_file are preserve targets,
-    # not the live TeX workdir.
+    # consistent mtimes. output_dir/keep_file are preserve targets, not the live
+    # TeX workdir.
     scratch_root = Path("/tmp/la/run")
     scratch_root.mkdir(parents=True, exist_ok=True)
     render_dir = Path(tempfile.mkdtemp(prefix="matrixlayout_render_", dir=str(scratch_root)))
-    return str(render_dir), resolved_output_stem
+    return str(render_dir), output_dir, resolved_output_stem
 
 
 def _legacy_find_artifact_source_base(
@@ -653,27 +627,27 @@ def _legacy_find_artifact_source_base(
     return first.with_suffix("")
 
 
-def _preserve_legacy_keep_file_artifacts(
+def _preserve_output_artifacts(
     *,
     keep_file: Optional[str],
-    tmp_dir: Optional[str],
+    render_dir: Optional[Any],
     output_dir: Optional[Any],
     output_stem: str,
 ) -> None:
-    if output_dir is None:
+    if render_dir is None:
         return
     from pathlib import Path
 
     artifact_exts = (".svg", ".tex", ".pdf", ".dvi", ".xdv", ".log", ".aux", ".fls", ".fdb_latexmk", ".stdout.txt", ".stderr.txt")
-    source_base = _legacy_find_artifact_source_base(output_dir, output_stem, artifact_exts)
+    source_base = _legacy_find_artifact_source_base(render_dir, output_stem, artifact_exts)
 
-    if tmp_dir:
-        tmp_target_dir = Path(str(tmp_dir))
-        tmp_target_dir.mkdir(parents=True, exist_ok=True)
+    if output_dir:
+        output_target_dir = Path(str(output_dir))
+        output_target_dir.mkdir(parents=True, exist_ok=True)
         for ext in artifact_exts:
             src = source_base.with_suffix(ext)
             if src.exists():
-                shutil.copy2(src, tmp_target_dir / src.name)
+                shutil.copy2(src, output_target_dir / src.name)
 
     if not keep_file:
         return
@@ -793,21 +767,6 @@ def _array_name_callouts(
         array_name_indices=array_name_indices,
     )
     return _name_specs_to_callouts(matrices, name_specs, color="blue")
-
-
-def _legacy_array_name_callouts(
-    matrices: Sequence[Sequence[Any]],
-    *,
-    array_names: Optional[Any],
-    n_rhs: Any,
-    start_index: Optional[int],
-) -> List[Dict[str, Any]]:
-    return _array_name_callouts(
-        matrices,
-        array_names=array_names,
-        n_rhs=n_rhs,
-        start_index=start_index,
-    )
 
 
 class _LegacyFuncAdapter:
