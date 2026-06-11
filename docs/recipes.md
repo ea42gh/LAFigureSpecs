@@ -37,12 +37,13 @@ spec = LAFigureSpecs.ge_tbl_spec(A, show_pivots=True)
 
 ```python
 import sympy as sym
-from LAFigureSpecs import ge_trace, ge_tbl_spec
+from LAFigureSpecs import ge_trace, ge_tbl_spec, trace_to_layer_matrices
 from matrixlayout.ge import render_ge_svg
 
 A = sym.Matrix([[2, 1], [4, 3]])
-trace = ge_trace(A, show_pivots=True)
-spec = ge_tbl_spec(A, trace=trace)
+trace = ge_trace(A, pivoting="none")
+layers = trace_to_layer_matrices(trace)  # inspect intermediate matrices if needed
+spec = ge_tbl_spec(A, show_pivots=True)
 svg = render_ge_svg(spec=spec)
 ```
 
