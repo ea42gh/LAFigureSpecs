@@ -61,7 +61,6 @@ Use these when you want a lightweight preflight before rendering:
 - `LAFigureSpecs.ge_tex(A, **opts)`: render GE TeX from the spec path.
 - `LAFigureSpecs.ge_svg(A, **opts)`: render GE SVG from the spec path.
 - `LAFigureSpecs.ge_stack_svg(matrices, **opts)`: canonical GE stack renderer.
-- `LAFigureSpecs.ge(matrices, **opts)`: historical alias for `ge_stack_svg(...)`.
 
 Example options:
 `ge_spec(A, show_pivots=True, pivoting="partial", gj=False)`

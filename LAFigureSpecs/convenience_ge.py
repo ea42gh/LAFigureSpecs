@@ -7,7 +7,6 @@ This module re-exports the public wrappers so both import paths work.
 """
 
 from .ge_convenience import (
-    ge,
     ge_bundle,
     ge_layout_spec,
     ge_spec,
@@ -23,5 +22,4 @@ __all__ = [
     "ge_stack_svg",
     "ge_svg",
     "ge_tex",
-    "ge",
 ]

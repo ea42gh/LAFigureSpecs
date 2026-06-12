@@ -494,7 +494,7 @@ def ge_layout_spec(
     return GEGridSpec.from_dict(spec, allow_extra=True)
 
 
-def ge(
+def ge_stack_svg(
     matrices: Sequence[Sequence[Any]],
     *,
     n_rhs: Any = _UNSET,
@@ -526,7 +526,7 @@ def ge(
     strict: Optional[bool] = None,
     **render_opts: Any,
 ) -> str:
-    """Convenience wrapper for the GE rendering surface."""
+    """Render-only wrapper: render SVG from a precomputed GE matrix stack."""
     removed_tex_hooks = {"preamble", "extension"} & set(render_opts)
     if removed_tex_hooks:
         names = ", ".join(sorted(removed_tex_hooks))
@@ -711,7 +711,7 @@ def ge(
 
 def show_ge(*args: Any, **kwargs: Any) -> Any:
     """Render GE and return a displayable SVG object when possible."""
-    svg = ge(*args, **kwargs)
+    svg = ge_stack_svg(*args, **kwargs)
     try:
         from IPython.display import SVG
 
@@ -965,6 +965,3 @@ def ge_svg(
         render_opts=render_opts,
     )
     return render_ge_svg(**spec, **opts)
-
-
-ge_stack_svg = ge

@@ -21,17 +21,17 @@ def test_legacy_pivot_list_to_pivot_locs():
 
 
 def test_ge_legacy_wrapper_rejects_unsupported_options(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
     monkeypatch.setattr(ml_ge, "render_ge_svg", lambda **kwargs: "<svg/>")
 
-    assert ge([[None, A]], func=lambda m: m) == "<svg/>"
+    assert ge_stack_svg([[None, A]], func=lambda m: m) == "<svg/>"
 
 
 def test_ge_legacy_wrapper_supports_backgrounds_and_comments():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -46,7 +46,7 @@ def test_ge_legacy_wrapper_supports_backgrounds_and_comments():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        out = ge(
+        out = ge_stack_svg(
             matrices,
             bg_for_entries=[(0, 1, [(0, 0)], "red!15", 0)],
             comment_list=["note"],
@@ -60,7 +60,7 @@ def test_ge_legacy_wrapper_supports_backgrounds_and_comments():
 
 
 def test_ge_legacy_wrapper_forwards_structured_decorations(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -82,7 +82,7 @@ def test_ge_legacy_wrapper_forwards_structured_decorations(monkeypatch):
 
     monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
 
-    out = ge(matrices, decorations=decorations)
+    out = ge_stack_svg(matrices, decorations=decorations)
 
     assert out == "<svg/>"
     assert captured["decorations"] == decorations
@@ -90,7 +90,7 @@ def test_ge_legacy_wrapper_forwards_structured_decorations(monkeypatch):
 
 
 def test_ge_legacy_wrapper_supports_ref_path_list():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -107,7 +107,7 @@ def test_ge_legacy_wrapper_supports_ref_path_list():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        out = ge(
+        out = ge_stack_svg(
             matrices,
             ref_path_list=[(1, 1, [(0, 0), (1, 1)], "hh")],
             output_dir="tmp",
@@ -122,7 +122,7 @@ def test_ge_legacy_wrapper_supports_ref_path_list():
 def test_ge_legacy_wrapper_preserves_output_dir_artifacts(monkeypatch, tmp_path):
     from pathlib import Path
 
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
@@ -136,12 +136,12 @@ def test_ge_legacy_wrapper_preserves_output_dir_artifacts(monkeypatch, tmp_path)
 
     monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
 
-    assert ge(matrices, output_dir=preserve_dir, output_stem="demo") == "<svg/>"
+    assert ge_stack_svg(matrices, output_dir=preserve_dir, output_stem="demo") == "<svg/>"
     assert (preserve_dir / "demo.svg").read_text(encoding="utf-8") == "<svg/>"
 
 
 def test_ge_legacy_wrapper_supports_variable_summary():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -156,7 +156,7 @@ def test_ge_legacy_wrapper_supports_variable_summary():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        out = ge(
+        out = ge_stack_svg(
             matrices,
             variable_summary=[True, False],
         )
@@ -168,7 +168,7 @@ def test_ge_legacy_wrapper_supports_variable_summary():
 
 
 def test_ge_legacy_wrapper_supports_array_names():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -185,7 +185,7 @@ def test_ge_legacy_wrapper_supports_array_names():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        out = ge(
+        out = ge_stack_svg(
             matrices,
             array_names=["E", ["A", "b"]],
         )
@@ -199,7 +199,7 @@ def test_ge_legacy_wrapper_supports_array_names():
 
 
 def test_ge_legacy_wrapper_can_suppress_array_name_indices():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -216,7 +216,7 @@ def test_ge_legacy_wrapper_can_suppress_array_name_indices():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        out = ge(
+        out = ge_stack_svg(
             matrices,
             array_names=["E", ["A", "b"]],
             array_name_indices=False,
@@ -234,7 +234,7 @@ def test_ge_legacy_wrapper_can_suppress_array_name_indices():
 
 
 def test_ge_legacy_wrapper_forwards_explicit_callouts():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -252,7 +252,7 @@ def test_ge_legacy_wrapper_forwards_explicit_callouts():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        out = ge(matrices, callouts=callouts)
+        out = ge_stack_svg(matrices, callouts=callouts)
     finally:
         ml_ge.render_ge_svg = ge_svg_orig
 
@@ -261,7 +261,7 @@ def test_ge_legacy_wrapper_forwards_explicit_callouts():
 
 
 def test_ge_legacy_wrapper_keeps_name_specs_compatibility():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -278,7 +278,7 @@ def test_ge_legacy_wrapper_keeps_name_specs_compatibility():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        out = ge(
+        out = ge_stack_svg(
             matrices,
             array_names={"name_specs": [((0, 1), "ar", "$A$")]},
         )
@@ -291,7 +291,7 @@ def test_ge_legacy_wrapper_keeps_name_specs_compatibility():
 
 
 def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -311,17 +311,17 @@ def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        ge(matrices, array_names=True, n_rhs=1)
+        ge_stack_svg(matrices, array_names=True, n_rhs=1)
         labels = _extract_labels(captured.get("callouts"))
         assert any(r"\mid  b" in label for label in labels)
 
         captured.clear()
-        ge(matrices, array_names=True, n_rhs=2)
+        ge_stack_svg(matrices, array_names=True, n_rhs=2)
         labels = _extract_labels(captured.get("callouts"))
         assert any(r"\mid  B" in label for label in labels)
 
         captured.clear()
-        ge(matrices, array_names=["E", ["A", "b"]], n_rhs=2)
+        ge_stack_svg(matrices, array_names=["E", ["A", "b"]], n_rhs=2)
         labels = _extract_labels(captured.get("callouts"))
         assert any(r"\mid  b" in label for label in labels)
     finally:
@@ -329,7 +329,7 @@ def test_ge_legacy_wrapper_rhs_callout_labels_follow_rhs_size():
 
 
 def test_ge_legacy_wrapper_supports_canonical_n_rhs_keyword():
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2, 3], [4, 5, 6]])]]
@@ -342,7 +342,7 @@ def test_ge_legacy_wrapper_supports_canonical_n_rhs_keyword():
     ge_svg_orig = ml_ge.render_ge_svg
     ml_ge.render_ge_svg = fake_svg
     try:
-        assert ge(matrices, n_rhs=1) == "<svg/>"
+        assert ge_stack_svg(matrices, n_rhs=1) == "<svg/>"
     finally:
         ml_ge.render_ge_svg = ge_svg_orig
 
@@ -350,7 +350,7 @@ def test_ge_legacy_wrapper_supports_canonical_n_rhs_keyword():
 
 
 def test_ge_legacy_wrapper_uses_canonical_tex_hook_names(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
@@ -362,14 +362,14 @@ def test_ge_legacy_wrapper_uses_canonical_tex_hook_names(monkeypatch):
 
     monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
 
-    assert ge(matrices, body_preamble="%body", document_preamble="%doc") == "<svg/>"
+    assert ge_stack_svg(matrices, body_preamble="%body", document_preamble="%doc") == "<svg/>"
 
     assert captured["body_preamble"] == "%body"
     assert captured["document_preamble"] == "%doc"
 
 
 def test_ge_legacy_wrapper_rejects_removed_tex_hook_aliases(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
@@ -381,7 +381,7 @@ def test_ge_legacy_wrapper_rejects_removed_tex_hook_aliases(monkeypatch):
     monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
 
     try:
-        ge(matrices, preamble="%old-body", extension="%old-doc")
+        ge_stack_svg(matrices, preamble="%old-body", extension="%old-doc")
     except TypeError as exc:
         msg = str(exc)
         assert "preamble" in msg

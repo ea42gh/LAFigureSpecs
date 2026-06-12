@@ -74,7 +74,6 @@ from .show_ge import (
 )
 from .convenience_utils import bundle_summary
 from .convenience_ge import (
-    ge as ge,
     ge_bundle,
     ge_layout_spec,
     ge_spec,
@@ -178,7 +177,6 @@ __all__ = [
     "ge_svg",
     "ge_stack_svg",
     "ge_bundle",
-    "ge",
     "eig_svg",
     "svd_svg",
     "render_ge_svg",

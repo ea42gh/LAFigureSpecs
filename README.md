@@ -31,7 +31,7 @@ The names above are the supported top-level surface for parity with
 
 | Area | Function | Output |
 |---|---|---|
-| GE | `ge_stack_svg(...)` / `ge(...)` | Rendered SVG for a precomputed row-reduction stack. |
+| GE | `ge_stack_svg(...)` | Rendered SVG for a precomputed row-reduction stack. |
 | GE | `show_ge(...)` / `ShowGE` | Notebook-friendly row-reduction workflow/display helpers. |
 | GE | `show_layout(show)` / `show_system(show)` / `show_solution(show)` | Top-level workflow/display wrappers over `ShowGE` methods. |
 | GE | `lhs_matrix(show)` / `rhs_matrix(show)` / `rhs_column(show, ...)` | Direct matrix accessors for the current GE stack state. |
