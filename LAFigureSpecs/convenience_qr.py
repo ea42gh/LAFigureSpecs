@@ -357,3 +357,8 @@ def gram_schmidt_qr(
         output_dir=output_dir,
         render_opts=render_opts,
     )
+
+
+qr_table_tex = qr_tbl_tex
+qr_table_svg = qr_tbl_svg
+qr_table_bundle = qr_tbl_bundle

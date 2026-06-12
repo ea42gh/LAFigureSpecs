@@ -20,6 +20,12 @@ def test_public_api_contains_canonical_render_names():
     assert "qr_bundle" in LAFigureSpecs.__all__
     assert "eig_bundle" in LAFigureSpecs.__all__
     assert "svd_bundle" in LAFigureSpecs.__all__
+    assert "ge_table_svg" in LAFigureSpecs.__all__
+    assert "qr_table_svg" in LAFigureSpecs.__all__
+    assert "ge_table_tex" in LAFigureSpecs.__all__
+    assert "qr_table_tex" in LAFigureSpecs.__all__
+    assert "ge_table_bundle" in LAFigureSpecs.__all__
+    assert "qr_table_bundle" in LAFigureSpecs.__all__
     assert "ShowGE" in LAFigureSpecs.__all__
     assert "ref" in LAFigureSpecs.__all__
     assert "lhs_matrix" in LAFigureSpecs.__all__
@@ -65,6 +71,12 @@ def test_canonical_aliases_point_to_existing_top_level_helpers():
     assert LAFigureSpecs.qr_bundle is LAFigureSpecs.qr_tbl_bundle
     assert LAFigureSpecs.eig_bundle is LAFigureSpecs.eig_tbl_bundle
     assert LAFigureSpecs.svd_bundle is LAFigureSpecs.svd_tbl_bundle
+    assert LAFigureSpecs.ge_table_tex is LAFigureSpecs.ge_tbl_tex
+    assert LAFigureSpecs.ge_table_svg is LAFigureSpecs.ge_tbl_svg
+    assert LAFigureSpecs.ge_table_bundle is LAFigureSpecs.ge_tbl_bundle
+    assert LAFigureSpecs.qr_table_tex is LAFigureSpecs.qr_tbl_tex
+    assert LAFigureSpecs.qr_table_svg is LAFigureSpecs.qr_tbl_svg
+    assert LAFigureSpecs.qr_table_bundle is LAFigureSpecs.qr_tbl_bundle
 
 
 def test_bundle_return_contracts_have_spec_tex_svg_keys():

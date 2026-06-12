@@ -63,7 +63,8 @@ Use these when you want a lightweight preflight before rendering:
 - `LAFigureSpecs.ge_tbl_bundle(A, **opts)`: compatibility alias for `ge_bundle(...)`; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
 - `LAFigureSpecs.ge_tex(A, **opts)`: render GE TeX from the spec path.
 - `LAFigureSpecs.ge_tbl_tex(A, **opts)`: compatibility alias for `ge_tex(...)`.
-- `LAFigureSpecs.ge_tbl_svg(A, **opts)`: render GE SVG from the spec path.
+- `LAFigureSpecs.ge_table_svg(A, **opts)`: render GE SVG from the spec path.
+- `LAFigureSpecs.ge_tbl_svg(A, **opts)`: compatibility alias for `ge_table_svg(...)`.
 - `LAFigureSpecs.ge_svg(matrices, **opts)`: canonical GE stack renderer.
 - `LAFigureSpecs.ge(matrices, **opts)`: compatibility alias for `ge_svg(...)`.
 
@@ -82,7 +83,8 @@ Example options:
 - `LAFigureSpecs.qr_matrices_dict_from_grid(mats)`: same as above, but returns a plain dict.
 - `LAFigureSpecs.qr_tex(A, **opts)`: render QR TeX from the spec path.
 - `LAFigureSpecs.qr_tbl_tex(A, **opts)`: compatibility alias for `qr_tex(...)`.
-- `LAFigureSpecs.qr_tbl_svg(A, **opts)`: render QR SVG from the spec path.
+- `LAFigureSpecs.qr_table_svg(A, **opts)`: render QR SVG from the spec path.
+- `LAFigureSpecs.qr_tbl_svg(A, **opts)`: compatibility alias for `qr_table_svg(...)`.
 - `LAFigureSpecs.qr_bundle(A, **opts)`: canonical QR bundle helper.
 - `LAFigureSpecs.qr_tbl_bundle(A, **opts)`: compatibility alias for `qr_bundle(...)`.
 - `LAFigureSpecs.qr_svg(matrices, **opts)`: canonical QR SVG renderer for a precomputed matrix stack.

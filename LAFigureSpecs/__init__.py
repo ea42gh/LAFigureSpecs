@@ -125,6 +125,12 @@ ge_bundle = ge_tbl_bundle
 qr_bundle = qr_tbl_bundle
 eig_bundle = eig_tbl_bundle
 svd_bundle = svd_tbl_bundle
+ge_table_tex = ge_tbl_tex
+ge_table_svg = ge_tbl_svg
+ge_table_bundle = ge_tbl_bundle
+qr_table_tex = qr_tbl_tex
+qr_table_svg = qr_tbl_svg
+qr_table_bundle = qr_tbl_bundle
 
 __all__ = [
     "__version__",
@@ -194,6 +200,9 @@ __all__ = [
     "ge_tbl_bundle",
     "ge_svg",
     "ge_bundle",
+    "ge_table_tex",
+    "ge_table_svg",
+    "ge_table_bundle",
     "ge",
     "eig_svg",
     "svd_svg",
@@ -207,6 +216,9 @@ __all__ = [
     "latex_document_svg",
     "lshow_svg",
     "qr",
+    "qr_table_tex",
+    "qr_table_svg",
+    "qr_table_bundle",
     "latexify",
     "make_decorator",
     "decorate_tex_entries",

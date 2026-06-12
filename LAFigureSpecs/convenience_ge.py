@@ -15,11 +15,18 @@ from .ge_convenience import (
     ge_tbl_svg,
 )
 
+ge_table_tex = ge_tbl_tex
+ge_table_svg = ge_tbl_svg
+ge_table_bundle = ge_tbl_bundle
+
 __all__ = [
     "ge_tbl_bundle",
     "ge_tbl_layout_spec",
     "ge_tbl_spec",
     "ge_tbl_tex",
     "ge_tbl_svg",
+    "ge_table_tex",
+    "ge_table_svg",
+    "ge_table_bundle",
     "ge",
 ]
