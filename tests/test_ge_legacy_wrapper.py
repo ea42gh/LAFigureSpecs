@@ -164,7 +164,7 @@ def test_ge_legacy_wrapper_supports_variable_summary():
         ml_ge.render_ge_svg = ge_svg_orig
 
     assert out == "<svg/>"
-    assert captured["variable_labels"]
+    assert captured["label_rows"]
 
 
 def test_ge_legacy_wrapper_supports_array_names():

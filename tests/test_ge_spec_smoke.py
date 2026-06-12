@@ -61,7 +61,7 @@ def test_ge_spec_variable_summary_labels():
         variable_colors=("blue", "orange"),
     )
 
-    labels = spec.get("variable_labels") or []
+    labels = spec.get("label_rows") or []
     assert labels
     rows = labels[0]["labels"]
     assert rows[0] == [

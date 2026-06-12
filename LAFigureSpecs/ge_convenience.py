@@ -286,12 +286,12 @@ def _build_ge_bundle(
             decorators = list(decorators) + pivot_decorators
 
     text_annotations = list(decor.get("text_annotations") or [])
-    variable_labels: Optional[List[Dict[str, Any]]] = None
+    label_rows: Optional[List[Dict[str, Any]]] = None
     eff_variable_summary = variable_summary
     if eff_variable_summary is None:
         eff_variable_summary = decor.get("variable_types") or decor.get("variable_summary")
     if eff_variable_summary:
-        variable_labels = _variable_summary_label_rows(
+        label_rows = _variable_summary_label_rows(
             layers["matrices"],
             eff_variable_summary,
             variable_colors,
@@ -321,7 +321,7 @@ def _build_ge_bundle(
         "nice_options": nice_options,
         "pivot_locs": pivot_locs,
         "text_annotations": text_annotations,
-        "variable_labels": variable_labels,
+        "label_rows": label_rows,
         "rowechelon_paths": rowechelon_paths,
         "callouts": callouts,
         "decorators": decorators,
@@ -484,7 +484,7 @@ def ge_layout_spec(
         "codebefore": bundle["spec"].get("codebefore"),
         "create_cell_nodes": bundle["spec"].get("create_cell_nodes"),
         "create_medium_nodes": bundle["spec"].get("create_medium_nodes"),
-        "variable_labels": bundle["spec"].get("variable_labels"),
+        "label_rows": bundle["spec"].get("label_rows"),
         "decorators": bundle["spec"].get("decorators"),
         "decorations": bundle["spec"].get("decorations"),
         "format_nrhs": bundle["spec"].get("format_nrhs"),
@@ -585,9 +585,9 @@ def ge_stack_svg(
         color="violet",
     )
 
-    variable_labels: Optional[List[Dict[str, Any]]] = None
+    label_rows: Optional[List[Dict[str, Any]]] = None
     if variable_summary:
-        variable_labels = _variable_summary_label_rows(
+        label_rows = _variable_summary_label_rows(
             matrices,
             variable_summary,
             variable_colors,
@@ -683,7 +683,7 @@ def ge_stack_svg(
         pivot_locs=pivot_locs,
         codebefore=codebefore,
         text_annotations=text_annotations,
-        variable_labels=variable_labels,
+        label_rows=label_rows,
         rowechelon_paths=rowechelon_paths,
         callouts=render_callouts or None,
         create_extra_nodes=True if (ref_path_list or needs_medium_nodes) else None,
