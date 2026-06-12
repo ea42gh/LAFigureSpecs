@@ -16,14 +16,14 @@ def _has_unexpanded_square_term_inside_radical(x):
     return False
 
 
-def test_svd_spec_from_right_singular_vectors_matches_svd_tbl_spec():
+def test_svd_spec_from_right_singular_vectors_matches_svd_spec():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 0], [0, 0]])  # rank-deficient
-    expected = LAFigureSpecs.svd_tbl_spec(A)
+    expected = LAFigureSpecs.svd_spec(A)
 
     G = A.T * A  # Gramian; its eigenvectors are right singular vectors
-    got = LAFigureSpecs.svd_tbl_spec_from_right_singular_vectors(A, G.eigenvects())
+    got = LAFigureSpecs.svd_spec_from_right_singular_vectors(A, G.eigenvects())
 
     assert got["sz"] == expected["sz"]
     assert got["lambda"] == expected["lambda"]
@@ -52,7 +52,7 @@ def test_svd_spec_from_right_singular_vectors_orthonormal_full_rank_rectangular(
 
     A = sym.Matrix([[1, 2], [3, 4], [5, 6]])
     G = A.T * A
-    got = LAFigureSpecs.svd_tbl_spec_from_right_singular_vectors(A, G.eigenvects())
+    got = LAFigureSpecs.svd_spec_from_right_singular_vectors(A, G.eigenvects())
 
     V_cols = _flatten_groups(got["qvecs"])
     assert len(V_cols) == A.cols
@@ -62,16 +62,16 @@ def test_svd_spec_from_right_singular_vectors_orthonormal_full_rank_rectangular(
             assert sym.simplify(v.dot(w)) == 0
 
 
-def test_svd_tbl_spec_sigma_sorted_and_scaled():
+def test_svd_spec_sigma_sorted_and_scaled():
     import LAFigureSpecs
 
     A = sym.Matrix([[2, 0], [0, 1]])
-    spec = LAFigureSpecs.svd_tbl_spec(A)
+    spec = LAFigureSpecs.svd_spec(A)
     sigmas = spec["sigma"]
     assert len(sigmas) == len(spec["lambda"])
     assert sigmas == sorted(sigmas, reverse=True)
 
-    spec_scaled = LAFigureSpecs.svd_tbl_spec(A, Ascale=2)
+    spec_scaled = LAFigureSpecs.svd_spec(A, Ascale=2)
     sigmas_scaled = spec_scaled["sigma"]
     assert len(sigmas_scaled) == len(sigmas)
     for s, s_scaled in zip(sigmas, sigmas_scaled, strict=False):
@@ -83,8 +83,8 @@ def test_svd_spec_from_right_singular_vectors_respects_Ascale():
 
     A = sym.Matrix([[2, 0], [0, 1]])
     G = A.T * A
-    got = LAFigureSpecs.svd_tbl_spec_from_right_singular_vectors(A, G.eigenvects(), Ascale=2)
-    expected = LAFigureSpecs.svd_tbl_spec(A, Ascale=2)
+    got = LAFigureSpecs.svd_spec_from_right_singular_vectors(A, G.eigenvects(), Ascale=2)
+    expected = LAFigureSpecs.svd_spec(A, Ascale=2)
     assert got["sigma"] == expected["sigma"]
 
 
@@ -92,7 +92,7 @@ def test_svd_spec_simplifies_rectangular_full_rank_vectors():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4], [5, 6]])
-    spec = LAFigureSpecs.svd_tbl_spec(A)
+    spec = LAFigureSpecs.svd_spec(A)
 
     sigma0 = spec["sigma"][0]
     assert sym.simplify(sigma0**2 - spec["lambda"][0]) == 0
@@ -114,7 +114,7 @@ def test_svd_spec_expands_square_terms_inside_radicals_for_display():
     import LAFigureSpecs
 
     A = sym.Matrix([[4, 9], [0, 2]])
-    spec = LAFigureSpecs.svd_tbl_spec(A)
+    spec = LAFigureSpecs.svd_spec(A)
 
     for sigma in spec["sigma"]:
         assert not _has_unexpanded_square_term_inside_radical(sigma)

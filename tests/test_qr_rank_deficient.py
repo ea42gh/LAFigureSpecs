@@ -78,16 +78,16 @@ def test_qr_specs_from_matrices_and_layout_spec():
     import pytest
 
     pytest.importorskip("matrixlayout")
-    from LAFigureSpecs.qr import qr_tbl_layout_spec, qr_tbl_spec_from_matrices
+    from LAFigureSpecs.qr import qr_layout_spec, qr_spec_from_matrices
 
     mats = gram_schmidt_qr_matrices([[1, 0], [1, 1]])
-    spec = qr_tbl_spec_from_matrices(mats, array_names=False, fig_scale=1.2)
+    spec = qr_spec_from_matrices(mats, array_names=False, fig_scale=1.2)
 
     assert spec["matrices"] == mats
     assert spec["array_names"] is False
     assert spec["fig_scale"] == 1.2
 
     callouts = [{"grid": (0, 2), "label": "A", "side": "right"}]
-    layout = qr_tbl_layout_spec([[1, 0], [1, 1]], callouts=callouts, array_names=False)
+    layout = qr_layout_spec([[1, 0], [1, 1]], callouts=callouts, array_names=False)
     assert layout.matrices
     assert layout.callouts == callouts

@@ -229,6 +229,9 @@ def eig_matrices_from_spec(
     return Λ, V
 
 
+eig_spec = eig_tbl_spec
+
+
 @dataclass(frozen=True)
 class EigenDecomposition:
     """A small container for a computed eigendecomposition and options."""

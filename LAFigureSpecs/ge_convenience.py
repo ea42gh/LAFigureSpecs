@@ -965,3 +965,10 @@ def ge_tbl_svg(
         render_opts=render_opts,
     )
     return render_ge_svg(**spec, **opts)
+
+
+ge_spec = ge_tbl_spec
+ge_layout_spec = ge_tbl_layout_spec
+ge_tex = ge_tbl_tex
+ge_table_svg = ge_tbl_svg
+ge_bundle = ge_tbl_bundle

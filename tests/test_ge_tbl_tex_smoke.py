@@ -13,32 +13,32 @@ def _has_ge_template() -> bool:
     return tpl.exists()
 
 
-def test_ge_tbl_tex_smoke():
+def test_ge_tex_smoke():
     pytest.importorskip("matrixlayout")
     if not _has_ge_template():
         pytest.skip("matrixlayout GE template not found")
 
-    from LAFigureSpecs.ge_convenience import ge_tbl_tex
+    from LAFigureSpecs.ge_convenience import ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    tex = ge_tbl_tex(A, show_pivots=True)
+    tex = ge_tex(A, show_pivots=True)
     assert "\\begin{NiceArray}" in tex
     assert r"\SubMatrix({1-3}{2-4})[name=A0]" in tex
     # pivot boxes are emitted as entry decorators in the body
     assert r"\boxed{" in tex
 
 
-def test_ge_tbl_tex_auto_callouts_smoke():
+def test_ge_tex_auto_callouts_smoke():
     """callouts=True should emit delimiter-attached \\draw snippets."""
 
     pytest.importorskip("matrixlayout")
     if not _has_ge_template():
         pytest.skip("matrixlayout GE template not found")
 
-    from LAFigureSpecs.ge_convenience import ge_tbl_tex
+    from LAFigureSpecs.ge_convenience import ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    tex = ge_tbl_tex(A, callouts=True)
+    tex = ge_tex(A, callouts=True)
 
     # Callouts are rendered into rowechelon_paths and emitted as TikZ \draw commands.
     assert "\\draw[" in tex

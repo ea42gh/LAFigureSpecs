@@ -1,4 +1,4 @@
-def test_eig_tbl_bundle_builds_spec_once(monkeypatch):
+def test_eig_bundle_builds_spec_once(monkeypatch):
     import LAFigureSpecs.convenience as conv
 
     calls = {"n": 0}
@@ -7,17 +7,17 @@ def test_eig_tbl_bundle_builds_spec_once(monkeypatch):
         calls["n"] += 1
         return {"lambda": [1], "ma": [1], "evecs": [[[1]]], "A": [[1]]}
 
-    monkeypatch.setattr(conv, "eig_tbl_spec", fake_spec)
+    monkeypatch.setattr(conv, "eig_spec", fake_spec)
     monkeypatch.setattr(conv, "_render_eig_tex_from_spec", lambda *a, **k: "tex")
     monkeypatch.setattr(conv, "_render_eig_svg_from_spec", lambda *a, **k: "<svg/>")
 
-    out = conv.eig_tbl_bundle([[1]])
+    out = conv.eig_bundle([[1]])
     assert out["tex"] == "tex"
     assert out["svg"] == "<svg/>"
     assert calls["n"] == 1
 
 
-def test_svd_tbl_bundle_builds_spec_once(monkeypatch):
+def test_svd_bundle_builds_spec_once(monkeypatch):
     import LAFigureSpecs.convenience as conv
 
     calls = {"n": 0}
@@ -26,17 +26,17 @@ def test_svd_tbl_bundle_builds_spec_once(monkeypatch):
         calls["n"] += 1
         return {"lambda": [1], "ma": [1], "evecs": [[[1]]], "A": [[1]], "sz": (1, 1)}
 
-    monkeypatch.setattr(conv, "svd_tbl_spec", fake_spec)
+    monkeypatch.setattr(conv, "svd_spec", fake_spec)
     monkeypatch.setattr(conv, "_render_eig_tex_from_spec", lambda *a, **k: "tex")
     monkeypatch.setattr(conv, "_render_eig_svg_from_spec", lambda *a, **k: "<svg/>")
 
-    out = conv.svd_tbl_bundle([[1]])
+    out = conv.svd_bundle([[1]])
     assert out["tex"] == "tex"
     assert out["svg"] == "<svg/>"
     assert calls["n"] == 1
 
 
-def test_svd_tbl_bundle_passes_factor_out(monkeypatch):
+def test_svd_bundle_passes_factor_out(monkeypatch):
     import LAFigureSpecs.convenience as conv
 
     render_calls = {}
@@ -52,11 +52,11 @@ def test_svd_tbl_bundle_passes_factor_out(monkeypatch):
         render_calls["svg"] = kwargs
         return "<svg/>"
 
-    monkeypatch.setattr(conv, "svd_tbl_spec", fake_spec)
+    monkeypatch.setattr(conv, "svd_spec", fake_spec)
     monkeypatch.setattr(conv, "_render_eig_tex_from_spec", fake_tex)
     monkeypatch.setattr(conv, "_render_eig_svg_from_spec", fake_svg)
 
-    out = conv.svd_tbl_bundle([[1]], factor_out={"sigma": True, "u": True})
+    out = conv.svd_bundle([[1]], factor_out={"sigma": True, "u": True})
     assert out["tex"] == "tex"
     assert out["svg"] == "<svg/>"
     assert render_calls["tex"]["factor_out"] == {"sigma": True, "u": True}
@@ -80,7 +80,7 @@ def test_svd_bundle_alias_passes_factor_out(monkeypatch):
         render_calls["svg"] = kwargs
         return "<svg/>"
 
-    monkeypatch.setattr(conv, "svd_tbl_spec", fake_spec)
+    monkeypatch.setattr(conv, "svd_spec", fake_spec)
     monkeypatch.setattr(conv, "_render_eig_tex_from_spec", fake_tex)
     monkeypatch.setattr(conv, "_render_eig_svg_from_spec", fake_svg)
 
@@ -91,7 +91,7 @@ def test_svd_bundle_alias_passes_factor_out(monkeypatch):
     assert render_calls["svg"]["factor_out"] == {"sigma": True, "u": True}
 
 
-def test_qr_tbl_bundle_builds_spec_once(monkeypatch):
+def test_qr_bundle_builds_spec_once(monkeypatch):
     import LAFigureSpecs.convenience_qr as conv
 
     calls = {"n": 0}
@@ -112,11 +112,11 @@ def test_qr_tbl_bundle_builds_spec_once(monkeypatch):
             "strict": False,
         }
 
-    monkeypatch.setattr(conv, "qr_tbl_spec", fake_spec)
+    monkeypatch.setattr(conv, "qr_spec", fake_spec)
     monkeypatch.setattr(conv, "_render_qr_tex_from_spec", lambda *a, **k: "tex")
     monkeypatch.setattr(conv, "_render_qr_svg_from_spec", lambda *a, **k: "<svg/>")
 
-    out = conv.qr_tbl_bundle([[1]])
+    out = conv.qr_bundle([[1]])
     assert out["tex"] == "tex"
     assert out["svg"] == "<svg/>"
     assert calls["n"] == 1

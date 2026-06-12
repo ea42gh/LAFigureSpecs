@@ -22,20 +22,20 @@ def test_to_sympy_matrix_tuple_rationals_numpy_array():
     assert M[1, 1] == sym.Rational(5, 6)
 
 
-def test_eig_tbl_spec_accepts_tuple_rationals():
+def test_eig_spec_accepts_tuple_rationals():
     import LAFigureSpecs
 
     A = [[(1, 1), (0, 1)], [(0, 1), (2, 1)]]
-    spec = LAFigureSpecs.eig_tbl_spec(A, normal=True)
+    spec = LAFigureSpecs.eig_spec(A, normal=True)
     assert "lambda" in spec and spec["lambda"]
     assert "qvecs" in spec  # normal=True should populate qvecs
 
 
-def test_svd_tbl_spec_accepts_tuple_rationals():
+def test_svd_spec_accepts_tuple_rationals():
     import LAFigureSpecs
 
     A = [[(1, 1), (0, 1)], [(0, 1), (0, 1)]]
-    spec = LAFigureSpecs.svd_tbl_spec(A)
+    spec = LAFigureSpecs.svd_spec(A)
     assert spec["sz"] == (2, 2)
     # For this A, the only nonzero singular value is 1.
     assert sym.simplify(spec["sigma"][0] - 1) == 0
@@ -162,8 +162,8 @@ def test_convenience_tex_wrappers_smoke():
     import LAFigureSpecs
 
     A = [[1, 0], [0, 2]]
-    tex_eig = LAFigureSpecs.eig_tbl_tex(A)
+    tex_eig = LAFigureSpecs.eig_tex(A)
     assert "\\begin{tabular}" in tex_eig
 
-    tex_svd = LAFigureSpecs.svd_tbl_tex([[1, 0], [0, 0]])
+    tex_svd = LAFigureSpecs.svd_tex([[1, 0], [0, 0]])
     assert "\\begin{tabular}" in tex_svd

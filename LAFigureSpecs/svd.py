@@ -245,3 +245,7 @@ def svd_matrices_from_spec(
     U = sym.Matrix.hstack(*cols_U) if cols_U else sym.Matrix([])
     Σ = sym.diag(*full_sigma) if full_sigma else sym.Matrix([])
     return U, Σ, V, rank
+
+
+svd_spec = svd_tbl_spec
+svd_spec_from_right_singular_vectors = svd_tbl_spec_from_right_singular_vectors

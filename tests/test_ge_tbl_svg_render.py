@@ -20,14 +20,14 @@ def _pick_toolchain_name_or_skip() -> str:
 
 
 @pytest.mark.render
-def test_ge_tbl_svg_smoke():
+def test_ge_table_svg_smoke():
     pytest.importorskip("matrixlayout")
     pytest.importorskip("jupyter_tikz")
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 0], [0, 2]])
 
-    svg = LAFigureSpecs.ge_tbl_svg(
+    svg = LAFigureSpecs.ge_table_svg(
         A,
         crop="tight",
         padding=(2, 2, 2, 2),
@@ -38,14 +38,14 @@ def test_ge_tbl_svg_smoke():
 
 
 @pytest.mark.render
-def test_ge_tbl_svg_smoke_with_pivots():
+def test_ge_table_svg_smoke_with_pivots():
     pytest.importorskip("matrixlayout")
     pytest.importorskip("jupyter_tikz")
-    from LAFigureSpecs.ge_convenience import ge_tbl_svg
+    from LAFigureSpecs.ge_convenience import ge_table_svg
 
     A = sym.Matrix([[1, 0], [2, 3]])
 
-    svg = ge_tbl_svg(
+    svg = ge_table_svg(
         A,
         show_pivots=True,
         crop="tight",

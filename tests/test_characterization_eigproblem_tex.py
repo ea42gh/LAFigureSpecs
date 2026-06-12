@@ -69,13 +69,13 @@ def test_eigenproblem_tex_matches_legacy_for_simple_matrix():
 
     import sympy as sym
 
-    from LAFigureSpecs import eig_tbl_spec
+    from LAFigureSpecs import eig_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[2, 0], [0, 3]])
 
     legacy = eig_tbl(A).nm_latex_doc(case="S", formater=sym.latex)
-    new = render_eig_tex(eig_tbl_spec(A), case="S", formatter=sym.latex)
+    new = render_eig_tex(eig_spec(A), case="S", formatter=sym.latex)
 
     assert _normalize_tex(new) == _normalize_tex(legacy)
 
@@ -92,13 +92,13 @@ def test_svd_tex_matches_legacy_for_rank_deficient_matrix():
 
     import sympy as sym
 
-    from LAFigureSpecs import svd_tbl_spec
+    from LAFigureSpecs import svd_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[3, 0], [0, 0]])
 
     legacy = _legacy_svd_tex(svd_tbl, A, formatter=sym.latex)
-    new = render_eig_tex(svd_tbl_spec(A), case="SVD", formatter=sym.latex)
+    new = render_eig_tex(svd_spec(A), case="SVD", formatter=sym.latex)
 
     assert _normalize_tex(new) == _normalize_tex(legacy)
 
@@ -115,13 +115,13 @@ def test_svd_tex_matches_legacy_for_rectangular_full_rank_matrix():
 
     import sympy as sym
 
-    from LAFigureSpecs import svd_tbl_spec
+    from LAFigureSpecs import svd_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[1, 2], [3, 4], [5, 6]])
 
     legacy = _legacy_svd_tex(svd_tbl, A, formatter=sym.latex)
-    new = render_eig_tex(svd_tbl_spec(A), case="SVD", formatter=sym.latex)
+    new = render_eig_tex(svd_spec(A), case="SVD", formatter=sym.latex)
 
     assert _normalize_tex(new) == _normalize_tex(legacy)
 
@@ -138,13 +138,13 @@ def test_svd_tex_matches_legacy_for_rectangular_rank_deficient_matrix():
 
     import sympy as sym
 
-    from LAFigureSpecs import svd_tbl_spec
+    from LAFigureSpecs import svd_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[1, 2], [2, 4], [3, 6]])
 
     legacy = _legacy_svd_tex(svd_tbl, A, formatter=sym.latex)
-    new = render_eig_tex(svd_tbl_spec(A), case="SVD", formatter=sym.latex)
+    new = render_eig_tex(svd_spec(A), case="SVD", formatter=sym.latex)
 
     assert _normalize_tex(new) == _normalize_tex(legacy)
 
@@ -161,13 +161,13 @@ def test_svd_tex_matches_legacy_for_wide_matrix():
 
     import sympy as sym
 
-    from LAFigureSpecs import svd_tbl_spec
+    from LAFigureSpecs import svd_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[1, 2, 3], [4, 5, 6]])
 
     legacy = _legacy_svd_tex(svd_tbl, A, formatter=sym.latex)
-    new = render_eig_tex(svd_tbl_spec(A), case="SVD", formatter=sym.latex)
+    new = render_eig_tex(svd_spec(A), case="SVD", formatter=sym.latex)
 
     assert _normalize_tex(new) == _normalize_tex(legacy)
 
@@ -184,13 +184,13 @@ def test_svd_tex_matches_legacy_with_Ascale():
 
     import sympy as sym
 
-    from LAFigureSpecs import svd_tbl_spec
+    from LAFigureSpecs import svd_spec
     from matrixlayout import render_eig_tex
 
     A = sym.Matrix([[2, 0], [0, 1]])
     Ascale = sym.Integer(2)
 
     legacy = _legacy_svd_tex(svd_tbl, A, formatter=sym.latex, Ascale=Ascale)
-    new = render_eig_tex(svd_tbl_spec(A, Ascale=Ascale), case="SVD", formatter=sym.latex)
+    new = render_eig_tex(svd_spec(A, Ascale=Ascale), case="SVD", formatter=sym.latex)
 
     assert _normalize_tex(new) == _normalize_tex(legacy)

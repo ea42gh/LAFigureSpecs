@@ -16,8 +16,8 @@ from typing import Any, Dict, Optional, Tuple, Union
 from .formatting import latexify
 from .convenience_utils import make_bundle, norm_str, resolve_crop_padding, resolve_render_svg_opts
 
-from .eig import eig_tbl_spec
-from .svd import svd_tbl_spec
+from .eig import eig_spec
+from .svd import svd_spec
 
 _UNSET = object()
 
@@ -169,7 +169,7 @@ def eig_tbl_tex(
     if case is None:
         case = "Q" if normal else "S"
 
-    spec = eig_tbl_spec(
+    spec = eig_spec(
         A,
         normal=normal,
         Ascale=Ascale,
@@ -224,7 +224,7 @@ def eig_tbl_svg(
     if case is None:
         case = "Q" if normal else "S"
 
-    spec = eig_tbl_spec(
+    spec = eig_spec(
         A,
         normal=normal,
         Ascale=Ascale,
@@ -273,7 +273,7 @@ def eig_tbl_bundle(
     if case is None:
         case = "Q" if normal else "S"
 
-    spec = eig_tbl_spec(
+    spec = eig_spec(
         A,
         normal=normal,
         Ascale=kwargs.get("Ascale"),
@@ -356,7 +356,7 @@ def svd_tbl_tex(
 ) -> str:
     """Compute + render: build an SVD spec from ``A`` and return TeX."""
 
-    spec = svd_tbl_spec(
+    spec = svd_spec(
         A,
         Ascale=Ascale,
         eig_digits=eig_digits,
@@ -411,7 +411,7 @@ def svd_tbl_svg(
 ) -> str:
     """Compute + render: build an SVD spec from ``A`` and return SVG."""
 
-    spec = svd_tbl_spec(
+    spec = svd_spec(
         A,
         Ascale=Ascale,
         eig_digits=eig_digits,
@@ -457,7 +457,7 @@ def svd_tbl_svg(
 def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
 
-    spec = svd_tbl_spec(
+    spec = svd_spec(
         A,
         Ascale=kwargs.get("Ascale"),
         eig_digits=kwargs.get("eig_digits"),
@@ -516,3 +516,11 @@ def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
         svg = None
         render_error = str(e)
     return make_bundle(spec=spec, tex=tex, svg=svg, data={}, render_error=render_error)
+
+
+eig_tex = eig_tbl_tex
+eig_svg = eig_tbl_svg
+eig_bundle = eig_tbl_bundle
+svd_tex = svd_tbl_tex
+svd_svg = svd_tbl_svg
+svd_bundle = svd_tbl_bundle

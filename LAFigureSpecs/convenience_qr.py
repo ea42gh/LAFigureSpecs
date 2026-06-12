@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional
 
 from .formatting import latexify
 from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
-from .qr import gram_schmidt_qr_matrices, qr_tbl_spec, qr_tbl_spec_from_matrices
+from .qr import gram_schmidt_qr_matrices, qr_spec, qr_spec_from_matrices
 
 _UNSET = object()
 _QR_SPEC_KEYS = {
@@ -109,7 +109,7 @@ def qr_tbl_tex(
 ) -> str:
     """Compute + render: build a QR spec from ``A`` and return TeX."""
 
-    spec = qr_tbl_spec(
+    spec = qr_spec(
         A,
         callouts=callouts,
         array_names=array_names,
@@ -152,7 +152,7 @@ def qr_tbl_svg(
 ) -> str:
     """Compute + render: build a QR spec from ``A`` and return SVG."""
 
-    spec = qr_tbl_spec(
+    spec = qr_spec(
         A,
         callouts=callouts,
         array_names=array_names,
@@ -195,7 +195,7 @@ def qr_tbl_bundle(
     """Bundle: compute once, then return a standardized bundle contract."""
 
     spec_kwargs = {k: kwargs[k] for k in _QR_SPEC_KEYS if k in kwargs}
-    spec = qr_tbl_spec(A, **spec_kwargs)
+    spec = qr_spec(A, **spec_kwargs)
     tex = _render_qr_tex_from_spec(
         spec,
         formatter=kwargs.get("formatter", latexify),
@@ -255,7 +255,7 @@ def qr(
 ) -> str:
     """Render-only wrapper: render SVG from a precomputed QR matrix stack."""
 
-    spec = qr_tbl_spec_from_matrices(
+    spec = qr_spec_from_matrices(
         matrices,
         callouts=callouts,
         array_names=array_names,
@@ -323,7 +323,7 @@ def gram_schmidt_qr(
         allow_rank_deficient=allow_rank_deficient,
         rank_deficient=rank_deficient,
     )
-    spec = qr_tbl_spec_from_matrices(
+    spec = qr_spec_from_matrices(
         matrices,
         callouts=callouts,
         array_names=array_names,
@@ -362,3 +362,5 @@ def gram_schmidt_qr(
 qr_table_tex = qr_tbl_tex
 qr_table_svg = qr_tbl_svg
 qr_table_bundle = qr_tbl_bundle
+qr_tex = qr_tbl_tex
+qr_bundle = qr_tbl_bundle

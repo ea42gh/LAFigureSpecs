@@ -18,19 +18,19 @@ def _pick_toolchain_name_or_skip() -> str:
     raise AssertionError("unreachable")
 
 
-def test_svd_tbl_tex_smoke():
+def test_svd_tex_smoke():
     import LAFigureSpecs
 
-    tex = LAFigureSpecs.svd_tbl_tex([[1, 0], [0, 0]])
+    tex = LAFigureSpecs.svd_tex([[1, 0], [0, 0]])
     assert "\\begin{tabular}" in tex
     assert "\\Sigma" in tex
 
 
-def test_svd_tbl_tex_factors_orthonormal_vectors_when_requested():
+def test_svd_tex_factors_orthonormal_vectors_when_requested():
     import sympy as sym
     import LAFigureSpecs
 
-    tex = LAFigureSpecs.svd_tbl_tex(sym.Matrix([[4, 2], [0, 9]]), factor_out={"qvecs": True})
+    tex = LAFigureSpecs.svd_tex(sym.Matrix([[4, 2], [0, 9]]), factor_out={"qvecs": True})
 
     vector_row = next(
         line
@@ -41,7 +41,7 @@ def test_svd_tbl_tex_factors_orthonormal_vectors_when_requested():
     assert r"\frac{8 \sqrt{2}}{\sqrt{5017 - 69 \sqrt{5017}}}" not in vector_row
 
 
-def test_svd_tbl_svg_defaults_exact_bbox(monkeypatch):
+def test_svd_svg_defaults_exact_bbox(monkeypatch):
     import LAFigureSpecs.convenience as conv
 
     calls = {}
@@ -53,13 +53,13 @@ def test_svd_tbl_svg_defaults_exact_bbox(monkeypatch):
 
     monkeypatch.setattr(conv, "_render_eig_svg_from_spec", fake_render)
 
-    svg = conv.svd_tbl_svg([[1, 0], [0, 0]])
+    svg = conv.svd_svg([[1, 0], [0, 0]])
 
     assert svg == "<svg/>"
     assert calls["kwargs"]["exact_bbox"] is True
 
 
-def test_svd_tbl_tex_passes_factor_out(monkeypatch):
+def test_svd_tex_passes_factor_out(monkeypatch):
     import LAFigureSpecs.convenience as conv
 
     calls = {}
@@ -71,13 +71,13 @@ def test_svd_tbl_tex_passes_factor_out(monkeypatch):
 
     monkeypatch.setattr(conv, "_render_eig_tex_from_spec", fake_render)
 
-    tex = conv.svd_tbl_tex([[1, 0], [0, 0]], factor_out={"u": True})
+    tex = conv.svd_tex([[1, 0], [0, 0]], factor_out={"u": True})
 
     assert tex == "tex"
     assert calls["kwargs"]["factor_out"] == {"u": True}
 
 
-def test_svd_tbl_svg_passes_factor_out(monkeypatch):
+def test_svd_svg_passes_factor_out(monkeypatch):
     import LAFigureSpecs.convenience as conv
 
     calls = {}
@@ -89,7 +89,7 @@ def test_svd_tbl_svg_passes_factor_out(monkeypatch):
 
     monkeypatch.setattr(conv, "_render_eig_svg_from_spec", fake_render)
 
-    svg = conv.svd_tbl_svg(
+    svg = conv.svd_svg(
         [[1, 0], [0, 0]],
         factor_out={"sigma": True, "u": True},
     )
@@ -120,11 +120,11 @@ def test_svd_svg_alias_passes_factor_out(monkeypatch):
     assert calls["kwargs"]["factor_out"] == {"sigma": True, "u": True}
 
 
-def test_svd_tbl_tex_selective_matrix_factoring_example():
+def test_svd_tex_selective_matrix_factoring_example():
     import sympy as sym
     import LAFigureSpecs
 
-    tex = LAFigureSpecs.svd_tbl_tex(
+    tex = LAFigureSpecs.svd_tex(
         sym.Matrix([[4, 9], [0, 2]]),
         factor_out={"u": True, "v": True, "sigma": False},
     )
@@ -141,12 +141,12 @@ def test_svd_tbl_tex_selective_matrix_factoring_example():
 
 
 @pytest.mark.render
-def test_svd_tbl_svg_smoke():
+def test_svd_svg_smoke():
     pytest.importorskip("jupyter_tikz")
 
     import LAFigureSpecs
 
-    svg = LAFigureSpecs.svd_tbl_svg(
+    svg = LAFigureSpecs.svd_svg(
         [[1, 0], [0, 0]],
         toolchain_name=_pick_toolchain_name_or_skip(),
         crop="tight",

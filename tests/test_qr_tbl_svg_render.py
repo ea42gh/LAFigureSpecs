@@ -20,14 +20,14 @@ def _pick_toolchain_name_or_skip() -> str:
 
 
 @pytest.mark.render
-def test_qr_tbl_svg_smoke():
+def test_qr_table_svg_smoke():
     pytest.importorskip("matrixlayout")
     pytest.importorskip("jupyter_tikz")
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
 
-    svg = LAFigureSpecs.qr_tbl_svg(
+    svg = LAFigureSpecs.qr_table_svg(
         A,
         crop="tight",
         padding=(2, 2, 2, 2),

@@ -17,11 +17,18 @@ from .__about__ import __version__, __build__
 from .eig import (
     EigenDecomposition,
     eig_spec_from_eigenvects,
+    eig_spec,
     eig_tbl_spec,
     eigendecomposition,
     eig_matrices_from_spec,
 )
-from .svd import svd_tbl_spec, svd_tbl_spec_from_right_singular_vectors, svd_matrices_from_spec
+from .svd import (
+    svd_spec,
+    svd_tbl_spec,
+    svd_spec_from_right_singular_vectors,
+    svd_tbl_spec_from_right_singular_vectors,
+    svd_matrices_from_spec,
+)
 from .convenience import (
     eig_tbl_bundle,
     eig_tbl_svg,
@@ -36,12 +43,24 @@ from .qr import (
     naive_gram_schmidt_w,
     naive_qr,
     qr_tbl_layout_spec,
+    qr_layout_spec,
+    qr_spec,
     qr_tbl_spec,
+    qr_spec_from_matrices,
     qr_tbl_spec_from_matrices,
     qr_matrices_from_grid,
     qr_matrices_dict_from_grid,
 )
-from .convenience_qr import qr, qr_tbl_bundle as qr_tbl_bundle, qr_tbl_tex, qr_tbl_svg, gram_schmidt_qr
+from .convenience_qr import (
+    qr,
+    qr_tbl_bundle as qr_tbl_bundle,
+    qr_tbl_tex,
+    qr_tbl_svg,
+    gram_schmidt_qr,
+    qr_table_tex,
+    qr_table_svg,
+    qr_table_bundle,
+)
 from .backsub import (
     backsubstitution_tex,
     linear_system_tex,
@@ -63,7 +82,20 @@ from .show_ge import (
     solutions,
 )
 from .convenience_utils import bundle_summary
-from .convenience_ge import ge as ge, ge_tbl_bundle, ge_tbl_layout_spec, ge_tbl_spec, ge_tbl_tex, ge_tbl_svg
+from .convenience_ge import (
+    ge as ge,
+    ge_bundle,
+    ge_layout_spec,
+    ge_spec,
+    ge_table_bundle,
+    ge_table_svg,
+    ge_table_tex,
+    ge_tbl_bundle,
+    ge_tbl_layout_spec,
+    ge_tbl_spec,
+    ge_tbl_tex,
+    ge_tbl_svg,
+)
 from .rendering import latex_svg, latex_document_svg, lshow_svg
 from matrixlayout.ge import render_ge_svg, render_ge_tex
 from matrixlayout.qr import render_qr_svg, render_qr_tex
@@ -108,10 +140,6 @@ def px_to_mm(px: float) -> float:
 
 
 # Canonical cross-language aliases for top-level display/bundle helpers.
-ge_spec = ge_tbl_spec
-qr_spec = qr_tbl_spec
-eig_spec = eig_tbl_spec
-svd_spec = svd_tbl_spec
 ge_tex = ge_tbl_tex
 qr_tex = qr_tbl_tex
 eig_tex = eig_tbl_tex
@@ -121,16 +149,9 @@ qr_svg = qr
 eig_svg = eig_tbl_svg
 svd_svg = svd_tbl_svg
 qr_figure = gram_schmidt_qr
-ge_bundle = ge_tbl_bundle
 qr_bundle = qr_tbl_bundle
 eig_bundle = eig_tbl_bundle
 svd_bundle = svd_tbl_bundle
-ge_table_tex = ge_tbl_tex
-ge_table_svg = ge_tbl_svg
-ge_table_bundle = ge_tbl_bundle
-qr_table_tex = qr_tbl_tex
-qr_table_svg = qr_tbl_svg
-qr_table_bundle = qr_tbl_bundle
 
 __all__ = [
     "__version__",
@@ -142,6 +163,7 @@ __all__ = [
     "eig_tbl_spec",
     "eig_matrices_from_spec",
     "svd_spec",
+    "svd_spec_from_right_singular_vectors",
     "svd_tbl_spec",
     "svd_tbl_spec_from_right_singular_vectors",
     "svd_matrices_from_spec",
@@ -161,9 +183,11 @@ __all__ = [
     "naive_qr",
     "qr_tbl_spec",
     "qr_tbl_spec_from_matrices",
+    "qr_spec_from_matrices",
     "qr_matrices_from_grid",
     "qr_matrices_dict_from_grid",
     "qr_spec",
+    "qr_layout_spec",
     "qr_tbl_layout_spec",
     "qr_tbl_tex",
     "qr_tbl_svg",
@@ -180,6 +204,7 @@ __all__ = [
     "trace_to_layer_matrices",
     "decorate_ge",
     "ge_spec",
+    "ge_layout_spec",
     "ge_tbl_spec",
     "ge_tbl_layout_spec",
     "ge_tex",

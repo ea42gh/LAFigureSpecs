@@ -5,7 +5,7 @@ import LAFigureSpecs
 
 def test_eig_matrices_from_spec_basic():
     A = sym.Matrix([[2, 0], [0, 3]])
-    spec = LAFigureSpecs.eig_tbl_spec(A)
+    spec = LAFigureSpecs.eig_spec(A)
     lam, vecs = LAFigureSpecs.eig_matrices_from_spec(spec)
     assert lam.shape == (2, 2)
     assert vecs.shape == (2, 2)
@@ -14,7 +14,7 @@ def test_eig_matrices_from_spec_basic():
 
 def test_svd_matrices_from_spec_reduced_rank():
     A = sym.Matrix([[3, 0], [0, 0]])
-    spec = LAFigureSpecs.svd_tbl_spec(A)
+    spec = LAFigureSpecs.svd_spec(A)
     U, S, V, rank = LAFigureSpecs.svd_matrices_from_spec(spec)
     assert rank == 1
     assert S.shape == (1, 1)

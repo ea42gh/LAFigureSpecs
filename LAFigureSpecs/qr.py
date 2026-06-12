@@ -357,3 +357,8 @@ def qr_tbl_spec_from_matrices(
         "decorators": decorators,
         "strict": strict,
     }
+
+
+qr_spec = qr_tbl_spec
+qr_layout_spec = qr_tbl_layout_spec
+qr_spec_from_matrices = qr_tbl_spec_from_matrices

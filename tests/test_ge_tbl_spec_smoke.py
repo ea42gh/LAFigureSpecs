@@ -1,7 +1,7 @@
 import sympy as sym
 
 
-def test_ge_tbl_spec_and_tex_smoke():
+def test_ge_spec_and_tex_smoke():
     import pytest
 
     pytest.importorskip("matrixlayout")
@@ -9,39 +9,39 @@ def test_ge_tbl_spec_and_tex_smoke():
 
     A = sym.Matrix([[1, 2], [3, 4]])
 
-    spec = LAFigureSpecs.ge_tbl_spec(A)
+    spec = LAFigureSpecs.ge_spec(A)
     assert isinstance(spec, dict)
     assert "matrices" in spec
     assert "n_rhs" in spec
     assert spec["n_rhs"] == 0
 
-    tex = LAFigureSpecs.ge_tbl_tex(A)
+    tex = LAFigureSpecs.ge_tex(A)
     assert "\\begin{NiceArray}" in tex
     assert "\\end{NiceArray}" in tex
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, array_names=True)
+    spec = LAFigureSpecs.ge_spec(A, array_names=True)
     assert spec.get("callouts")
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, array_names=True, array_name_indices=False)
+    spec = LAFigureSpecs.ge_spec(A, array_names=True, array_name_indices=False)
     labels = [c.get("label", "") for c in spec.get("callouts") or []]
     assert labels
     assert not any("E_{" in label for label in labels)
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, show_pivots=True)
+    spec = LAFigureSpecs.ge_spec(A, show_pivots=True)
     assert spec.get("codebefore")
     assert spec.get("rowechelon_paths")
 
 
-def test_ge_tbl_layout_spec_uses_typed_layout():
+def test_ge_layout_spec_uses_typed_layout():
     import pytest
 
     pytest.importorskip("matrixlayout")
-    from LAFigureSpecs.ge_convenience import ge_tbl_layout_spec
+    from LAFigureSpecs.ge_convenience import ge_layout_spec
     from matrixlayout.specs import GEGridSpec, GELayoutSpec
     from matrixlayout.ge import render_ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    spec = ge_tbl_layout_spec(A, show_pivots=True)
+    spec = ge_layout_spec(A, show_pivots=True)
 
     assert isinstance(spec, GEGridSpec)
     assert isinstance(spec.layout, GELayoutSpec)
@@ -51,11 +51,11 @@ def test_ge_tbl_layout_spec_uses_typed_layout():
     assert "\\begin{NiceArray}" in tex
 
 
-def test_ge_tbl_spec_variable_summary_labels():
+def test_ge_spec_variable_summary_labels():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    spec = LAFigureSpecs.ge_tbl_spec(
+    spec = LAFigureSpecs.ge_spec(
         A,
         variable_summary=[True, False],
         variable_colors=("blue", "orange"),
@@ -74,40 +74,40 @@ def test_ge_tbl_spec_variable_summary_labels():
     ]
 
 
-def test_ge_tbl_spec_rhs_vline():
+def test_ge_spec_rhs_vline():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=[5, 6])
+    spec = LAFigureSpecs.ge_spec(A, rhs=[5, 6])
 
     decorations = spec.get("decorations") or []
     assert {"grid": (0, 1), "vlines": 2} in decorations
     assert {"grid": (1, 1), "vlines": 2} in decorations
 
 
-def test_ge_tbl_spec_rejects_removed_ref_rhs_alias():
+def test_ge_spec_rejects_removed_ref_rhs_alias():
     import pytest
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
     with pytest.raises(TypeError, match="ref_rhs"):
-        LAFigureSpecs.ge_tbl_spec(A, ref_rhs=[5, 6])
+        LAFigureSpecs.ge_spec(A, ref_rhs=[5, 6])
 
 
-def test_ge_tbl_spec_layout_and_bundle_match_tex():
+def test_ge_spec_layout_and_bundle_match_tex():
     import pytest
 
     pytest.importorskip("matrixlayout")
     import LAFigureSpecs
-    from LAFigureSpecs.ge_convenience import ge_tbl_layout_spec
+    from LAFigureSpecs.ge_convenience import ge_layout_spec
     from matrixlayout.ge import render_ge_tex
 
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=rhs, show_pivots=True)
-    layout_spec = ge_tbl_layout_spec(A, rhs=rhs, show_pivots=True)
-    bundle = LAFigureSpecs.ge_tbl_bundle(A, rhs=rhs, show_pivots=True)
+    spec = LAFigureSpecs.ge_spec(A, rhs=rhs, show_pivots=True)
+    layout_spec = ge_layout_spec(A, rhs=rhs, show_pivots=True)
+    bundle = LAFigureSpecs.ge_bundle(A, rhs=rhs, show_pivots=True)
 
     tex_spec = render_ge_tex(**spec)
     tex_layout = render_ge_tex(spec=layout_spec)
@@ -117,7 +117,7 @@ def test_ge_tbl_spec_layout_and_bundle_match_tex():
     assert tex_spec == tex_bundle
 
 
-def test_ge_tbl_spec_dict_roundtrip_render_ge_svg_accepts_spec():
+def test_ge_spec_dict_roundtrip_render_ge_svg_accepts_spec():
     import shutil
     import pytest
 
@@ -131,27 +131,27 @@ def test_ge_tbl_spec_dict_roundtrip_render_ge_svg_accepts_spec():
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=rhs, show_pivots=True, array_names=True)
+    spec = LAFigureSpecs.ge_spec(A, rhs=rhs, show_pivots=True, array_names=True)
     svg = render_ge_svg(spec=spec, toolchain_name="pdftex_dvisvgm", crop="tight", padding=(1, 1, 1, 1))
     assert isinstance(svg, str)
     assert "<svg" in svg
 
 
-def test_ge_tbl_spec_sets_create_extra_nodes_for_array_names():
+def test_ge_spec_sets_create_extra_nodes_for_array_names():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
     rhs = sym.Matrix([[5], [6]])
 
-    spec = LAFigureSpecs.ge_tbl_spec(A, rhs=rhs, show_pivots=True, array_names=True)
+    spec = LAFigureSpecs.ge_spec(A, rhs=rhs, show_pivots=True, array_names=True)
     assert spec.get("create_extra_nodes") is True
 
 
-def test_ge_tbl_spec_rowechelon_paths_per_layer():
+def test_ge_spec_rowechelon_paths_per_layer():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    spec = LAFigureSpecs.ge_tbl_spec(A, show_pivots=True)
+    spec = LAFigureSpecs.ge_spec(A, show_pivots=True)
 
     rowechelon_paths = spec.get("rowechelon_paths") or []
     assert rowechelon_paths
@@ -159,7 +159,7 @@ def test_ge_tbl_spec_rowechelon_paths_per_layer():
     assert all(not p.startswith(r"\tikz") for p in rowechelon_paths)
 
 
-def test_ge_tbl_spec_rowechelon_paths_do_not_nest_tikz_in_rendered_tex():
+def test_ge_spec_rowechelon_paths_do_not_nest_tikz_in_rendered_tex():
     import pytest
 
     pytest.importorskip("matrixlayout")
@@ -167,7 +167,7 @@ def test_ge_tbl_spec_rowechelon_paths_do_not_nest_tikz_in_rendered_tex():
     from matrixlayout.ge import render_ge_tex
 
     A = sym.Matrix([[1, 2], [1, 2], [3, 4]])
-    spec = LAFigureSpecs.ge_tbl_spec(A, gj=False, show_pivots=True)
+    spec = LAFigureSpecs.ge_spec(A, gj=False, show_pivots=True)
     tex = render_ge_tex(spec=spec)
 
     assert spec.get("rowechelon_paths")
