@@ -191,7 +191,7 @@ def test_qr_render_wrapper_defers_crop_padding_to_render_opts(monkeypatch):
         fake_render_qr_svg_from_spec,
     )
 
-    svg = convenience_qr.qr(
+    svg = convenience_qr.qr_stack_svg(
         [[[1]], [[1]], [[1]]],
         render_opts={"crop": "loose", "padding": (9, 9, 9, 9)},
     )

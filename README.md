@@ -40,7 +40,7 @@ The names above are the supported top-level surface for parity with
 | GE | `ge_svg(...)` | Rendered SVG for a GE layout. |
 | GE | `ge_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | QR | `qr_figure(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
-| QR | `qr_stack_svg(...)` / `qr(...)` | Renders a precomputed QR matrix stack as SVG. |
+| QR | `qr_stack_svg(...)` | Renders a precomputed QR matrix stack as SVG. |
 | QR | `qr_spec(...)` | Reusable spec dictionary for a QR layout. |
 | QR | `qr_tex(...)` | TeX source for a QR layout. |
 | QR | `qr_svg(...)` | Rendered SVG for a QR layout. |

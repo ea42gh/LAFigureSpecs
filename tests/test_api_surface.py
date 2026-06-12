@@ -2,7 +2,6 @@ def test_public_api_contains_canonical_render_names():
     import LAFigureSpecs
 
     assert "ge" in LAFigureSpecs.__all__
-    assert "qr" in LAFigureSpecs.__all__
     assert "ge_svg" in LAFigureSpecs.__all__
     assert "qr_svg" in LAFigureSpecs.__all__
     assert "ge_stack_svg" in LAFigureSpecs.__all__
@@ -47,6 +46,7 @@ def test_public_api_does_not_export_legacy_names():
     import LAFigureSpecs
 
     assert "svg" not in LAFigureSpecs.__all__
+    assert "qr" not in LAFigureSpecs.__all__
     assert not any("_tbl" in name for name in LAFigureSpecs.__all__)
     assert "gram_schmidt_qr" not in LAFigureSpecs.__all__
     assert not hasattr(LAFigureSpecs, "gram_schmidt_qr")
@@ -56,7 +56,6 @@ def test_canonical_names_point_to_existing_top_level_helpers():
     import LAFigureSpecs
 
     assert LAFigureSpecs.ge_stack_svg is LAFigureSpecs.ge
-    assert LAFigureSpecs.qr_stack_svg is LAFigureSpecs.qr
     from LAFigureSpecs.ge_convenience import ge_svg, ge_stack_svg
 
     assert LAFigureSpecs.ge_svg is ge_svg

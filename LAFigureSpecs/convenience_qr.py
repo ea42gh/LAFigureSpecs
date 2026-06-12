@@ -230,7 +230,7 @@ def qr_bundle(
     return make_bundle(spec=spec, tex=tex, svg=svg, data={}, render_error=render_error)
 
 
-def qr(
+def qr_stack_svg(
     matrices: Any,
     *,
     formatter: Any = latexify,
@@ -357,6 +357,3 @@ def qr_figure(
         output_dir=output_dir,
         render_opts=render_opts,
     )
-
-
-qr_stack_svg = qr

@@ -46,7 +46,6 @@ from .qr import (
     qr_matrices_dict_from_grid,
 )
 from .convenience_qr import (
-    qr,
     qr_bundle,
     qr_figure,
     qr_stack_svg,
@@ -191,7 +190,6 @@ __all__ = [
     "latex_svg",
     "latex_document_svg",
     "lshow_svg",
-    "qr",
     "latexify",
     "make_decorator",
     "decorate_tex_entries",

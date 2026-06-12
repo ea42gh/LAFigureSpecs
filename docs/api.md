@@ -79,7 +79,6 @@ Example options:
 - `LAFigureSpecs.qr_svg(A, **opts)`: render QR SVG from the spec path.
 - `LAFigureSpecs.qr_bundle(A, **opts)`: canonical QR bundle helper.
 - `LAFigureSpecs.qr_stack_svg(matrices, **opts)`: canonical QR SVG renderer for a precomputed matrix stack.
-- `LAFigureSpecs.qr(matrices, **opts)`: historical alias for `qr_stack_svg(...)`.
 - `LAFigureSpecs.qr_figure(A, **opts)`: canonical compute+render Gram-Schmidt QR helper.
 
 Example options:
