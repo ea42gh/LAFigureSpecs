@@ -91,7 +91,7 @@ def _render_qr_svg_from_spec(
     )
 
 
-def qr_tbl_tex(
+def qr_tex(
     A: Any,
     *,
     callouts: Optional[Any] = None,
@@ -127,7 +127,7 @@ def qr_tbl_tex(
     return _render_qr_tex_from_spec(spec, formatter=formatter, strict=strict)
 
 
-def qr_tbl_svg(
+def qr_svg(
     A: Any,
     *,
     callouts: Optional[Any] = None,
@@ -188,7 +188,7 @@ def qr_tbl_svg(
     )
 
 
-def qr_tbl_bundle(
+def qr_bundle(
     A: Any,
     **kwargs: Any,
 ) -> Dict[str, Any]:
@@ -359,7 +359,4 @@ def gram_schmidt_qr(
     )
 
 
-qr_tex = qr_tbl_tex
-qr_svg = qr_tbl_svg
-qr_bundle = qr_tbl_bundle
 qr_stack_svg = qr

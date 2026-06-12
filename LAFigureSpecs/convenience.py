@@ -146,7 +146,7 @@ def _render_eig_svg_from_spec(
     )
 
 
-def eig_tbl_tex(
+def eig_tex(
     A: Any,
     *,
     normal: bool = False,
@@ -193,7 +193,7 @@ def eig_tbl_tex(
     )
 
 
-def eig_tbl_svg(
+def eig_svg(
     A: Any,
     *,
     normal: bool = False,
@@ -262,7 +262,7 @@ def eig_tbl_svg(
     )
 
 
-def eig_tbl_bundle(
+def eig_bundle(
     A: Any,
     **kwargs: Any,
 ) -> Dict[str, Any]:
@@ -335,7 +335,7 @@ def eig_tbl_bundle(
     return make_bundle(spec=spec, tex=tex, svg=svg, data={}, render_error=render_error)
 
 
-def svd_tbl_tex(
+def svd_tex(
     A: Any,
     *,
     Ascale: Optional[Any] = None,
@@ -383,7 +383,7 @@ def svd_tbl_tex(
     )
 
 
-def svd_tbl_svg(
+def svd_svg(
     A: Any,
     *,
     Ascale: Optional[Any] = None,
@@ -454,7 +454,7 @@ def svd_tbl_svg(
     )
 
 
-def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
+def svd_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
 
     spec = svd_spec(
@@ -516,11 +516,3 @@ def svd_tbl_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
         svg = None
         render_error = str(e)
     return make_bundle(spec=spec, tex=tex, svg=svg, data={}, render_error=render_error)
-
-
-eig_tex = eig_tbl_tex
-eig_svg = eig_tbl_svg
-eig_bundle = eig_tbl_bundle
-svd_tex = svd_tbl_tex
-svd_svg = svd_tbl_svg
-svd_bundle = svd_tbl_bundle

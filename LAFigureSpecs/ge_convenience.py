@@ -359,7 +359,7 @@ def _build_ge_bundle(
     }
 
 
-def ge_tbl_spec(
+def ge_spec(
     A: Any,
     rhs: Any = None,
     *,
@@ -419,7 +419,7 @@ def ge_tbl_spec(
     )["spec"]
 
 
-def ge_tbl_layout_spec(
+def ge_layout_spec(
     A: Any,
     rhs: Any = None,
     *,
@@ -720,7 +720,7 @@ def show_ge(*args: Any, **kwargs: Any) -> Any:
         return svg
 
 
-def ge_tbl_bundle(
+def ge_bundle(
     A: Any,
     rhs: Any = None,
     *,
@@ -827,7 +827,7 @@ def ge_tbl_bundle(
     return make_bundle(spec=spec, tex=tex, svg=svg, data=data, render_error=render_error)
 
 
-def ge_tbl_tex(
+def ge_tex(
     A: Any,
     rhs: Any = None,
     *,
@@ -856,7 +856,7 @@ def ge_tbl_tex(
 ) -> str:
     """Compute + render: build GE data from reference inputs and return TeX."""
 
-    return ge_tbl_bundle(
+    return ge_bundle(
         A,
         rhs,
         pivoting=pivoting,
@@ -883,7 +883,7 @@ def ge_tbl_tex(
     )["tex"]
 
 
-def ge_tbl_svg(
+def ge_svg(
     A: Any,
     rhs: Any = None,
     *,
@@ -919,7 +919,7 @@ def ge_tbl_svg(
 ) -> str:
     """Compute + render: build GE data from reference inputs and return SVG."""
 
-    spec = ge_tbl_spec(
+    spec = ge_spec(
         A,
         rhs,
         pivoting=pivoting,
@@ -967,9 +967,4 @@ def ge_tbl_svg(
     return render_ge_svg(**spec, **opts)
 
 
-ge_spec = ge_tbl_spec
-ge_layout_spec = ge_tbl_layout_spec
-ge_tex = ge_tbl_tex
-ge_svg = ge_tbl_svg
-ge_bundle = ge_tbl_bundle
 ge_stack_svg = ge

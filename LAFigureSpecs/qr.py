@@ -255,7 +255,7 @@ def naive_qr(
     return Q_total, Ak, float(conv)
 
 
-def qr_tbl_spec(
+def qr_spec(
     A: Any,
     *,
     callouts: Optional[Sequence[Any]] = None,
@@ -290,7 +290,7 @@ def qr_tbl_spec(
     }
 
 
-def qr_tbl_layout_spec(
+def qr_layout_spec(
     A: Any,
     *,
     callouts: Optional[Sequence[Any]] = None,
@@ -309,7 +309,7 @@ def qr_tbl_layout_spec(
 
     from matrixlayout.specs import QRGridSpec
 
-    spec = qr_tbl_spec(
+    spec = qr_spec(
         A,
         callouts=callouts,
         array_names=array_names,
@@ -326,7 +326,7 @@ def qr_tbl_layout_spec(
     return QRGridSpec.from_dict(spec)
 
 
-def qr_tbl_spec_from_matrices(
+def qr_spec_from_matrices(
     matrices: Sequence[Sequence[Any]],
     *,
     callouts: Optional[Sequence[Any]] = None,
@@ -357,8 +357,3 @@ def qr_tbl_spec_from_matrices(
         "decorators": decorators,
         "strict": strict,
     }
-
-
-qr_spec = qr_tbl_spec
-qr_layout_spec = qr_tbl_layout_spec
-qr_spec_from_matrices = qr_tbl_spec_from_matrices

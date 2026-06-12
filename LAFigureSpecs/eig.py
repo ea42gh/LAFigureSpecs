@@ -69,7 +69,7 @@ def _factor_out_denominator(A: sym.Matrix) -> tuple[Any, sym.Matrix]:
     return d, sym.simplify(d * A)
 
 
-def eig_tbl_spec(
+def eig_spec(
     A: Any,
     *,
     normal: bool = False,
@@ -110,7 +110,7 @@ def eig_tbl_spec(
         Ascale = d
 
     if A.rows != A.cols:
-        raise ValueError(f"eig_tbl_spec requires a square matrix; got shape {A.shape}")
+        raise ValueError(f"eig_spec requires a square matrix; got shape {A.shape}")
 
     eig: Dict[str, Any] = {
         "lambda": [],
@@ -158,7 +158,7 @@ def eig_spec_from_eigenvects(
         An iterable of ``(e, m, vecs)`` triples, as produced by
         ``sympy.Matrix.eigenvects()``.
     normal, Ascale, eig_digits, vec_digits:
-        Behave as in :func:`eig_tbl_spec`.
+        Behave as in :func:`eig_spec`.
     order:
         - ``"legacy"`` (default): reverse SymPy's eigenvects order.
         - ``"sympy"``: preserve SymPy's order.
@@ -208,7 +208,7 @@ def eig_matrices_from_spec(
     Parameters
     ----------
     eig:
-        Spec dict as returned by :func:`eig_tbl_spec` or :func:`eig_spec_from_eigenvects`.
+        Spec dict as returned by :func:`eig_spec` or :func:`eig_spec_from_eigenvects`.
     orthonormal:
         Use ``qvecs`` when present; otherwise fall back to ``evecs``.
     """
@@ -227,10 +227,6 @@ def eig_matrices_from_spec(
     V = sym.Matrix.hstack(*cols) if cols else sym.Matrix([])
     Λ = sym.diag(*full_lambda) if full_lambda else sym.Matrix([])
     return Λ, V
-
-
-eig_spec = eig_tbl_spec
-
 
 @dataclass(frozen=True)
 class EigenDecomposition:

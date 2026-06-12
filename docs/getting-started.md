@@ -15,7 +15,7 @@ The `render_*` functions are low-level matrixlayout renderer re-exports.
 
 ## Bundle contract
 
-All `*_bundle(...)` helpers, and their `_tbl` compatibility aliases, return the same keys:
+All `*_bundle(...)` helpers return the same keys:
 
 - `spec`: render spec dictionary
 - `tex`: rendered TeX source

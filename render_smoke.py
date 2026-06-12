@@ -22,7 +22,7 @@ def main() -> int:
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
-    svg = lf.ge_tbl_svg(A, rhs=b, output_dir=outdir)
+    svg = lf.ge_svg(A, rhs=b, output_dir=outdir)
     print("svg length:", len(svg))
     return 0
 

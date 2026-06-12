@@ -68,7 +68,7 @@ def _cleanup_svd_vector_entries(v: sym.Matrix) -> sym.Matrix:
     )
 
 
-def svd_tbl_spec_from_right_singular_vectors(
+def svd_spec_from_right_singular_vectors(
     A: Any,
     right_singular_spaces: RightSingularSpaces,
     *,
@@ -89,7 +89,7 @@ def svd_tbl_spec_from_right_singular_vectors(
         ``G = A.T * A``. The vectors are the *right singular vectors* (columns
         of ``V``) grouped by distinct ``sigma^2``.
     Ascale:
-        Scaling behavior matches :func:`svd_tbl_spec`.
+        Scaling behavior matches :func:`svd_spec`.
     sigma2_digits, sigma_digits, vec_digits:
         Optional rounding controls.
         ``sigma2_digits`` rounds the distinct ``sigma^2`` values.
@@ -152,7 +152,7 @@ def svd_tbl_spec_from_right_singular_vectors(
     return eig
 
 
-def svd_tbl_spec(
+def svd_spec(
     A: Any,
     *,
     Ascale: Optional[Any] = None,
@@ -197,7 +197,7 @@ def svd_tbl_spec(
 
     # Use the same implementation path as the precomputed-right-singular-vectors API.
     G = A.T * A
-    return svd_tbl_spec_from_right_singular_vectors(
+    return svd_spec_from_right_singular_vectors(
         A,
         G.eigenvects(),
         Ascale=Ascale,
@@ -217,7 +217,7 @@ def svd_matrices_from_spec(
     Parameters
     ----------
     eig:
-        Spec dict as returned by :func:`svd_tbl_spec`.
+        Spec dict as returned by :func:`svd_spec`.
     reduced:
         If true, drop zero singular value groups.
     """
@@ -245,7 +245,3 @@ def svd_matrices_from_spec(
     U = sym.Matrix.hstack(*cols_U) if cols_U else sym.Matrix([])
     Σ = sym.diag(*full_sigma) if full_sigma else sym.Matrix([])
     return U, Σ, V, rank
-
-
-svd_spec = svd_tbl_spec
-svd_spec_from_right_singular_vectors = svd_tbl_spec_from_right_singular_vectors
