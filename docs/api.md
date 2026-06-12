@@ -85,7 +85,11 @@ Example options:
 - `LAFigureSpecs.gram_schmidt_qr(A, **opts)`: compatibility alias for `qr_figure(...)`.
 
 Example options:
-`qr_tbl_spec(A, array_names=True, rank_deficient=True)`
+`qr_tbl_spec(A, array_names=True)`
+
+Rank-deficient Gram-Schmidt construction is controlled by the algorithm-facing
+entry points, for example:
+`gram_schmidt_qr(A, array_names=True, rank_deficient="drop")`
 
 ## Eigen/SVD
 

@@ -112,7 +112,7 @@ svg = lf.svd_tbl_svg(
 This factors any common scalar that exists for the selected displayed matrices.
 For this example, `V` is rendered with a leading `\frac{\sqrt{2}}{2}` factor,
 `U` with a leading `4`, and `\Sigma` remains entrywise because
-`sigma_matrix=False`.
+`factor_out["sigma"]` is `False`.
 
 ## Decorators
 
