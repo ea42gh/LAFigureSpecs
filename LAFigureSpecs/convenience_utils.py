@@ -84,7 +84,7 @@ def resolve_render_svg_opts(
     output_stem: Any = None,
     render_opts: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
-    """Resolve SVG render kwargs with canonical alias handling."""
+    """Resolve SVG render kwargs from canonical convenience options."""
 
     resolved_output_dir = resolve_output_dir(output_dir=output_dir)
     opts = merge_render_opts(

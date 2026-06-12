@@ -31,7 +31,7 @@ def test_norm_padding_passthrough_none():
     assert norm_padding(None) is None
 
 
-def test_resolve_output_dir_alias_rules():
+def test_resolve_output_dir_defaults():
     assert resolve_output_dir(output_dir="out") == "out"
     assert resolve_output_dir(output_dir=None) == "/tmp/la/run"
 
@@ -59,7 +59,7 @@ def test_merge_render_opts_prefers_explicit_kwargs():
     assert opts["output_dir"] == "/tmp/x"
 
 
-def test_resolve_render_svg_opts_combines_aliases_and_output_stem():
+def test_resolve_render_svg_opts_combines_render_options_and_output_stem():
     opts = resolve_render_svg_opts(
         toolchain_name="pdftex_dvisvgm",
         crop="tight",

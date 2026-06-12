@@ -63,7 +63,7 @@ def test_svd_bundle_passes_factor_out(monkeypatch):
     assert render_calls["svg"]["factor_out"] == {"sigma": True, "u": True}
 
 
-def test_svd_bundle_alias_passes_factor_out(monkeypatch):
+def test_top_level_svd_bundle_passes_factor_out(monkeypatch):
     import LAFigureSpecs
     import LAFigureSpecs.convenience as conv
 

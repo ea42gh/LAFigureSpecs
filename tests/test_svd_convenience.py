@@ -98,7 +98,7 @@ def test_svd_svg_passes_factor_out(monkeypatch):
     assert calls["kwargs"]["factor_out"] == {"sigma": True, "u": True}
 
 
-def test_svd_svg_alias_passes_factor_out(monkeypatch):
+def test_top_level_svd_svg_passes_factor_out(monkeypatch):
     import LAFigureSpecs
     import LAFigureSpecs.convenience as conv
 

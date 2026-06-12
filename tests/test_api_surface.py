@@ -43,14 +43,14 @@ def test_public_api_contains_canonical_render_names():
     assert "lshow_svg" in LAFigureSpecs.__all__
 
 
-def test_public_api_does_not_export_legacy_aliases():
+def test_public_api_does_not_export_legacy_names():
     import LAFigureSpecs
 
     assert "svg" not in LAFigureSpecs.__all__
     assert not any("_tbl" in name for name in LAFigureSpecs.__all__)
 
 
-def test_canonical_aliases_point_to_existing_top_level_helpers():
+def test_canonical_names_point_to_existing_top_level_helpers():
     import LAFigureSpecs
 
     assert LAFigureSpecs.ge_stack_svg is LAFigureSpecs.ge

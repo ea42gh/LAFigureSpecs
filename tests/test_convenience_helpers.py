@@ -20,7 +20,7 @@ def test_filter_tex_kwargs_removes_svg_only_options():
     assert out["mmLambda"] == 7
 
 
-def test_julia_str_aliases_norm_str():
+def test_julia_str_normalizes_symbol_like_strings():
     import LAFigureSpecs.convenience as conv
 
     assert conv._julia_str(":foo") == "foo"
