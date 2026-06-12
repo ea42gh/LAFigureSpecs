@@ -12,7 +12,7 @@ LAFigureSpecs accepts Julia-style inputs via PythonCall/PyCall.
 using PythonCall
 la = pyimport("LAFigureSpecs")
 A = [1 2; 3 4]
-spec = la.ge_tbl_spec(A)
+spec = la.ge_spec(A)
 ```
 
 If `LAlatex` is available in Julia, you can also ask Python to render the

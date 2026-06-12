@@ -25,9 +25,9 @@ All `*_bundle(...)` helpers, and their `_tbl` compatibility aliases, return the 
 
 Common defaults:
 
-- `ge_tbl_spec`: `pivoting="none"`, `gj=False`, `show_pivots=True`.
-- `qr_tbl_spec`: `array_names=True`.
-- `eig_tbl_spec`: `normal=False`.
+- `ge_spec`: `pivoting="none"`, `gj=False`, `show_pivots=True`.
+- `qr_spec`: `array_names=True`.
+- `eig_spec`: `normal=False`.
 
 ## What is a spec?
 
@@ -40,7 +40,7 @@ import sympy as sym
 import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = LAFigureSpecs.ge_tbl_spec(A)
+spec = LAFigureSpecs.ge_spec(A)
 # spec["decorations"] includes RHS separators (if present) as vline specs.
 # spec["matrices"] holds the matrix grid
 # pass extra row/column labels with annotations=...
@@ -54,7 +54,7 @@ import sympy as sym
 import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = LAFigureSpecs.ge_tbl_spec(A)
+spec = LAFigureSpecs.ge_spec(A)
 ```
 
 Minimal render from a spec:
@@ -101,18 +101,18 @@ import sympy as sym
 import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = LAFigureSpecs.qr_tbl_spec(A)
+spec = LAFigureSpecs.qr_spec(A)
 ```
 
 ## QR end-to-end render
 
 ```python
 import sympy as sym
-from LAFigureSpecs import qr_tbl_spec
+from LAFigureSpecs import qr_spec
 from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = qr_tbl_spec(A)
+spec = qr_spec(A)
 svg = render_qr_svg(spec=spec)
 ```
 
@@ -123,9 +123,9 @@ import sympy as sym
 import LAFigureSpecs
 
 A = sym.Matrix([[4, 2], [0, 9]])
-eig_spec = LAFigureSpecs.eig_tbl_spec(A)
+eig_spec = LAFigureSpecs.eig_spec(A)
 Λ, V = LAFigureSpecs.eig_matrices_from_spec(eig_spec)
-svd_spec = LAFigureSpecs.svd_tbl_spec(A)
+svd_spec = LAFigureSpecs.svd_spec(A)
 U, Σ, V, rank = LAFigureSpecs.svd_matrices_from_spec(svd_spec)
 ```
 

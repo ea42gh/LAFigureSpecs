@@ -30,20 +30,20 @@ import sympy as sym
 import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = LAFigureSpecs.ge_tbl_spec(A, show_pivots=True)
+spec = LAFigureSpecs.ge_spec(A, show_pivots=True)
 ```
 
 ## GE trace to SVG
 
 ```python
 import sympy as sym
-from LAFigureSpecs import ge_trace, ge_tbl_spec, trace_to_layer_matrices
+from LAFigureSpecs import ge_trace, ge_spec, trace_to_layer_matrices
 from matrixlayout.ge import render_ge_svg
 
 A = sym.Matrix([[2, 1], [4, 3]])
 trace = ge_trace(A, pivoting="none")
 layers = trace_to_layer_matrices(trace)  # inspect intermediate matrices if needed
-spec = ge_tbl_spec(A, show_pivots=True)
+spec = ge_spec(A, show_pivots=True)
 svg = render_ge_svg(spec=spec)
 ```
 
@@ -55,19 +55,19 @@ import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
-spec = LAFigureSpecs.qr_tbl_spec(A, array_names=True)
+spec = LAFigureSpecs.qr_spec(A, array_names=True)
 ```
 
 ## QR with custom annotations
 
 ```python
 import sympy as sym
-from LAFigureSpecs import qr_tbl_spec
+from LAFigureSpecs import qr_spec
 from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
 W = sym.eye(2)
-spec = qr_tbl_spec(A)
+spec = qr_spec(A)
 annotations = [{"grid": (0, 2), "side": "above", "labels": ["x_1", "x_2"]}]
 svg = render_qr_svg(spec=spec, annotations=annotations)
 ```
@@ -76,11 +76,11 @@ svg = render_qr_svg(spec=spec, annotations=annotations)
 
 ```python
 import sympy as sym
-from LAFigureSpecs import qr_tbl_spec
+from LAFigureSpecs import qr_spec
 from matrixlayout.qr import render_qr_svg
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = qr_tbl_spec(A, array_names=False)
+spec = qr_spec(A, array_names=False)
 callouts = [{"grid": (0, 2), "label": r"$A$", "side": "right"}]
 svg = render_qr_svg(spec=spec, callouts=callouts)
 ```
@@ -92,9 +92,9 @@ import sympy as sym
 import LAFigureSpecs
 
 A = sym.Matrix([[2, 0], [0, 3]])
-eig_spec = LAFigureSpecs.eig_tbl_spec(A)
+eig_spec = LAFigureSpecs.eig_spec(A)
 Λ, V = LAFigureSpecs.eig_matrices_from_spec(eig_spec)
-svd_spec = LAFigureSpecs.svd_tbl_spec(A)
+svd_spec = LAFigureSpecs.svd_spec(A)
 U, Σ, V, rank = LAFigureSpecs.svd_matrices_from_spec(svd_spec)
 ```
 

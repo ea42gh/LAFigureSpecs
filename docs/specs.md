@@ -12,7 +12,7 @@ Grid positions are addressed by (row, column) in the outer list.
 
 ## GE
 
-`ge_tbl_spec` parameters:
+`ge_spec` parameters:
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -53,9 +53,9 @@ Pivot rendering:
 
 Defaults (selected):
 
-- `ge_tbl_spec`: `pivoting="none"`, `gj=False`, `show_pivots=True`
-- `qr_tbl_spec`: `array_names=True`
-- `eig_tbl_spec`: `normal=False`
+- `ge_spec`: `pivoting="none"`, `gj=False`, `show_pivots=True`
+- `qr_spec`: `array_names=True`
+- `eig_spec`: `normal=False`
 
 GE convenience wrappers render TeX to SVG via matrixlayout. Shared renderer
 parameters: `toolchain_name`, `crop`, `padding`, `output_dir`, `output_stem`,
@@ -77,8 +77,8 @@ For most users, prefer `ge_tbl_svg(...)` over direct `render_ge_svg(...)`.
 | `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
 | `decorators` | list | None | Entry decorators. |
 
-`ge_tbl_tex`, `ge_tbl_svg`, `ge_bundle` accept the same algorithmic
-parameters as `ge_tbl_spec` plus renderer options (for SVG).
+`ge_tex`, `ge_tbl_svg`, `ge_bundle` accept the same algorithmic
+parameters as `ge_spec` plus renderer options (for SVG).
 
 Bundle return contract (`ge_bundle`):
 
@@ -89,13 +89,13 @@ Bundle return contract (`ge_bundle`):
 
 Note on RHS separators:
 
-`ge_tbl_spec` now emits RHS separator lines via `decorations` (per-block vlines)
+`ge_spec` now emits RHS separator lines via `decorations` (per-block vlines)
 and disables format-level separators to keep label rows clean. The resulting
 vertical lines only appear in the matrix rows.
 
 ## QR
 
-`qr_tbl_spec` parameters:
+`qr_spec` parameters:
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -122,7 +122,7 @@ vertical lines only appear in the matrix rows.
 | `array_names` | bool/list | True | Labels. |
 | `decorators` | list | None | Entry decorators. |
 
-`qr_tbl_tex`, `qr_tbl_svg`, `qr_bundle` follow `qr_tbl_spec` plus renderer
+`qr_tex`, `qr_tbl_svg`, `qr_bundle` follow `qr_spec` plus renderer
 options (for SVG).
 
 Bundle return contract (`qr_bundle`): `spec`, `tex`, `svg`, `data`, `render_error`.
@@ -134,7 +134,7 @@ inputs, the Q^T label uses a longer arrow to avoid overlapping the R label.
 
 ## Eigen/SVD
 
-`eig_tbl_spec` parameters:
+`eig_spec` parameters:
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -144,14 +144,14 @@ inputs, the Q^T label uses a longer arrow to avoid overlapping the R label.
 | `eig_digits` | int | None | Rounding for eigenvalues. |
 | `vec_digits` | int | None | Rounding for eigenvectors. |
 
-`svd_tbl_spec` parameters:
+`svd_spec` parameters:
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `A` | matrix | required | Input matrix. |
 | `Ascale` | scalar | None | Scaling factor. |
 
-`eig_tbl_tex`, `eig_tbl_svg`, `svd_tbl_tex`, `svd_tbl_svg` accept `A` plus the
+`eig_tex`, `eig_tbl_svg`, `svd_tex`, `svd_tbl_svg` accept `A` plus the
 corresponding spec parameters, along with renderer options (for SVG).
 
 Bundle return contract (`eig_bundle`, `svd_bundle`):

@@ -94,7 +94,7 @@ import sympy as sym
 import LAFigureSpecs as lf
 
 A = sym.Matrix([[1, 2], [1, 2], [3, 4]])
-spec = lf.ge_tbl_spec(A, gj=False)
+spec = lf.ge_spec(A, gj=False)
 svg = lf.render_ge_svg(**spec)
 ```
 
