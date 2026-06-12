@@ -54,7 +54,7 @@ def _bs_rhs(
 
 def _backsub_trace_from_ref(
     ref_A: Any,
-    ref_rhs: Any = None,
+    rhs: Any = None,
     *,
     var_name: str = "x",
     param_name: str = r"\alpha",
@@ -66,7 +66,7 @@ def _backsub_trace_from_ref(
     ref_A:
         Coefficient matrix in *reference* (typically echelon) form.
         The function will compute an RREF internally for the substituted lines.
-    ref_rhs:
+    rhs:
         Optional RHS vector. If provided, the RREF is computed for the augmented
         matrix and pivots are derived accordingly.
     var_name:
@@ -83,7 +83,7 @@ def _backsub_trace_from_ref(
     A = to_sympy_matrix(ref_A)
     if A is None:
         raise ValueError("ref_A must not be None")
-    b = to_sympy_col(ref_rhs)
+    b = to_sympy_col(rhs)
 
     if b is None:
         rref_A, pivot_cols = A.rref()
@@ -133,7 +133,7 @@ def _backsub_trace_from_ref(
 
 def backsubstitution_tex(
     ref_A: Any,
-    ref_rhs: Any = None,
+    rhs: Any = None,
     *,
     var_name: str = "x",
     param_name: str = r"\alpha",
@@ -142,7 +142,7 @@ def backsubstitution_tex(
 
     trace = _backsub_trace_from_ref(
         ref_A,
-        ref_rhs,
+        rhs,
         var_name=var_name,
         param_name=param_name,
     )
@@ -196,7 +196,7 @@ def linear_system_tex(A: Any, b: Any, *, var_name: str = "x") -> str:
 
 def standard_solution_tex(
     ref_A: Any,
-    ref_rhs: Any,
+    rhs: Any,
     *,
     var_name: str = "x",
     param_name: str = r"\alpha",
@@ -209,9 +209,9 @@ def standard_solution_tex(
     """
 
     A = to_sympy_matrix(ref_A)
-    b = to_sympy_col(ref_rhs)
+    b = to_sympy_col(rhs)
     if A is None or b is None:
-        raise ValueError("ref_A and ref_rhs must not be None")
+        raise ValueError("ref_A and rhs must not be None")
 
     Ab = A.row_join(b)
     rref_Ab, pivot_cols_ab = Ab.rref()

@@ -65,5 +65,5 @@ def test_backsub_helpers_reject_missing_inputs():
         backsubstitution_tex(None)
     with pytest.raises(ValueError, match="A and b"):
         linear_system_tex([[1]], None)
-    with pytest.raises(ValueError, match="ref_A and ref_rhs"):
+    with pytest.raises(ValueError, match="ref_A and rhs"):
         standard_solution_tex(None, [1])

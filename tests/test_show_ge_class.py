@@ -97,9 +97,9 @@ def test_show_ge_show_solution_selects_rhs_column(monkeypatch):
 
     captured = {}
 
-    def fake_standard_solution_tex(ref_A, ref_rhs, *, var_name="x", param_name=r"\alpha"):
+    def fake_standard_solution_tex(ref_A, rhs, *, var_name="x", param_name=r"\alpha"):
         captured["ref_A"] = ref_A
-        captured["ref_rhs"] = ref_rhs
+        captured["rhs"] = rhs
         captured["var_name"] = var_name
         captured["param_name"] = param_name
         return "solution-ok"
@@ -123,7 +123,7 @@ def test_show_ge_show_solution_selects_rhs_column(monkeypatch):
 
     result = show.show_solution(b_col=1, var_name="y", param_name="β", crop="tight")
     assert result == "<display/>"
-    assert captured["ref_rhs"] == sym.Matrix([[2], [4]])
+    assert captured["rhs"] == sym.Matrix([[2], [4]])
     assert captured["var_name"] == "y"
     assert captured["param_name"] == "β"
     assert captured["render_opts"]["solution_txt"] == "solution-ok"

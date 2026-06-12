@@ -148,14 +148,14 @@ class ShowGE:
         return last[:, :-nrhs], last[:, -nrhs:]
 
     def _update_rhs_status(self) -> None:
-        ref_A, ref_rhs = self._final_ref_mats()
-        if ref_rhs is None:
+        ref_A, rhs = self._final_ref_mats()
+        if rhs is None:
             self.status = "none"
             self.rhs_status = []
             self.rhs_consistent = []
             return
         A = to_sympy_matrix(ref_A)
-        b = to_sympy_matrix(ref_rhs)
+        b = to_sympy_matrix(rhs)
         if A is None or b is None:
             self.status = "unknown"
             self.rhs_status = []
@@ -464,12 +464,12 @@ class ShowGE:
         return _show_svg(svg)
 
     def show_backsubstitution(self, *, var_name: str = "x", param_name: str = r"\alpha", **render_opts: Any):
-        ref_A, ref_rhs = self._final_ref_mats()
+        ref_A, rhs = self._final_ref_mats()
         if self.rhs_status and any(s == "inconsistent" for s in self.rhs_status):
             val = None
-            if ref_rhs is not None:
+            if rhs is not None:
                 A = to_sympy_matrix(ref_A)
-                b = to_sympy_matrix(ref_rhs)
+                b = to_sympy_matrix(rhs)
                 if A is not None and b is not None:
                     for col, s in enumerate(self.rhs_status):
                         if s != "inconsistent":
@@ -488,7 +488,7 @@ class ShowGE:
             rhs_txt = str(val) if val is not None else "?"
             cascade_txt = [rf"0 = {rhs_txt}", r"\text{No Solution}"]
         else:
-            cascade_txt = backsubstitution_tex(ref_A, ref_rhs, var_name=var_name, param_name=param_name)
+            cascade_txt = backsubstitution_tex(ref_A, rhs, var_name=var_name, param_name=param_name)
         from matrixlayout.backsubst import backsubst_svg
 
         opts = dict(render_opts)
@@ -513,11 +513,11 @@ class ShowGE:
         param_name: str = r"\alpha",
         **render_opts: Any,
     ):
-        ref_A, ref_rhs = self._final_ref_mats()
-        if ref_rhs is None:
+        ref_A, rhs = self._final_ref_mats()
+        if rhs is None:
             raise ValueError("show_solution requires a RHS.")
 
-        rhs_cols = int(ref_rhs.shape[1]) if hasattr(ref_rhs, "shape") and len(ref_rhs.shape) > 1 else 1
+        rhs_cols = int(rhs.shape[1]) if hasattr(rhs, "shape") and len(rhs.shape) > 1 else 1
         if b_col is None:
             if rhs_cols != 1:
                 raise ValueError("show_solution requires b_col when the RHS has multiple columns.")
@@ -528,7 +528,7 @@ class ShowGE:
         if self.rhs_status and b_col < len(self.rhs_status) and self.rhs_status[b_col] == "inconsistent":
             return []
 
-        solution_txt = standard_solution_tex(ref_A, ref_rhs[:, b_col], var_name=var_name, param_name=param_name)
+        solution_txt = standard_solution_tex(ref_A, rhs[:, b_col], var_name=var_name, param_name=param_name)
         from matrixlayout.backsubst import backsubst_svg
 
         opts = dict(render_opts)
