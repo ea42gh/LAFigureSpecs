@@ -17,6 +17,8 @@ figure should follow the actual linear algebra computation.
 Canonical cross-language names:
 
 - render helpers: `ge_svg`, `qr_svg`, `eig_svg`, `svd_svg`, `qr_figure`
+- spec helpers: `ge_spec`, `qr_spec`, `eig_spec`, `svd_spec`
+- TeX helpers: `ge_tex`, `qr_tex`, `eig_tex`, `svd_tex`
 - bundle helpers: `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
 - workflow/display helpers on `ShowGE` objects:
   `ref`, `show_layout`, `show_system`, `show_backsubstitution`,
@@ -33,26 +35,30 @@ surface for parity with `LATeachingSuite`.
 | GE | `show_ge(...)` / `ShowGE` | Notebook-friendly row-reduction workflow/display helpers. |
 | GE | `show_layout(show)` / `show_system(show)` / `show_solution(show)` | Top-level workflow/display wrappers over `ShowGE` methods. |
 | GE | `lhs_matrix(show)` / `rhs_matrix(show)` / `rhs_column(show, ...)` | Direct matrix accessors for the current GE stack state. |
-| GE | `ge_tbl_spec(...)` | Reusable spec dictionary for a GE layout. |
-| GE | `ge_tbl_tex(...)` | TeX source for a GE layout. |
+| GE | `ge_spec(...)` | Reusable spec dictionary for a GE layout. |
+| GE | `ge_tex(...)` | TeX source for a GE layout. |
 | GE | `ge_tbl_svg(...)` | Rendered SVG for a GE layout. |
 | GE | `ge_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | QR | `qr_figure(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
 | QR | `qr_svg(...)` | Renders a precomputed QR matrix stack as SVG. |
-| QR | `qr_tbl_spec(...)` | Reusable spec dictionary for a QR layout. |
-| QR | `qr_tbl_tex(...)` | TeX source for a QR layout. |
+| QR | `qr_spec(...)` | Reusable spec dictionary for a QR layout. |
+| QR | `qr_tex(...)` | TeX source for a QR layout. |
 | QR | `qr_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | Eigen | `eigendecomposition(...)` | Structured eigenvalue/eigenvector data. |
-| Eigen | `eig_tbl_spec(...)` | Reusable spec dictionary for an eigen layout. |
-| Eigen | `eig_tbl_tex(...)` | TeX source for an eigen layout. |
+| Eigen | `eig_spec(...)` | Reusable spec dictionary for an eigen layout. |
+| Eigen | `eig_tex(...)` | TeX source for an eigen layout. |
 | Eigen | `eig_svg(...)` | Rendered SVG for an eigen layout. |
+| SVD | `svd_spec(...)` | Reusable spec dictionary for an SVD layout. |
+| SVD | `svd_tex(...)` | TeX source for an SVD layout. |
 | SVD | `svd_svg(...)` | Rendered SVG for an SVD layout. |
 | Eigen | `eig_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | SVD | `svd_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 
-Compatibility aliases such as `ge_tbl_bundle`, `qr_tbl_bundle`, `eig_tbl_bundle`,
-`svd_tbl_bundle`, and `gram_schmidt_qr` remain available, but the canonical
-cross-language names above are preferred for new code.
+Compatibility aliases such as `ge_tbl_spec`, `ge_tbl_tex`, `ge_tbl_bundle`,
+`qr_tbl_spec`, `qr_tbl_tex`, `qr_tbl_bundle`, `eig_tbl_spec`, `eig_tbl_tex`,
+`eig_tbl_bundle`, `svd_tbl_spec`, `svd_tbl_tex`, `svd_tbl_bundle`, and
+`gram_schmidt_qr` remain available, but the canonical cross-language names
+above are preferred for new code.
 
 ## Try It
 

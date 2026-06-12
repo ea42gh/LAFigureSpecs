@@ -108,6 +108,14 @@ def px_to_mm(px: float) -> float:
 
 
 # Canonical cross-language aliases for top-level display/bundle helpers.
+ge_spec = ge_tbl_spec
+qr_spec = qr_tbl_spec
+eig_spec = eig_tbl_spec
+svd_spec = svd_tbl_spec
+ge_tex = ge_tbl_tex
+qr_tex = qr_tbl_tex
+eig_tex = eig_tbl_tex
+svd_tex = svd_tbl_tex
 ge_svg = ge
 qr_svg = qr
 eig_svg = eig_tbl_svg
@@ -124,15 +132,19 @@ __all__ = [
     "EigenDecomposition",
     "eigendecomposition",
     "eig_spec_from_eigenvects",
+    "eig_spec",
     "eig_tbl_spec",
     "eig_matrices_from_spec",
+    "svd_spec",
     "svd_tbl_spec",
     "svd_tbl_spec_from_right_singular_vectors",
     "svd_matrices_from_spec",
+    "eig_tex",
     "eig_tbl_tex",
     "eig_tbl_svg",
     "eig_tbl_bundle",
     "eig_bundle",
+    "svd_tex",
     "svd_tbl_tex",
     "svd_tbl_svg",
     "svd_tbl_bundle",
@@ -145,10 +157,12 @@ __all__ = [
     "qr_tbl_spec_from_matrices",
     "qr_matrices_from_grid",
     "qr_matrices_dict_from_grid",
+    "qr_spec",
     "qr_tbl_layout_spec",
     "qr_tbl_tex",
     "qr_tbl_svg",
     "qr_tbl_bundle",
+    "qr_tex",
     "gram_schmidt_qr",
     "qr_svg",
     "qr_figure",
@@ -159,8 +173,10 @@ __all__ = [
     "ge_trace",
     "trace_to_layer_matrices",
     "decorate_ge",
+    "ge_spec",
     "ge_tbl_spec",
     "ge_tbl_layout_spec",
+    "ge_tex",
     "ge_tbl_tex",
     "ge_tbl_svg",
     "show_ge",

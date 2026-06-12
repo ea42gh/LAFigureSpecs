@@ -7,6 +7,14 @@ def test_public_api_contains_canonical_render_names():
     assert "qr_svg" in LAFigureSpecs.__all__
     assert "eig_svg" in LAFigureSpecs.__all__
     assert "svd_svg" in LAFigureSpecs.__all__
+    assert "ge_spec" in LAFigureSpecs.__all__
+    assert "qr_spec" in LAFigureSpecs.__all__
+    assert "eig_spec" in LAFigureSpecs.__all__
+    assert "svd_spec" in LAFigureSpecs.__all__
+    assert "ge_tex" in LAFigureSpecs.__all__
+    assert "qr_tex" in LAFigureSpecs.__all__
+    assert "eig_tex" in LAFigureSpecs.__all__
+    assert "svd_tex" in LAFigureSpecs.__all__
     assert "qr_figure" in LAFigureSpecs.__all__
     assert "ge_bundle" in LAFigureSpecs.__all__
     assert "qr_bundle" in LAFigureSpecs.__all__
@@ -44,6 +52,14 @@ def test_canonical_aliases_point_to_existing_top_level_helpers():
     assert LAFigureSpecs.qr_svg is LAFigureSpecs.qr
     assert LAFigureSpecs.eig_svg is LAFigureSpecs.eig_tbl_svg
     assert LAFigureSpecs.svd_svg is LAFigureSpecs.svd_tbl_svg
+    assert LAFigureSpecs.ge_spec is LAFigureSpecs.ge_tbl_spec
+    assert LAFigureSpecs.qr_spec is LAFigureSpecs.qr_tbl_spec
+    assert LAFigureSpecs.eig_spec is LAFigureSpecs.eig_tbl_spec
+    assert LAFigureSpecs.svd_spec is LAFigureSpecs.svd_tbl_spec
+    assert LAFigureSpecs.ge_tex is LAFigureSpecs.ge_tbl_tex
+    assert LAFigureSpecs.qr_tex is LAFigureSpecs.qr_tbl_tex
+    assert LAFigureSpecs.eig_tex is LAFigureSpecs.eig_tbl_tex
+    assert LAFigureSpecs.svd_tex is LAFigureSpecs.svd_tbl_tex
     assert LAFigureSpecs.qr_figure is LAFigureSpecs.gram_schmidt_qr
     assert LAFigureSpecs.ge_bundle is LAFigureSpecs.ge_tbl_bundle
     assert LAFigureSpecs.qr_bundle is LAFigureSpecs.qr_tbl_bundle

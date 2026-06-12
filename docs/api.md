@@ -12,9 +12,11 @@ rendered output.
 Preferred cross-language top-level names:
 
 - `ge_svg`, `qr_svg`, `eig_svg`, `svd_svg`, `qr_figure`
+- `ge_spec`, `qr_spec`, `eig_spec`, `svd_spec`
+- `ge_tex`, `qr_tex`, `eig_tex`, `svd_tex`
 - `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
 
-The older `_tbl` bundle names remain available for compatibility.
+The older `_tbl` names remain available for compatibility.
 
 ## Which function should I call?
 
@@ -54,28 +56,32 @@ Use these when you want a lightweight preflight before rendering:
 - `LAFigureSpecs.show_solution(show, *, b_col=None, **render_opts)`: top-level wrapper for `ShowGE.show_solution(...)`.
 - `LAFigureSpecs.rhs_block(show, ...)`: top-level wrapper for `ShowGE.rhs_block(...)`.
 - `LAFigureSpecs.solutions(show, ...)`: returns `(particular, homogeneous)` from `ShowGE.solve(...)`, matching the Julia umbrella shape.
-- `LAFigureSpecs.ge_tbl_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
+- `LAFigureSpecs.ge_spec(A, **opts)`: build a GE spec for matrixlayout. Inputs: matrix-like `A`. Returns: spec dict.
+- `LAFigureSpecs.ge_tbl_spec(A, **opts)`: compatibility alias for `ge_spec(...)`.
 - `LAFigureSpecs.ge_tbl_layout_spec(A, **opts)`: build a typed `GEGridSpec` layout spec. Inputs: matrix-like `A`. Returns: typed spec.
 - `LAFigureSpecs.ge_bundle(A, **opts)`: canonical GE bundle helper.
 - `LAFigureSpecs.ge_tbl_bundle(A, **opts)`: compatibility alias for `ge_bundle(...)`; `data` includes GE intermediates (`trace`, `layers`, `decor`, `typed_layout`).
-- `LAFigureSpecs.ge_tbl_tex(A, **opts)`: render GE TeX from the spec path.
+- `LAFigureSpecs.ge_tex(A, **opts)`: render GE TeX from the spec path.
+- `LAFigureSpecs.ge_tbl_tex(A, **opts)`: compatibility alias for `ge_tex(...)`.
 - `LAFigureSpecs.ge_tbl_svg(A, **opts)`: render GE SVG from the spec path.
 - `LAFigureSpecs.ge_svg(matrices, **opts)`: canonical GE stack renderer.
 - `LAFigureSpecs.ge(matrices, **opts)`: compatibility alias for `ge_svg(...)`.
 
 Example options:
-`ge_tbl_spec(A, show_pivots=True, pivoting="partial", gj=False)`
+`ge_spec(A, show_pivots=True, pivoting="partial", gj=False)`
 
 ## QR
 
 - `LAFigureSpecs.compute_qr_matrices(A)`: compute the QR matrix grid. Returns: list of grid matrices. Computed internally via naive Gram-Schmidt (LCD-scaled, no normalization).
 - `LAFigureSpecs.gram_schmidt_qr_matrices(A, **opts)`: compute QR grid with rank-deficient handling. Returns: list of grid matrices.
-- `LAFigureSpecs.qr_tbl_spec(A, **opts)`: build a QR spec for matrixlayout. Returns: spec dict.
+- `LAFigureSpecs.qr_spec(A, **opts)`: build a QR spec for matrixlayout. Returns: spec dict.
+- `LAFigureSpecs.qr_tbl_spec(A, **opts)`: compatibility alias for `qr_spec(...)`.
 - `LAFigureSpecs.qr_tbl_layout_spec(A, **opts)`: build a typed QR layout spec. Returns: typed spec.
 - `LAFigureSpecs.qr_matrices_from_grid(mats)`: extract `(A, W, WtA, WtW, S, Qt, Q, R)` from the QR grid.
   Returns a dict-like object; access via `qr["Q"]`, `qr.as_tuple()`, or `qr.as_dict()`.
 - `LAFigureSpecs.qr_matrices_dict_from_grid(mats)`: same as above, but returns a plain dict.
-- `LAFigureSpecs.qr_tbl_tex(A, **opts)`: render QR TeX from the spec path.
+- `LAFigureSpecs.qr_tex(A, **opts)`: render QR TeX from the spec path.
+- `LAFigureSpecs.qr_tbl_tex(A, **opts)`: compatibility alias for `qr_tex(...)`.
 - `LAFigureSpecs.qr_tbl_svg(A, **opts)`: render QR SVG from the spec path.
 - `LAFigureSpecs.qr_bundle(A, **opts)`: canonical QR bundle helper.
 - `LAFigureSpecs.qr_tbl_bundle(A, **opts)`: compatibility alias for `qr_bundle(...)`.
@@ -85,7 +91,7 @@ Example options:
 - `LAFigureSpecs.gram_schmidt_qr(A, **opts)`: compatibility alias for `qr_figure(...)`.
 
 Example options:
-`qr_tbl_spec(A, array_names=True)`
+`qr_spec(A, array_names=True)`
 
 Rank-deficient Gram-Schmidt construction is controlled by the algorithm-facing
 entry points, for example:
@@ -93,17 +99,21 @@ entry points, for example:
 
 ## Eigen/SVD
 
-- `LAFigureSpecs.eig_tbl_spec(A, **opts)`: build eigenproblem table specs. Returns: spec dict.
+- `LAFigureSpecs.eig_spec(A, **opts)`: build eigenproblem table specs. Returns: spec dict.
+- `LAFigureSpecs.eig_tbl_spec(A, **opts)`: compatibility alias for `eig_spec(...)`.
 - `LAFigureSpecs.eig_matrices_from_spec(spec, orthonormal=True)`: assemble `(Λ, V)` from an eigen spec.
-- `LAFigureSpecs.svd_tbl_spec(A, **opts)`: build SVD table specs. Returns: spec dict.
+- `LAFigureSpecs.svd_spec(A, **opts)`: build SVD table specs. Returns: spec dict.
+- `LAFigureSpecs.svd_tbl_spec(A, **opts)`: compatibility alias for `svd_spec(...)`.
 - `LAFigureSpecs.svd_tbl_spec_from_right_singular_vectors(V, **opts)`: build SVD specs from given vectors. Returns: spec dict.
 - `LAFigureSpecs.svd_matrices_from_spec(spec, reduced=True)`: assemble `(U, Σ, V, rank)` from an SVD spec.
-- `LAFigureSpecs.eig_tbl_tex(A, **opts)`: render eigen table TeX.
+- `LAFigureSpecs.eig_tex(A, **opts)`: render eigen table TeX.
+- `LAFigureSpecs.eig_tbl_tex(A, **opts)`: compatibility alias for `eig_tex(...)`.
 - `LAFigureSpecs.eig_svg(A, **opts)`: canonical rendered SVG helper for eigen layouts.
 - `LAFigureSpecs.eig_tbl_svg(A, **opts)`: compatibility alias for `eig_svg(...)`.
 - `LAFigureSpecs.eig_bundle(A, **opts)`: canonical eigen bundle helper.
 - `LAFigureSpecs.eig_tbl_bundle(A, **opts)`: compatibility alias for `eig_bundle(...)`.
-- `LAFigureSpecs.svd_tbl_tex(A, **opts)`: render SVD table TeX.
+- `LAFigureSpecs.svd_tex(A, **opts)`: render SVD table TeX.
+- `LAFigureSpecs.svd_tbl_tex(A, **opts)`: compatibility alias for `svd_tex(...)`.
 - `LAFigureSpecs.svd_svg(A, **opts)`: canonical rendered SVG helper for SVD layouts.
 - `LAFigureSpecs.svd_tbl_svg(A, **opts)`: compatibility alias for `svd_svg(...)`.
 - `LAFigureSpecs.svd_bundle(A, **opts)`: canonical SVD bundle helper.
