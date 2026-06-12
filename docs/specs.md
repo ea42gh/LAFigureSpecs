@@ -151,7 +151,7 @@ inputs, the Q^T label uses a longer arrow to avoid overlapping the R label.
 | `A` | matrix | required | Input matrix. |
 | `Ascale` | scalar | None | Scaling factor. |
 
-`eig_tex`, `eig_tbl_svg`, `svd_tex`, `svd_tbl_svg` accept `A` plus the
+`eig_tex`, `eig_svg`, `svd_tex`, `svd_svg` accept `A` plus the
 corresponding spec parameters, along with renderer options (for SVG).
 
 Bundle return contract (`eig_bundle`, `svd_bundle`):

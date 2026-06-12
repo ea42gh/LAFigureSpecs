@@ -109,7 +109,7 @@ Selective SVD matrix factoring:
 
 ```python
 A = sym.Matrix([[4, 9], [0, 2]])
-svg = lf.svd_tbl_svg(
+svg = lf.svd_svg(
     A,
     factor_out={"u": True, "v": True, "sigma": False},
 )

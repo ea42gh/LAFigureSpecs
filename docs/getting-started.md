@@ -5,7 +5,7 @@ ready for matrixlayout rendering.
 
 Use high-level wrappers by default:
 
-- `ge_svg`, `qr_svg`, `eig_tbl_svg`, `svd_tbl_svg`
+- `ge_svg`, `qr_svg`, `eig_svg`, `svd_svg`
 - `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
 - `latex_svg` for standalone LaTeX fragments
 - `latex_document_svg` for full LaTeX documents

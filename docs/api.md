@@ -143,7 +143,7 @@ Example:
 
 ```python
 A = sym.Matrix([[4, 9], [0, 2]])
-svg = LAFigureSpecs.svd_tbl_svg(
+svg = LAFigureSpecs.svd_svg(
     A,
     factor_out={"qvecs": True, "u": True, "v": True, "sigma": False},
 )
