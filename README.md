@@ -26,9 +26,8 @@ Canonical cross-language names:
   `show_solution`, `lhs_matrix`, `rhs_matrix`, `rhs_column`, `rhs_block`,
   `solutions`
 
-The older `_tbl` bundle names and historical QR/GE convenience names remain
-available for compatibility, but the names above are the preferred top-level
-surface for parity with `LATeachingSuite`.
+The names above are the supported top-level surface for parity with
+`LATeachingSuite`.
 
 | Area | Function | Output |
 |---|---|---|
@@ -56,12 +55,8 @@ surface for parity with `LATeachingSuite`.
 | Eigen | `eig_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | SVD | `svd_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 
-Compatibility aliases such as `ge_tbl_spec`, `ge_tbl_tex`, `ge_tbl_svg`,
-`ge_tbl_bundle`, `qr_tbl_spec`, `qr_tbl_tex`, `qr_tbl_svg`, `qr_tbl_bundle`,
-`eig_tbl_spec`, `eig_tbl_tex`, `eig_tbl_bundle`, `svd_tbl_spec`,
-`svd_tbl_tex`, `svd_tbl_bundle`, and
-`gram_schmidt_qr` remain available, but the canonical cross-language names
-above are preferred for new code.
+`gram_schmidt_qr` remains available as the historical name for `qr_figure`.
+Use the canonical cross-language names above for new code.
 
 ## Try It
 
