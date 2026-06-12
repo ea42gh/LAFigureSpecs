@@ -55,7 +55,6 @@ The names above are the supported top-level surface for parity with
 | Eigen | `eig_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | SVD | `svd_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 
-`gram_schmidt_qr` remains available as the historical name for `qr_figure`.
 Use the canonical cross-language names above for new code.
 
 ## Try It

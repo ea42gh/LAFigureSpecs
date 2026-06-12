@@ -47,8 +47,8 @@ from .qr import (
 )
 from .convenience_qr import (
     qr,
-    gram_schmidt_qr,
     qr_bundle,
+    qr_figure,
     qr_stack_svg,
     qr_svg,
     qr_tex,
@@ -126,8 +126,6 @@ def px_to_mm(px: float) -> float:
     return float(px) * 25.4 / 96.0
 
 
-qr_figure = gram_schmidt_qr
-
 __all__ = [
     "__version__",
     "__build__",
@@ -154,7 +152,6 @@ __all__ = [
     "qr_layout_spec",
     "qr_tex",
     "qr_stack_svg",
-    "gram_schmidt_qr",
     "qr_svg",
     "qr_figure",
     "qr_bundle",

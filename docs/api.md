@@ -80,15 +80,14 @@ Example options:
 - `LAFigureSpecs.qr_bundle(A, **opts)`: canonical QR bundle helper.
 - `LAFigureSpecs.qr_stack_svg(matrices, **opts)`: canonical QR SVG renderer for a precomputed matrix stack.
 - `LAFigureSpecs.qr(matrices, **opts)`: historical alias for `qr_stack_svg(...)`.
-- `LAFigureSpecs.qr_figure(A, **opts)`: canonical compute+render QR helper.
-- `LAFigureSpecs.gram_schmidt_qr(A, **opts)`: historical alias for `qr_figure(...)`.
+- `LAFigureSpecs.qr_figure(A, **opts)`: canonical compute+render Gram-Schmidt QR helper.
 
 Example options:
 `qr_spec(A, array_names=True)`
 
 Rank-deficient Gram-Schmidt construction is controlled by the algorithm-facing
 entry points, for example:
-`gram_schmidt_qr(A, array_names=True, rank_deficient="drop")`
+`qr_figure(A, array_names=True, rank_deficient="drop")`
 
 ## Eigen/SVD
 

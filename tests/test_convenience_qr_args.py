@@ -202,7 +202,7 @@ def test_qr_render_wrapper_defers_crop_padding_to_render_opts(monkeypatch):
     assert captured["render_opts"] == {"crop": "loose", "padding": (9, 9, 9, 9)}
 
 
-def test_gram_schmidt_qr_wrapper_uses_rank_deficient_mode_and_svg_defaults(
+def test_qr_figure_uses_rank_deficient_mode_and_svg_defaults(
     monkeypatch,
 ):
     import LAFigureSpecs.convenience_qr as convenience_qr
@@ -220,7 +220,7 @@ def test_gram_schmidt_qr_wrapper_uses_rank_deficient_mode_and_svg_defaults(
         fake_render_qr_svg_from_spec,
     )
 
-    svg = convenience_qr.gram_schmidt_qr(
+    svg = convenience_qr.qr_figure(
         [[1, 2], [2, 4]],
         rank_deficient="drop",
         fig_scale=1.2,

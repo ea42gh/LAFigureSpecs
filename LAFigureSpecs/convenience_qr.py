@@ -291,7 +291,7 @@ def qr(
     )
 
 
-def gram_schmidt_qr(
+def qr_figure(
     A: Any,
     *,
     formatter: Any = latexify,

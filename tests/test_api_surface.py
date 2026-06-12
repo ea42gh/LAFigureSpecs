@@ -48,6 +48,8 @@ def test_public_api_does_not_export_legacy_names():
 
     assert "svg" not in LAFigureSpecs.__all__
     assert not any("_tbl" in name for name in LAFigureSpecs.__all__)
+    assert "gram_schmidt_qr" not in LAFigureSpecs.__all__
+    assert not hasattr(LAFigureSpecs, "gram_schmidt_qr")
 
 
 def test_canonical_names_point_to_existing_top_level_helpers():
@@ -55,15 +57,15 @@ def test_canonical_names_point_to_existing_top_level_helpers():
 
     assert LAFigureSpecs.ge_stack_svg is LAFigureSpecs.ge
     assert LAFigureSpecs.qr_stack_svg is LAFigureSpecs.qr
-    assert LAFigureSpecs.qr_figure is LAFigureSpecs.gram_schmidt_qr
     from LAFigureSpecs.ge_convenience import ge_svg, ge_stack_svg
 
     assert LAFigureSpecs.ge_svg is ge_svg
     assert LAFigureSpecs.ge_stack_svg is ge_stack_svg
-    from LAFigureSpecs.convenience_qr import qr_svg, qr_stack_svg
+    from LAFigureSpecs.convenience_qr import qr_figure, qr_svg, qr_stack_svg
 
     assert LAFigureSpecs.qr_svg is qr_svg
     assert LAFigureSpecs.qr_stack_svg is qr_stack_svg
+    assert LAFigureSpecs.qr_figure is qr_figure
 
 
 def test_bundle_return_contracts_have_spec_tex_svg_keys():
