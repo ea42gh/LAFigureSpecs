@@ -183,7 +183,7 @@ import sympy as sym
 import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-svg = LAFigureSpecs.ge_table_svg(A, output_dir="./_out", output_stem="ge_min")
+svg = LAFigureSpecs.ge_svg(A, output_dir="./_out", output_stem="ge_min")
 ```
 
 ### render_opts pass-through
@@ -200,7 +200,7 @@ import sympy as sym
 import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-svg = LAFigureSpecs.ge_table_svg(
+svg = LAFigureSpecs.ge_svg(
     A,
     render_opts={
         "toolchain_name": "pdftex_dvisvgm",

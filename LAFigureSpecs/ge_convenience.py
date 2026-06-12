@@ -970,5 +970,6 @@ def ge_tbl_svg(
 ge_spec = ge_tbl_spec
 ge_layout_spec = ge_tbl_layout_spec
 ge_tex = ge_tbl_tex
-ge_table_svg = ge_tbl_svg
+ge_svg = ge_tbl_svg
 ge_bundle = ge_tbl_bundle
+ge_stack_svg = ge

@@ -50,8 +50,8 @@ tex body -> LAFigureSpecs.latex_svg(...) -> matrixlayout.render.render_svg(...)
 
 ## Module map
 
-- GE: `ge_trace`, `ge_spec`, `ge_layout_spec`, `ge_table_svg`.
-- QR: `compute_qr_matrices`, `qr_spec`, `qr_table_svg`.
+- GE: `ge_trace`, `ge_spec`, `ge_layout_spec`, `ge_svg`.
+- QR: `compute_qr_matrices`, `qr_spec`, `qr_svg`.
 - Eigen/SVD: `eig_spec`, `eig_matrices_from_spec`, `svd_spec`, `svd_matrices_from_spec`.
 - Backsubstitution: `linear_system_tex`, `backsubstitution_tex`, `standard_solution_tex`.
 

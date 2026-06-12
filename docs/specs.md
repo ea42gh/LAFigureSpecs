@@ -61,7 +61,7 @@ GE convenience wrappers render TeX to SVG via matrixlayout. Shared renderer
 parameters: `toolchain_name`, `crop`, `padding`, `output_dir`, `output_stem`,
 `frame`.
 
-For most users, prefer `ge_table_svg(...)` over direct `render_ge_svg(...)`.
+For most users, prefer `ge_svg(...)` over direct `render_ge_svg(...)`.
 
 `ge_svg(...)` parameters (subset shown):
 
@@ -77,7 +77,7 @@ For most users, prefer `ge_table_svg(...)` over direct `render_ge_svg(...)`.
 | `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
 | `decorators` | list | None | Entry decorators. |
 
-`ge_tex`, `ge_table_svg`, `ge_bundle` accept the same algorithmic
+`ge_tex`, `ge_svg`, `ge_bundle` accept the same algorithmic
 parameters as `ge_spec` plus renderer options (for SVG).
 
 Bundle return contract (`ge_bundle`):
@@ -113,7 +113,7 @@ vertical lines only appear in the matrix rows.
 | `decorators` | list | None | Entry decorators. |
 | `strict` | bool | None | Error on invalid decorators. |
 
-`qr_svg(...)` / `qr_table_svg(...)` parameters (subset shown):
+`qr_svg(...)` parameters (subset shown):
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -122,7 +122,7 @@ vertical lines only appear in the matrix rows.
 | `array_names` | bool/list | True | Labels. |
 | `decorators` | list | None | Entry decorators. |
 
-`qr_tex`, `qr_table_svg`, `qr_bundle` follow `qr_spec` plus renderer
+`qr_tex`, `qr_svg`, `qr_bundle` follow `qr_spec` plus renderer
 options (for SVG).
 
 Bundle return contract (`qr_bundle`): `spec`, `tex`, `svg`, `data`, `render_error`.

@@ -5,7 +5,7 @@ import sympy as sym
 import LAFigureSpecs
 
 
-def test_qr_table_svg_normalizes_svg_args(monkeypatch):
+def test_qr_svg_normalizes_svg_args(monkeypatch):
     import LAFigureSpecs.convenience_qr as convenience_qr
 
     captured: Dict[str, Any] = {}
@@ -17,7 +17,7 @@ def test_qr_table_svg_normalizes_svg_args(monkeypatch):
     monkeypatch.setattr("matrixlayout.qr.render_qr_svg", fake_render_qr_svg)
 
     A = [[1, 0], [0, 1]]
-    svg = convenience_qr.qr_table_svg(
+    svg = convenience_qr.qr_svg(
         A,
         toolchain_name=":pdftex_dvisvgm",
         crop="  tight ",

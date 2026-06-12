@@ -17,7 +17,7 @@ figure should follow the actual linear algebra computation.
 Canonical cross-language names:
 
 - render helpers: `ge_svg`, `qr_svg`, `eig_svg`, `svd_svg`, `qr_figure`
-- compute-and-render table helpers: `ge_table_svg`, `qr_table_svg`
+- precomputed stack renderers: `ge_stack_svg`, `qr_stack_svg`
 - spec helpers: `ge_spec`, `qr_spec`, `eig_spec`, `svd_spec`
 - TeX helpers: `ge_tex`, `qr_tex`, `eig_tex`, `svd_tex`
 - bundle helpers: `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
@@ -31,19 +31,19 @@ The names above are the supported top-level surface for parity with
 
 | Area | Function | Output |
 |---|---|---|
-| GE | `ge_svg(...)` / `ge(...)` | Rendered SVG for a row-reduction layout. |
+| GE | `ge_stack_svg(...)` / `ge(...)` | Rendered SVG for a precomputed row-reduction stack. |
 | GE | `show_ge(...)` / `ShowGE` | Notebook-friendly row-reduction workflow/display helpers. |
 | GE | `show_layout(show)` / `show_system(show)` / `show_solution(show)` | Top-level workflow/display wrappers over `ShowGE` methods. |
 | GE | `lhs_matrix(show)` / `rhs_matrix(show)` / `rhs_column(show, ...)` | Direct matrix accessors for the current GE stack state. |
 | GE | `ge_spec(...)` | Reusable spec dictionary for a GE layout. |
 | GE | `ge_tex(...)` | TeX source for a GE layout. |
-| GE | `ge_table_svg(...)` | Rendered SVG for a GE layout. |
+| GE | `ge_svg(...)` | Rendered SVG for a GE layout. |
 | GE | `ge_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | QR | `qr_figure(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
-| QR | `qr_svg(...)` | Renders a precomputed QR matrix stack as SVG. |
+| QR | `qr_stack_svg(...)` / `qr(...)` | Renders a precomputed QR matrix stack as SVG. |
 | QR | `qr_spec(...)` | Reusable spec dictionary for a QR layout. |
 | QR | `qr_tex(...)` | TeX source for a QR layout. |
-| QR | `qr_table_svg(...)` | Rendered SVG for a QR layout. |
+| QR | `qr_svg(...)` | Rendered SVG for a QR layout. |
 | QR | `qr_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | Eigen | `eigendecomposition(...)` | Structured eigenvalue/eigenvector data. |
 | Eigen | `eig_spec(...)` | Reusable spec dictionary for an eigen layout. |

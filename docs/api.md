@@ -27,6 +27,7 @@ Preferred cross-language top-level names:
   - Use `bundle_summary(bundle)` for a quick status-only view.
 - If you already have prepared matrices/specs and want low-level renderer control:
   - `render_ge_*`, `render_qr_*`, `render_eig_*` (re-exported matrixlayout functions)
+  - `ge_stack_svg`, `qr_stack_svg` for precomputed GE/QR matrix grids
 - If you already have LaTeX and just need SVG:
   - `latex_svg` for fragments
   - `latex_document_svg` for complete documents
@@ -58,9 +59,9 @@ Use these when you want a lightweight preflight before rendering:
 - `LAFigureSpecs.ge_layout_spec(A, **opts)`: build a typed `GEGridSpec` layout spec. Inputs: matrix-like `A`. Returns: typed spec.
 - `LAFigureSpecs.ge_bundle(A, **opts)`: canonical GE bundle helper.
 - `LAFigureSpecs.ge_tex(A, **opts)`: render GE TeX from the spec path.
-- `LAFigureSpecs.ge_table_svg(A, **opts)`: render GE SVG from the spec path.
-- `LAFigureSpecs.ge_svg(matrices, **opts)`: canonical GE stack renderer.
-- `LAFigureSpecs.ge(matrices, **opts)`: historical alias for `ge_svg(...)`.
+- `LAFigureSpecs.ge_svg(A, **opts)`: render GE SVG from the spec path.
+- `LAFigureSpecs.ge_stack_svg(matrices, **opts)`: canonical GE stack renderer.
+- `LAFigureSpecs.ge(matrices, **opts)`: historical alias for `ge_stack_svg(...)`.
 
 Example options:
 `ge_spec(A, show_pivots=True, pivoting="partial", gj=False)`
@@ -75,10 +76,10 @@ Example options:
   Returns a dict-like object; access via `qr["Q"]`, `qr.as_tuple()`, or `qr.as_dict()`.
 - `LAFigureSpecs.qr_matrices_dict_from_grid(mats)`: same as above, but returns a plain dict.
 - `LAFigureSpecs.qr_tex(A, **opts)`: render QR TeX from the spec path.
-- `LAFigureSpecs.qr_table_svg(A, **opts)`: render QR SVG from the spec path.
+- `LAFigureSpecs.qr_svg(A, **opts)`: render QR SVG from the spec path.
 - `LAFigureSpecs.qr_bundle(A, **opts)`: canonical QR bundle helper.
-- `LAFigureSpecs.qr_svg(matrices, **opts)`: canonical QR SVG renderer for a precomputed matrix stack.
-- `LAFigureSpecs.qr(matrices, **opts)`: historical alias for `qr_svg(...)`.
+- `LAFigureSpecs.qr_stack_svg(matrices, **opts)`: canonical QR SVG renderer for a precomputed matrix stack.
+- `LAFigureSpecs.qr(matrices, **opts)`: historical alias for `qr_stack_svg(...)`.
 - `LAFigureSpecs.qr_figure(A, **opts)`: canonical compute+render QR helper.
 - `LAFigureSpecs.gram_schmidt_qr(A, **opts)`: historical alias for `qr_figure(...)`.
 

@@ -262,11 +262,11 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
         captured.update(kwargs)
         return "<svg/>"
 
-    def fail_ge_table_svg(*args, **kwargs):
-        raise RuntimeError("ge_table_svg should not be called when full stack is available")
+    def fail_ge_svg(*args, **kwargs):
+        raise RuntimeError("ge_svg should not be called when full stack is available")
 
     monkeypatch.setattr("LAFigureSpecs.ge_convenience.ge", fake_ge)
-    monkeypatch.setattr("LAFigureSpecs.show_ge.ge_table_svg", fail_ge_table_svg)
+    monkeypatch.setattr("LAFigureSpecs.show_ge.ge_svg", fail_ge_svg)
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
@@ -357,11 +357,11 @@ def test_show_ge_default_array_names(monkeypatch):
 
     captured = {}
 
-    def fake_ge_table_svg(*args, **kwargs):
+    def fake_ge_svg(*args, **kwargs):
         captured.update(kwargs)
         return "<svg/>"
 
-    monkeypatch.setattr("LAFigureSpecs.show_ge.ge_table_svg", fake_ge_table_svg)
+    monkeypatch.setattr("LAFigureSpecs.show_ge.ge_svg", fake_ge_svg)
 
     show = LAFigureSpecs.ShowGE([[1, 0], [0, 1]])
     show.ref()

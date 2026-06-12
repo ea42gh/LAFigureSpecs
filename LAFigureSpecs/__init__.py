@@ -49,10 +49,9 @@ from .convenience_qr import (
     qr,
     gram_schmidt_qr,
     qr_bundle,
+    qr_stack_svg,
+    qr_svg,
     qr_tex,
-    qr_table_tex,
-    qr_table_svg,
-    qr_table_bundle,
 )
 from .backsub import (
     backsubstitution_tex,
@@ -80,9 +79,8 @@ from .convenience_ge import (
     ge_bundle,
     ge_layout_spec,
     ge_spec,
-    ge_table_bundle,
-    ge_table_svg,
-    ge_table_tex,
+    ge_stack_svg,
+    ge_svg,
     ge_tex,
 )
 from .rendering import latex_svg, latex_document_svg, lshow_svg
@@ -128,8 +126,6 @@ def px_to_mm(px: float) -> float:
     return float(px) * 25.4 / 96.0
 
 
-ge_svg = ge
-qr_svg = qr
 qr_figure = gram_schmidt_qr
 
 __all__ = [
@@ -157,6 +153,7 @@ __all__ = [
     "qr_spec",
     "qr_layout_spec",
     "qr_tex",
+    "qr_stack_svg",
     "gram_schmidt_qr",
     "qr_svg",
     "qr_figure",
@@ -183,10 +180,8 @@ __all__ = [
     "rhs_block",
     "solutions",
     "ge_svg",
+    "ge_stack_svg",
     "ge_bundle",
-    "ge_table_tex",
-    "ge_table_svg",
-    "ge_table_bundle",
     "ge",
     "eig_svg",
     "svd_svg",
@@ -200,9 +195,6 @@ __all__ = [
     "latex_document_svg",
     "lshow_svg",
     "qr",
-    "qr_table_tex",
-    "qr_table_svg",
-    "qr_table_bundle",
     "latexify",
     "make_decorator",
     "decorate_tex_entries",

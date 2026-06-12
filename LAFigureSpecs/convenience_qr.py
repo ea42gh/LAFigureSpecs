@@ -359,8 +359,7 @@ def gram_schmidt_qr(
     )
 
 
-qr_table_tex = qr_tbl_tex
-qr_table_svg = qr_tbl_svg
-qr_table_bundle = qr_tbl_bundle
 qr_tex = qr_tbl_tex
+qr_svg = qr_tbl_svg
 qr_bundle = qr_tbl_bundle
+qr_stack_svg = qr
