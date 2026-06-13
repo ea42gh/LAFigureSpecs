@@ -69,6 +69,33 @@ def _factor_out_denominator(A: sym.Matrix) -> tuple[Any, sym.Matrix]:
     return d, sym.simplify(d * A)
 
 
+def _sort_eigenvects_triples(
+    triples: List[Tuple[Any, int, List[sym.Matrix]]],
+    *,
+    order: str,
+    Ascale: Optional[Any] = None,
+    eig_digits: Optional[int] = None,
+) -> List[Tuple[Any, int, List[sym.Matrix]]]:
+    if order == "sympy":
+        return triples
+    if order != "descending":
+        raise ValueError(f"order must be 'descending' or 'sympy'; got {order!r}")
+
+    try:
+        return sorted(
+            triples,
+            key=lambda item: sym.N(_display_eigenvalue(item[0], Ascale=Ascale, eig_digits=eig_digits)),
+            reverse=True,
+        )
+    except TypeError:
+        return list(reversed(triples))
+
+
+def _display_eigenvalue(e: Any, *, Ascale: Optional[Any], eig_digits: Optional[int]) -> Any:
+    e_scaled = e if Ascale is None else (e / Ascale)
+    return _maybe_round(e_scaled, eig_digits)
+
+
 def eig_spec(
     A: Any,
     *,
@@ -120,20 +147,17 @@ def eig_spec(
     if normal:
         eig["qvecs"] = []
 
-    res = A.eigenvects()
-    for (e, m, vecs) in res:
-        e_scaled = e if Ascale is None else (e / Ascale)
-        e_scaled = _maybe_round(e_scaled, eig_digits)
-        vecs2 = [sym.Matrix(v) for v in vecs]
+    triples = [(e, int(m), [sym.Matrix(v) for v in vecs]) for (e, m, vecs) in A.eigenvects()]
+    for (e, m, vecs2) in _sort_eigenvects_triples(triples, order="descending", Ascale=Ascale, eig_digits=eig_digits):
+        e_scaled = _display_eigenvalue(e, Ascale=Ascale, eig_digits=eig_digits)
         vecs2 = _maybe_round_vectors(vecs2, vec_digits)
 
-        # Insert at 0 to reverse the order returned by SymPy.
-        eig["lambda"].insert(0, e_scaled)
-        eig["ma"].insert(0, int(m))
-        eig["evecs"].insert(0, vecs2)
+        eig["lambda"].append(e_scaled)
+        eig["ma"].append(int(m))
+        eig["evecs"].append(vecs2)
 
         if normal:
-            eig["qvecs"].insert(0, q_gram_schmidt(vecs2))
+            eig["qvecs"].append(q_gram_schmidt(vecs2))
 
     return eig
 
@@ -148,7 +172,7 @@ def eig_spec_from_eigenvects(
     Ascale: Optional[Any] = None,
     eig_digits: Optional[int] = None,
     vec_digits: Optional[int] = None,
-    order: str = "reverse_sympy",
+    order: str = "descending",
 ) -> Dict[str, Any]:
     """Convert a precomputed eigenvects-style result into a matrixlayout spec.
 
@@ -160,7 +184,7 @@ def eig_spec_from_eigenvects(
     normal, Ascale, eig_digits, vec_digits:
         Behave as in :func:`eig_spec`.
     order:
-        - ``"reverse_sympy"`` (default): reverse SymPy's eigenvects order.
+        - ``"descending"`` (default): sort eigenvalues descending when comparable.
         - ``"sympy"``: preserve SymPy's order.
     """
 
@@ -178,15 +202,10 @@ def eig_spec_from_eigenvects(
         vecs2 = [sym.Matrix(v) for v in vecs]
         triples.append((e, int(m), vecs2))
 
-    if order not in {"reverse_sympy", "sympy"}:
-        raise ValueError(f"order must be 'reverse_sympy' or 'sympy'; got {order!r}")
-
-    if order == "reverse_sympy":
-        triples = list(reversed(triples))
+    triples = _sort_eigenvects_triples(triples, order=order, Ascale=Ascale, eig_digits=eig_digits)
 
     for (e, m, vecs2) in triples:
-        e_scaled = e if Ascale is None else (e / Ascale)
-        e_scaled = _maybe_round(e_scaled, eig_digits)
+        e_scaled = _display_eigenvalue(e, Ascale=Ascale, eig_digits=eig_digits)
         vecs2 = _maybe_round_vectors(vecs2, vec_digits)
 
         eig["lambda"].append(e_scaled)
@@ -239,7 +258,7 @@ class EigenDecomposition:
     eig_digits: Optional[int] = None
     vec_digits: Optional[int] = None
 
-    def to_spec(self, *, order: str = "reverse_sympy") -> Dict[str, Any]:
+    def to_spec(self, *, order: str = "descending") -> Dict[str, Any]:
         return eig_spec_from_eigenvects(
             self.eigenvects,
             normal=self.normal,
