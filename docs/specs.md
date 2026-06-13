@@ -96,6 +96,8 @@ For stack renderers, `pivot_locs` may use structured selectors:
 `{"grid": (block_row, block_col), "entries": [(row, col)], "style": "draw=blue"}`.
 `rowechelon_paths` may also use structured selectors:
 `{"grid": (block_row, block_col), "pivots": [(row, col)], "case": "hh", "color": "blue"}`.
+Right-side stack comments can be expressed as structured `text_annotations`:
+`{"grid_row": 0, "text": "\\qquad note", "color": "violet", "shift_mm": (50, 0)}`.
 Raw renderer snippets remain accepted for advanced uses.
 
 The old `pivot_list`, `bg_for_entries`, `ref_path_list`, `comment_list`, and

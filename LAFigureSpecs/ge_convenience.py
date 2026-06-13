@@ -86,6 +86,78 @@ def _variable_summary_label_rows(
     ]
 
 
+def _normalize_stack_text_annotations(
+    matrices: Sequence[Sequence[Any]],
+    text_annotations: Optional[Sequence[Any]],
+    *,
+    comment_shift_x_mm: float,
+    comment_shift_y_mm: float,
+) -> List[Any]:
+    """Resolve high-level GE-stack text annotations to renderer coordinates."""
+
+    if not text_annotations:
+        return []
+
+    _, block_widths, row_starts, col_starts = _ge_compat._grid_offsets(matrices, index_base=1)
+    out: List[Any] = []
+    for item in text_annotations:
+        if not isinstance(item, dict) or "grid_row" not in item:
+            out.append(item)
+            continue
+
+        if not (block_widths and row_starts and col_starts):
+            raise ValueError("grid_row text_annotations require a non-empty GE matrix stack")
+
+        grid_row = int(item["grid_row"])
+        if grid_row < 0:
+            grid_row += len(row_starts)
+        if grid_row < 0 or grid_row >= len(row_starts):
+            raise ValueError(f"text annotation grid_row out of range: {item['grid_row']!r}")
+
+        grid_col = int(item.get("grid_col", len(block_widths) - 1))
+        if grid_col < 0:
+            grid_col += len(block_widths)
+        if grid_col < 0 or grid_col >= len(block_widths):
+            raise ValueError(f"text annotation grid_col out of range: {item.get('grid_col')!r}")
+
+        side = str(item.get("side", "right")).strip().lower()
+        if side not in {"right", "left"}:
+            raise ValueError(f"text annotation side must be 'right' or 'left', got {side!r}")
+
+        row = row_starts[grid_row]
+        if side == "right":
+            col = col_starts[grid_col] + max(block_widths[grid_col] - 1, 0)
+            coord = f"({row}-{col}.east)"
+            anchor = "right"
+            x_default = comment_shift_x_mm
+        else:
+            col = col_starts[grid_col]
+            coord = f"({row}-{col}.west)"
+            anchor = "left"
+            x_default = -comment_shift_x_mm
+
+        shift = item.get("shift_mm")
+        if shift is None:
+            x_shift = float(item.get("shift_x_mm", x_default))
+            y_shift = float(item.get("shift_y_mm", comment_shift_y_mm))
+        else:
+            x_shift, y_shift = shift
+            x_shift = float(x_shift)
+            y_shift = float(y_shift)
+
+        if "style" in item and item["style"] is not None:
+            style = str(item["style"])
+        else:
+            color = str(item.get("color", "violet"))
+            style = f"{anchor},align=left,text={color}, xshift={x_shift}mm"
+            if y_shift:
+                style += f", yshift={y_shift}mm"
+
+        out.append((coord, str(item.get("text", "")), style))
+
+    return out
+
+
 def _build_typed_layout_spec(
     *,
     pivot_locs: Optional[Any],
@@ -786,7 +858,14 @@ def _legacy_ge_stack_render_inputs(
     )
     render_text_annotations: List[Any] = []
     if text_annotations:
-        render_text_annotations.extend(list(text_annotations))
+        render_text_annotations.extend(
+            _normalize_stack_text_annotations(
+                matrices,
+                text_annotations,
+                comment_shift_x_mm=comment_shift_x_mm,
+                comment_shift_y_mm=comment_shift_y_mm,
+            )
+        )
     render_text_annotations.extend(legacy_text_annotations)
 
     render_label_rows: Optional[List[Any]] = list(label_rows) if label_rows else None

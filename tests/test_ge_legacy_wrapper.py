@@ -182,6 +182,59 @@ def test_ge_stack_svg_accepts_structured_rowechelon_paths(monkeypatch):
     assert "A1" in paths[0]
 
 
+def test_ge_stack_svg_accepts_grid_row_text_annotations(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    A0 = sym.Matrix([[1, 2], [3, 4]])
+    A1 = sym.Matrix([[1, 2], [0, 1]])
+    matrices = [[None, A0], [sym.eye(2), A1]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    out = ge_stack_svg(
+        matrices,
+        text_annotations=[
+            {
+                "grid_row": 1,
+                "text": r"\qquad row note",
+                "color": "blue",
+                "shift_mm": (24, -2),
+            }
+        ],
+    )
+
+    assert out == "<svg/>"
+    assert captured["text_annotations"] == [
+        ("(3-4.east)", r"\qquad row note", "right,align=left,text=blue, xshift=24.0mm, yshift=-2.0mm")
+    ]
+
+
+def test_ge_stack_svg_preserves_raw_text_annotations(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    raw = {"coord": "1-1", "text": "raw", "style": "red"}
+    out = ge_stack_svg([[A]], text_annotations=[raw])
+
+    assert out == "<svg/>"
+    assert captured["text_annotations"] == [raw]
+
+
 def test_ge_legacy_wrapper_supports_ref_path_list():
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
