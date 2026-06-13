@@ -12,6 +12,10 @@ from __future__ import annotations
 
 import sys
 
+import pytest
+
+pytestmark = pytest.mark.legacy
+
 
 def _ensure_repo_on_path() -> None:
     """Make the monorepo root importable for cross-package tests."""

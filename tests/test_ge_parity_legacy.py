@@ -3,6 +3,8 @@ import re
 import pytest
 import sympy as sym
 
+pytestmark = pytest.mark.legacy
+
 
 def _legacy_ge_tex(matrices, *, n_rhs=0):
     itikz = pytest.importorskip("itikz")
