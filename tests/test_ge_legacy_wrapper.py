@@ -2,7 +2,7 @@ import sympy as sym
 
 
 def test_legacy_pivot_list_to_pivot_locs():
-    from LAFigureSpecs.ge_convenience import _legacy_pivot_list_to_pivot_locs
+    from LAFigureSpecs._ge_legacy_compat import _legacy_pivot_list_to_pivot_locs
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
     E1 = sym.eye(2)

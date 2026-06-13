@@ -1,4 +1,4 @@
-from LAFigureSpecs.ge_convenience import _legacy_bg_list_to_codebefore
+from LAFigureSpecs._ge_legacy_compat import _legacy_bg_list_to_codebefore
 
 
 def test_legacy_bg_uses_block_padding_for_right_align():

@@ -21,24 +21,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Sequence, 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify
 from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
-from ._ge_legacy_compat import (
-    _array_name_callouts,
-    _array_name_specs,
-    _coerce_rhs_labels,
-    _grid_offsets,
-    _legacy_bg_for_entries_to_codebefore,
-    _legacy_bg_list_to_codebefore,
-    _legacy_comment_list_to_text_annotations,
-    _name_specs_to_callouts,
-    _legacy_pivot_list_to_pivot_locs,
-    _legacy_ref_path_list_to_rowechelon_paths,
-    _legacy_ref_paths_to_rowechelon_paths,
-    _LegacyFuncAdapter,
-    _matrix_shape,
-    _pivot_list_to_decorators,
-    _preserve_output_artifacts,
-    _resolve_output_targets,
-)
+from . import _ge_legacy_compat as _ge_compat
 
 
 if TYPE_CHECKING:
@@ -61,7 +44,7 @@ def _variable_summary_label_rows(
     variable_colors: Sequence[str],
     rhs_status: Optional[Sequence[Any]] = None,
 ) -> List[Dict[str, Any]]:
-    _, block_widths, row_starts, _ = _grid_offsets(matrices, index_base=1)
+    _, block_widths, row_starts, _ = _ge_compat._grid_offsets(matrices, index_base=1)
     if not (block_widths and row_starts):
         return []
     n_block_rows = len(matrices or [])
@@ -232,15 +215,15 @@ def _build_ge_bundle(
             lhs, rhs_list = "E", ["A"]
         rhs_list = [str(x) for x in rhs_list]
         if not explicit_names:
-            rhs_list = _coerce_rhs_labels(rhs_list, tr.n_rhs)
-        name_specs = _array_name_specs(
+            rhs_list = _ge_compat._coerce_rhs_labels(rhs_list, tr.n_rhs)
+        name_specs = _ge_compat._array_name_specs(
             len(layers["matrices"]),
             str(lhs),
             rhs_list,
             start_index=index_base,
             array_name_indices=array_name_indices,
         )
-        extra_callouts = _name_specs_to_callouts(
+        extra_callouts = _ge_compat._name_specs_to_callouts(
             layers["matrices"],
             name_specs,
             color="blue",
@@ -259,11 +242,11 @@ def _build_ge_bundle(
         callouts = list(callouts) + extra_callouts
 
     bg_list = decor.get("bg_list") or []
-    codebefore: List[str] = _legacy_bg_list_to_codebefore(layers["matrices"], bg_list) if bg_list else []
+    codebefore: List[str] = _ge_compat._legacy_bg_list_to_codebefore(layers["matrices"], bg_list) if bg_list else []
 
     ref_path_list = decor.get("ref_path_list") or []
     rowechelon_paths = (
-        _legacy_ref_path_list_to_rowechelon_paths(
+        _ge_compat._legacy_ref_path_list_to_rowechelon_paths(
             layers["matrices"],
             ref_path_list,
             legacy_submatrix_names=False,
@@ -274,7 +257,7 @@ def _build_ge_bundle(
 
     pivot_decorators: List[Dict[str, Any]] = []
     if pivots_enabled and decor.get("pivot_list"):
-        pivot_decorators = _pivot_list_to_decorators(
+        pivot_decorators = _ge_compat._pivot_list_to_decorators(
             decor.get("pivot_list") or [],
             pivot_text_color=pivot_text_color,
         )
@@ -307,7 +290,7 @@ def _build_ge_bundle(
         for br in range(n_block_rows):
             row = layers["matrices"][br] if br < n_block_rows else []
             mat = row[last_col] if 0 <= last_col < len(row) else None
-            _, w = _matrix_shape(mat)
+            _, w = _ge_compat._matrix_shape(mat)
             split = w - nrhs
             if w <= 0 or split <= 0 or split >= w:
                 continue
@@ -546,7 +529,7 @@ def ge_stack_svg(
     ):
         matrices = [[None, matrices]]
 
-    render_dir, preserve_output_dir, output_stem = _resolve_output_targets(
+    render_dir, preserve_output_dir, output_stem = _ge_compat._resolve_output_targets(
         keep_file=keep_file,
         output_dir=output_dir,
         output_stem=output_stem,
@@ -598,7 +581,7 @@ def ge_stack_svg(
         **render_inputs,
         **render_opts,
     )
-    _preserve_output_artifacts(
+    _ge_compat._preserve_output_artifacts(
         keep_file=keep_file,
         render_dir=render_dir,
         output_dir=preserve_output_dir,
@@ -634,7 +617,7 @@ def _legacy_ge_stack_render_inputs(
 
     pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
     pivot_locs = (
-        _legacy_pivot_list_to_pivot_locs(
+        _ge_compat._legacy_pivot_list_to_pivot_locs(
             matrices,
             pivot_list,
             index_base=1,
@@ -646,7 +629,7 @@ def _legacy_ge_stack_render_inputs(
         else None
     )
 
-    codebefore = _legacy_bg_for_entries_to_codebefore(
+    codebefore = _ge_compat._legacy_bg_for_entries_to_codebefore(
         matrices,
         bg_for_entries,
         block_align=block_align,
@@ -654,7 +637,7 @@ def _legacy_ge_stack_render_inputs(
     )
     needs_medium_nodes = bool(codebefore)
 
-    text_annotations = _legacy_comment_list_to_text_annotations(
+    text_annotations = _ge_compat._legacy_comment_list_to_text_annotations(
         matrices,
         comment_list,
         comment_shift_x_mm=comment_shift_x_mm,
@@ -689,7 +672,7 @@ def _legacy_ge_stack_render_inputs(
         for br in range(n_block_rows):
             row = matrices[br] if br < n_block_rows else []
             mat = row[last_col] if 0 <= last_col < len(row) else None
-            _, w = _matrix_shape(mat)
+            _, w = _ge_compat._matrix_shape(mat)
             if w <= 0:
                 continue
             if nrhs_splits is not None:
@@ -715,9 +698,9 @@ def _legacy_ge_stack_render_inputs(
         render_decorations.extend(list(decorations))
     render_decorations.extend(generated_decorations)
 
-    rowechelon_paths: List[str] = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
+    rowechelon_paths: List[str] = _ge_compat._legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
 
-    generated_callouts = _array_name_callouts(
+    generated_callouts = _ge_compat._array_name_callouts(
         matrices,
         array_names=array_names,
         n_rhs=n_rhs,
@@ -737,7 +720,7 @@ def _legacy_ge_stack_render_inputs(
             needs_medium_nodes = True
 
         func(
-            _LegacyFuncAdapter(
+            _ge_compat._LegacyFuncAdapter(
                 matrices=matrices,
                 codebefore=codebefore,
                 text_annotations=text_annotations,
