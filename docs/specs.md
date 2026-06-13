@@ -90,11 +90,13 @@ or `ge_bundle(...)`.
 | `array_names` | list/bool | None | Shorthand matrix labels converted to callouts. |
 | `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
 | `decorators` | list | None | Entry decorators. |
+| `specs` | list | None | Compatibility alias for callouts; old `angle`/`length` keys are normalized. |
 
-The old `pivot_list`, `bg_for_entries`, `ref_path_list`, and `comment_list`
-inputs are intentionally isolated as compatibility inputs. Matrixlayout-facing
-specs should use canonical renderer fields such as `decorators`, `decorations`,
-`text_annotations`, `rowechelon_paths`, and `callouts`.
+The old `pivot_list`, `bg_for_entries`, `ref_path_list`, `comment_list`, and
+`specs` inputs are intentionally isolated as compatibility inputs.
+Matrixlayout-facing specs should use canonical renderer fields such as
+`decorators`, `decorations`, `text_annotations`, `rowechelon_paths`, and
+`callouts`.
 
 Bundle return contract (`ge_bundle`):
 

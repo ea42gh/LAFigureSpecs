@@ -543,6 +543,15 @@ def ge_stack_svg(
     block_align = render_opts.get("block_align")
     block_valign = render_opts.get("block_valign")
 
+    specs_callouts = _legacy_specs_to_callouts(specs)
+    if specs_callouts:
+        if callouts is None or callouts is False:
+            callouts = specs_callouts
+        elif callouts is True:
+            callouts = specs_callouts
+        elif isinstance(callouts, list):
+            callouts = list(callouts) + specs_callouts
+
     render_inputs = _legacy_ge_stack_render_inputs(
         matrices,
         n_rhs=n_rhs,
@@ -598,6 +607,32 @@ def ge_stack_svg(
         output_stem=output_stem or "output",
     )
     return svg
+
+
+def _legacy_specs_to_callouts(specs: Optional[Any]) -> List[Dict[str, Any]]:
+    """Normalize old ``specs=`` matrix-label callouts for ``ge_stack_svg``."""
+
+    if not specs:
+        return []
+    items = specs if isinstance(specs, (list, tuple)) else [specs]
+    callouts: List[Dict[str, Any]] = []
+    for item in items:
+        try:
+            spec = dict(item)
+        except Exception:
+            continue
+        angle = spec.pop("angle", None)
+        if angle is not None and "angle_deg" not in spec:
+            spec["angle_deg"] = angle
+        length = spec.pop("length", None)
+        if length is not None and "length_mm" not in spec:
+            spec["length_mm"] = length
+        shift_x = spec.pop("label_shift_x_mm", None)
+        shift_y = spec.pop("label_shift_y_mm", None)
+        if (shift_x is not None or shift_y is not None) and "label_shift_mm" not in spec:
+            spec["label_shift_mm"] = (0.0 if shift_x is None else shift_x, 0.0 if shift_y is None else shift_y)
+        callouts.append(spec)
+    return callouts
 
 
 def _legacy_ge_stack_render_inputs(

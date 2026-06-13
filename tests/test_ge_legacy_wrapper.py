@@ -300,6 +300,56 @@ def test_ge_legacy_wrapper_forwards_explicit_callouts():
     assert captured["callouts"] == callouts
 
 
+def test_ge_legacy_wrapper_maps_specs_to_callouts():
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    A0 = sym.Matrix([[1, 2], [3, 4]])
+    E1 = sym.eye(2)
+    A1 = sym.Matrix([[1, 2], [0, 1]])
+    matrices = [[None, A0], [E1, A1]]
+    specs = [
+        {
+            "grid": (1, 0),
+            "label": r"\tilde{E}^{-1}",
+            "side": "left",
+            "angle": -35,
+            "length": 6,
+            "label_shift_x_mm": 1,
+            "label_shift_y_mm": -2,
+            "math_mode": True,
+        }
+    ]
+
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    ge_svg_orig = ml_ge.render_ge_svg
+    ml_ge.render_ge_svg = fake_svg
+    try:
+        out = ge_stack_svg(matrices, specs=specs)
+    finally:
+        ml_ge.render_ge_svg = ge_svg_orig
+
+    assert out == "<svg/>"
+    assert captured["callouts"] == [
+        {
+            "grid": (1, 0),
+            "label": r"\tilde{E}^{-1}",
+            "side": "left",
+            "angle_deg": -35,
+            "length_mm": 6,
+            "label_shift_mm": (1, -2),
+            "math_mode": True,
+        }
+    ]
+    assert "angle" not in captured["callouts"][0]
+    assert "length" not in captured["callouts"][0]
+
+
 def test_ge_legacy_wrapper_keeps_name_specs_compatibility():
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
