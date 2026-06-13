@@ -320,7 +320,7 @@ def _name_specs_to_callouts(
                 "anchor": anchor,
                 "angle_deg": -35.0,
                 "length_mm": 6.0,
-                "label_shift_y_mm": 1.0,
+                "label_shift_mm": (0.0, 1.0),
                 "color": color,
                 "math_mode": had_math,
             }
