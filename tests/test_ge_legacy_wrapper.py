@@ -115,7 +115,7 @@ def test_ge_stack_svg_accepts_canonical_renderer_fields(monkeypatch):
     )
 
     assert out == "<svg/>"
-    assert captured["pivot_locs"] == [{"grid": (0, 1), "entries": [(0, 0)]}]
+    assert captured["pivot_locs"] == [("(1-3)(1-3)", "draw=red, inner sep=2pt, outer sep=0pt")]
     assert captured["codebefore"] == [r"\CodeBefore"]
     assert captured["text_annotations"] == [{"text": "note"}]
     assert captured["label_rows"] == [{"grid": (0, 1), "labels": ["x", "b"]}]
@@ -127,6 +127,29 @@ def test_ge_stack_svg_accepts_canonical_renderer_fields(monkeypatch):
     assert captured["create_extra_nodes"] is True
     assert captured["create_medium_nodes"] is True
     assert captured["format_nrhs"] is False
+
+
+def test_ge_stack_svg_grid_pivot_locs_accept_custom_style(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    matrices = [[None, A]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    out = ge_stack_svg(
+        matrices,
+        pivot_locs=[{"grid": (0, 1), "entries": [(1, 1)], "style": "draw=blue"}],
+    )
+
+    assert out == "<svg/>"
+    assert captured["pivot_locs"] == [("(2-4)(2-4)", "draw=blue")]
 
 
 def test_ge_legacy_wrapper_supports_ref_path_list():

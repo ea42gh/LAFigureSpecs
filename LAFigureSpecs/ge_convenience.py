@@ -542,6 +542,14 @@ def ge_stack_svg(
 
     block_align = render_opts.get("block_align")
     block_valign = render_opts.get("block_valign")
+    pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
+    pivot_locs = _normalize_stack_pivot_locs(
+        matrices,
+        pivot_locs,
+        default_style=pivot_style,
+        block_align=block_align,
+        block_valign=block_valign,
+    )
 
     specs_callouts = _legacy_specs_to_callouts(specs)
     if specs_callouts:
@@ -607,6 +615,39 @@ def ge_stack_svg(
         output_stem=output_stem or "output",
     )
     return svg
+
+
+def _normalize_stack_pivot_locs(
+    matrices: Sequence[Sequence[Any]],
+    pivot_locs: Optional[Sequence[Any]],
+    *,
+    default_style: str,
+    block_align: Optional[Any],
+    block_valign: Optional[Any],
+) -> Optional[List[Any]]:
+    """Normalize grid/entry pivot selectors accepted by ``ge_stack_svg``."""
+
+    if not pivot_locs:
+        return None
+    out: List[Any] = []
+    for item in pivot_locs:
+        if not isinstance(item, dict) or "grid" not in item or "entries" not in item:
+            out.append(item)
+            continue
+        grid = item.get("grid")
+        entries = item.get("entries") or []
+        style = str(item.get("style", default_style))
+        out.extend(
+            _ge_compat._legacy_pivot_list_to_pivot_locs(
+                matrices,
+                [(grid, entries)],
+                index_base=1,
+                pivot_style=style,
+                block_align=block_align,
+                block_valign=block_valign,
+            )
+        )
+    return out or None
 
 
 def _legacy_specs_to_callouts(specs: Optional[Any]) -> List[Dict[str, Any]]:
