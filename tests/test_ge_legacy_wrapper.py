@@ -152,6 +152,36 @@ def test_ge_stack_svg_grid_pivot_locs_accept_custom_style(monkeypatch):
     assert captured["pivot_locs"] == [("(2-4)(2-4)", "draw=blue")]
 
 
+def test_ge_stack_svg_accepts_structured_rowechelon_paths(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    A0 = sym.Matrix([[1, 2], [3, 4]])
+    E1 = sym.eye(2)
+    A1 = sym.Matrix([[1, 2], [0, 1]])
+    matrices = [[None, A0], [E1, A1]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    out = ge_stack_svg(
+        matrices,
+        rowechelon_paths=[
+            {"grid": (1, 1), "pivots": [(0, 0), (1, 1)], "case": "hh", "color": "red"}
+        ],
+    )
+
+    assert out == "<svg/>"
+    paths = captured["rowechelon_paths"]
+    assert len(paths) == 1
+    assert paths[0].startswith(r"\draw[red]")
+    assert "A1" in paths[0]
+
+
 def test_ge_legacy_wrapper_supports_ref_path_list():
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge

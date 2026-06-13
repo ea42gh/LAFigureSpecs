@@ -92,6 +92,12 @@ or `ge_bundle(...)`.
 | `decorators` | list | None | Entry decorators. |
 | `specs` | list | None | Compatibility alias for callouts; old `angle`/`length` keys are normalized. |
 
+For stack renderers, `pivot_locs` may use structured selectors:
+`{"grid": (block_row, block_col), "entries": [(row, col)], "style": "draw=blue"}`.
+`rowechelon_paths` may also use structured selectors:
+`{"grid": (block_row, block_col), "pivots": [(row, col)], "case": "hh", "color": "blue"}`.
+Raw renderer snippets remain accepted for advanced uses.
+
 The old `pivot_list`, `bg_for_entries`, `ref_path_list`, `comment_list`, and
 `specs` inputs are intentionally isolated as compatibility inputs.
 Matrixlayout-facing specs should use canonical renderer fields such as

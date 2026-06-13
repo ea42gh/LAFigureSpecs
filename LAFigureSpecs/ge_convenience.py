@@ -550,6 +550,7 @@ def ge_stack_svg(
         block_align=block_align,
         block_valign=block_valign,
     )
+    rowechelon_paths = _normalize_stack_rowechelon_paths(matrices, rowechelon_paths)
 
     specs_callouts = _legacy_specs_to_callouts(specs)
     if specs_callouts:
@@ -647,6 +648,43 @@ def _normalize_stack_pivot_locs(
                 block_valign=block_valign,
             )
         )
+    return out or None
+
+
+def _normalize_stack_rowechelon_paths(
+    matrices: Sequence[Sequence[Any]],
+    rowechelon_paths: Optional[Sequence[Any]],
+) -> Optional[List[Any]]:
+    """Normalize structured row-echelon path selectors accepted by ``ge_stack_svg``."""
+
+    if not rowechelon_paths:
+        return None
+    out: List[Any] = []
+    for item in rowechelon_paths:
+        if not isinstance(item, dict) or "grid" not in item:
+            out.append(item)
+            continue
+        if "tikz" in item:
+            out.append(item)
+            continue
+        grid = item.get("grid")
+        pivots = item.get("pivots", item.get("entries", []))
+        if not isinstance(grid, (list, tuple)) or len(grid) != 2:
+            continue
+        spec = [
+            int(grid[0]),
+            int(grid[1]),
+            list(pivots or []),
+            str(item.get("case", "hh")),
+            str(item.get("color", "blue,line width=0.4mm")),
+        ]
+        if "adj" in item:
+            spec.append(item.get("adj"))
+        if "left_pad" in item:
+            if "adj" not in item:
+                spec.append(0.1)
+            spec.append(item.get("left_pad"))
+        out.extend(_ge_compat._legacy_ref_path_list_to_rowechelon_paths(matrices, [spec], legacy_submatrix_names=True))
     return out or None
 
 
