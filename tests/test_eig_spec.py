@@ -42,10 +42,22 @@ def test_eigendecomposition_to_spec_roundtrips():
     assert dec.to_spec() == LAFigureSpecs.eig_spec(A, normal=True)
 
 
-def test_eig_spec_order_sympy_is_reverse_of_legacy():
+def test_eig_spec_order_sympy_is_reverse_of_default_reverse_sympy():
     import LAFigureSpecs
 
     A = sym.Matrix([[2, 0], [0, 1]])
-    legacy = LAFigureSpecs.eig_spec(A)
+    default_order = LAFigureSpecs.eig_spec(A)
+    reverse_sympy = LAFigureSpecs.eig_spec_from_eigenvects(A.eigenvects(), order="reverse_sympy")
     sympy_order = LAFigureSpecs.eig_spec_from_eigenvects(A.eigenvects(), order="sympy")
-    assert list(reversed(legacy["lambda"])) == sympy_order["lambda"]
+    assert reverse_sympy == default_order
+    assert list(reversed(default_order["lambda"])) == sympy_order["lambda"]
+
+
+def test_eig_spec_order_rejects_removed_legacy_name():
+    import pytest
+
+    import LAFigureSpecs
+
+    A = sym.Matrix([[2, 0], [0, 1]])
+    with pytest.raises(ValueError, match="reverse_sympy"):
+        LAFigureSpecs.eig_spec_from_eigenvects(A.eigenvects(), order="legacy")

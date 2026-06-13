@@ -148,7 +148,7 @@ def eig_spec_from_eigenvects(
     Ascale: Optional[Any] = None,
     eig_digits: Optional[int] = None,
     vec_digits: Optional[int] = None,
-    order: str = "legacy",
+    order: str = "reverse_sympy",
 ) -> Dict[str, Any]:
     """Convert a precomputed eigenvects-style result into a matrixlayout spec.
 
@@ -160,7 +160,7 @@ def eig_spec_from_eigenvects(
     normal, Ascale, eig_digits, vec_digits:
         Behave as in :func:`eig_spec`.
     order:
-        - ``"legacy"`` (default): reverse SymPy's eigenvects order.
+        - ``"reverse_sympy"`` (default): reverse SymPy's eigenvects order.
         - ``"sympy"``: preserve SymPy's order.
     """
 
@@ -178,10 +178,10 @@ def eig_spec_from_eigenvects(
         vecs2 = [sym.Matrix(v) for v in vecs]
         triples.append((e, int(m), vecs2))
 
-    if order not in {"legacy", "sympy"}:
-        raise ValueError(f"order must be 'legacy' or 'sympy'; got {order!r}")
+    if order not in {"reverse_sympy", "sympy"}:
+        raise ValueError(f"order must be 'reverse_sympy' or 'sympy'; got {order!r}")
 
-    if order == "legacy":
+    if order == "reverse_sympy":
         triples = list(reversed(triples))
 
     for (e, m, vecs2) in triples:
@@ -239,7 +239,7 @@ class EigenDecomposition:
     eig_digits: Optional[int] = None
     vec_digits: Optional[int] = None
 
-    def to_spec(self, *, order: str = "legacy") -> Dict[str, Any]:
+    def to_spec(self, *, order: str = "reverse_sympy") -> Dict[str, Any]:
         return eig_spec_from_eigenvects(
             self.eigenvects,
             normal=self.normal,
