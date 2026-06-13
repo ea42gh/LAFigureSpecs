@@ -77,6 +77,11 @@ or `ge_bundle(...)`.
 | --- | --- | --- | --- |
 | `matrices` | grid | required | Matrix grid. |
 | `n_rhs` | int/list | 0 | RHS partitioning for matrixlayout specs. |
+| `pivot_locs` | list | None | Canonical pivot selector/decorator specs. |
+| `codebefore` | list | None | Canonical raw CodeBefore snippets. |
+| `text_annotations` | list | None | Canonical text annotation specs. |
+| `label_rows` | list | None | Canonical label-row specs. |
+| `rowechelon_paths` | list | None | Canonical row-echelon path snippets. |
 | `pivot_list` | list | None | Compatibility pivot specs converted to renderer decorators. |
 | `bg_for_entries` | list | None | Compatibility background highlights converted to renderer code. |
 | `ref_path_list` | list | None | Compatibility row‑echelon paths converted to renderer paths. |

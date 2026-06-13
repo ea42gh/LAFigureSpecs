@@ -492,6 +492,11 @@ def ge_stack_svg(
     comment_shift_y_mm: float = 0.0,
     variable_summary: Optional[Any] = None,
     rhs_status: Optional[Sequence[Any]] = None,
+    pivot_locs: Optional[Sequence[Any]] = None,
+    codebefore: Optional[Sequence[str]] = None,
+    text_annotations: Optional[Sequence[Any]] = None,
+    label_rows: Optional[Sequence[Any]] = None,
+    rowechelon_paths: Optional[Sequence[str]] = None,
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
     array_name_indices: bool = True,
@@ -551,6 +556,11 @@ def ge_stack_svg(
         comment_shift_y_mm=comment_shift_y_mm,
         variable_summary=variable_summary,
         rhs_status=rhs_status,
+        pivot_locs=pivot_locs,
+        codebefore=codebefore,
+        text_annotations=text_annotations,
+        label_rows=label_rows,
+        rowechelon_paths=rowechelon_paths,
         callouts=callouts,
         array_names=array_names,
         array_name_indices=array_name_indices,
@@ -604,6 +614,11 @@ def _legacy_ge_stack_render_inputs(
     comment_shift_y_mm: float,
     variable_summary: Optional[Any],
     rhs_status: Optional[Sequence[Any]],
+    pivot_locs: Optional[Sequence[Any]],
+    codebefore: Optional[Sequence[str]],
+    text_annotations: Optional[Sequence[Any]],
+    label_rows: Optional[Sequence[Any]],
+    rowechelon_paths: Optional[Sequence[str]],
     callouts: Optional[Any],
     array_names: Optional[Any],
     array_name_indices: bool,
@@ -616,7 +631,7 @@ def _legacy_ge_stack_render_inputs(
     """Translate legacy GE wrapper inputs into canonical matrixlayout kwargs."""
 
     pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
-    pivot_locs = (
+    legacy_pivot_locs = (
         _ge_compat._legacy_pivot_list_to_pivot_locs(
             matrices,
             pivot_list,
@@ -628,31 +643,50 @@ def _legacy_ge_stack_render_inputs(
         if pivot_list
         else None
     )
+    render_pivot_locs: Optional[List[Any]] = None
+    if pivot_locs or legacy_pivot_locs:
+        render_pivot_locs = []
+        if pivot_locs:
+            render_pivot_locs.extend(list(pivot_locs))
+        if legacy_pivot_locs:
+            render_pivot_locs.extend(list(legacy_pivot_locs))
 
-    codebefore = _ge_compat._legacy_bg_for_entries_to_codebefore(
+    legacy_codebefore = _ge_compat._legacy_bg_for_entries_to_codebefore(
         matrices,
         bg_for_entries,
         block_align=block_align,
         block_valign=block_valign,
     )
-    needs_medium_nodes = bool(codebefore)
+    render_codebefore: List[str] = []
+    if codebefore:
+        render_codebefore.extend(list(codebefore))
+    render_codebefore.extend(legacy_codebefore)
+    needs_medium_nodes = bool(render_codebefore)
 
-    text_annotations = _ge_compat._legacy_comment_list_to_text_annotations(
+    legacy_text_annotations = _ge_compat._legacy_comment_list_to_text_annotations(
         matrices,
         comment_list,
         comment_shift_x_mm=comment_shift_x_mm,
         comment_shift_y_mm=comment_shift_y_mm,
         color="violet",
     )
+    render_text_annotations: List[Any] = []
+    if text_annotations:
+        render_text_annotations.extend(list(text_annotations))
+    render_text_annotations.extend(legacy_text_annotations)
 
-    label_rows: Optional[List[Dict[str, Any]]] = None
+    render_label_rows: Optional[List[Any]] = list(label_rows) if label_rows else None
     if variable_summary:
-        label_rows = _variable_summary_label_rows(
+        summary_label_rows = _variable_summary_label_rows(
             matrices,
             variable_summary,
             variable_colors,
             rhs_status=rhs_status,
         )
+        if render_label_rows is None:
+            render_label_rows = summary_label_rows
+        else:
+            render_label_rows.extend(summary_label_rows)
 
     generated_decorations: List[Dict[str, Any]] = []
     nrhs_total: int
@@ -698,7 +732,11 @@ def _legacy_ge_stack_render_inputs(
         render_decorations.extend(list(decorations))
     render_decorations.extend(generated_decorations)
 
-    rowechelon_paths: List[str] = _ge_compat._legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
+    legacy_rowechelon_paths: List[str] = _ge_compat._legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
+    render_rowechelon_paths: List[str] = []
+    if rowechelon_paths:
+        render_rowechelon_paths.extend(list(rowechelon_paths))
+    render_rowechelon_paths.extend(legacy_rowechelon_paths)
 
     generated_callouts = _ge_compat._array_name_callouts(
         matrices,
@@ -722,9 +760,9 @@ def _legacy_ge_stack_render_inputs(
         func(
             _ge_compat._LegacyFuncAdapter(
                 matrices=matrices,
-                codebefore=codebefore,
-                text_annotations=text_annotations,
-                rowechelon_paths=rowechelon_paths,
+                codebefore=render_codebefore,
+                text_annotations=render_text_annotations,
+                rowechelon_paths=render_rowechelon_paths,
                 comment_shift_x_mm=comment_shift_x_mm,
                 comment_shift_y_mm=comment_shift_y_mm,
                 mark_medium_nodes=_mark_medium_nodes,
@@ -732,14 +770,14 @@ def _legacy_ge_stack_render_inputs(
         )
 
     return {
-        "pivot_locs": pivot_locs,
-        "codebefore": codebefore,
-        "text_annotations": text_annotations,
-        "label_rows": label_rows,
-        "rowechelon_paths": rowechelon_paths,
+        "pivot_locs": render_pivot_locs,
+        "codebefore": render_codebefore,
+        "text_annotations": render_text_annotations,
+        "label_rows": render_label_rows,
+        "rowechelon_paths": render_rowechelon_paths,
         "callouts": render_callouts or None,
-        "create_extra_nodes": True if (ref_path_list or needs_medium_nodes) else None,
-        "create_medium_nodes": True if (ref_path_list or needs_medium_nodes) else None,
+        "create_extra_nodes": True if (render_rowechelon_paths or needs_medium_nodes) else None,
+        "create_medium_nodes": True if (render_rowechelon_paths or needs_medium_nodes) else None,
         "decorations": render_decorations or None,
         "format_nrhs": False if generated_decorations else True,
     }

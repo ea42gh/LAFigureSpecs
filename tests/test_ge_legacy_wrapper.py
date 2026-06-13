@@ -89,6 +89,46 @@ def test_ge_legacy_wrapper_forwards_structured_decorations(monkeypatch):
     assert captured["format_nrhs"] is True
 
 
+def test_ge_stack_svg_accepts_canonical_renderer_fields(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    matrices = [[None, A]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    out = ge_stack_svg(
+        matrices,
+        n_rhs=1,
+        pivot_locs=[{"grid": (0, 1), "entries": [(0, 0)]}],
+        codebefore=[r"\CodeBefore"],
+        text_annotations=[{"text": "note"}],
+        label_rows=[{"grid": (0, 1), "labels": ["x", "b"]}],
+        rowechelon_paths=[r"\draw (1-1) -- (2-2);"],
+        decorations=[{"grid": (0, 1), "entries": [(0, 0)], "background": "yellow!35"}],
+    )
+
+    assert out == "<svg/>"
+    assert captured["pivot_locs"] == [{"grid": (0, 1), "entries": [(0, 0)]}]
+    assert captured["codebefore"] == [r"\CodeBefore"]
+    assert captured["text_annotations"] == [{"text": "note"}]
+    assert captured["label_rows"] == [{"grid": (0, 1), "labels": ["x", "b"]}]
+    assert captured["rowechelon_paths"] == [r"\draw (1-1) -- (2-2);"]
+    assert captured["decorations"] == [
+        {"grid": (0, 1), "entries": [(0, 0)], "background": "yellow!35"},
+        {"grid": (0, 1), "vlines": 1},
+    ]
+    assert captured["create_extra_nodes"] is True
+    assert captured["create_medium_nodes"] is True
+    assert captured["format_nrhs"] is False
+
+
 def test_ge_legacy_wrapper_supports_ref_path_list():
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
