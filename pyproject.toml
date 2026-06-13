@@ -40,7 +40,6 @@ addopts = "-q"
 testpaths = ["tests"]
 markers = [
   "render: tests that require external rendering toolchains (LaTeX + SVG converter)",
-  "legacy: characterization tests that compare against the retired itikz API",
 ]
 
 [tool.coverage.run]

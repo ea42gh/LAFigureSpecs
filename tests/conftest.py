@@ -28,7 +28,6 @@ def _ensure_monorepo_imports() -> None:
         repo_root / "LAFigureSpecs",
         repo_root / "matrixlayout",
         repo_root / "jupyter_tikz",
-        repo_root / "itikz",  # legacy characterization tests
     ]
 
     # Ensure predictable precedence: insert in reverse order so the first item
@@ -62,4 +61,3 @@ def pytest_collection_modifyitems(config, items):
     for item in items:
         if "render" in item.keywords:
             item.add_marker(marker)
-
