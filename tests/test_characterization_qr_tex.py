@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import pytest
+import sympy as sym
+
 
 def _extract_mat_format(tex: str) -> str:
     start = tex.find(r"\begin{NiceArray")
@@ -91,6 +94,22 @@ def _submatrix_names(tex: str):
     return re.findall(r"name=([A-Za-z0-9_]+)", tex)
 
 
+def _count_nonempty_blocks(matrices):
+    count = 0
+    for row in matrices:
+        for mat in row:
+            if mat is None:
+                continue
+            try:
+                h, w = mat.shape
+                if int(h) > 0 and int(w) > 0:
+                    count += 1
+            except Exception:
+                if mat:
+                    count += 1
+    return count
+
+
 def _assert_qr_tex_has_markers(tex: str) -> None:
     assert _extract_mat_format(tex)
     assert _extract_mat_rep(tex)
@@ -99,7 +118,7 @@ def _assert_qr_tex_has_markers(tex: str) -> None:
     assert _submatrix_spans(tex)
 
 
-def test_qr_tex_matches_legacy_for_2x2():
+def test_qr_tex_has_current_structure_for_2x2():
     import sympy as sym
 
     from LAFigureSpecs import compute_qr_matrices
@@ -112,7 +131,7 @@ def test_qr_tex_matches_legacy_for_2x2():
     _assert_qr_tex_has_markers(new)
 
 
-def test_qr_tex_matches_legacy_for_3x2():
+def test_qr_tex_has_current_structure_for_3x2():
     import sympy as sym
 
     from LAFigureSpecs import compute_qr_matrices
@@ -125,7 +144,7 @@ def test_qr_tex_matches_legacy_for_3x2():
     _assert_qr_tex_has_markers(new)
 
 
-def test_qr_tex_matches_legacy_for_rank_deficient():
+def test_qr_tex_has_current_structure_for_rank_deficient():
     import sympy as sym
 
     from LAFigureSpecs import compute_qr_matrices
@@ -136,3 +155,21 @@ def test_qr_tex_matches_legacy_for_rank_deficient():
 
     new = render_qr_tex(matrices=matrices, formatter=str)
     _assert_qr_tex_has_markers(new)
+
+
+@pytest.mark.parametrize(
+    "A",
+    [
+        pytest.param(sym.Matrix([[1, 2], [3, 4]]), id="2x2"),
+        pytest.param(sym.Matrix([[1, 2], [3, 4], [5, 6]]), id="3x2"),
+        pytest.param(sym.Matrix([[1, 2], [2, 4]]), id="rank-deficient"),
+    ],
+)
+def test_qr_tex_submatrix_count_matches_nonempty_blocks(A):
+    from LAFigureSpecs import compute_qr_matrices
+    from matrixlayout.qr import render_qr_tex
+
+    matrices = compute_qr_matrices(A)
+    tex = render_qr_tex(matrices=matrices, formatter=str)
+
+    assert len(_submatrix_spans(tex)) == _count_nonempty_blocks(matrices)
