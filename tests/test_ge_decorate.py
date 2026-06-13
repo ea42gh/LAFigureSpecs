@@ -2,7 +2,7 @@ import sympy as sym
 import inspect
 
 
-def test_decorate_ge_pivots_and_variable_types():
+def test_decorate_ge_canonical_pivots_and_variable_types():
     import importlib
     ge_mod = importlib.import_module("LAFigureSpecs.ge")
 
@@ -17,7 +17,23 @@ def test_decorate_ge_pivots_and_variable_types():
         ("(1-1)(1-1)", ""),
         ("(2-2)(2-2)", ""),
     ]
+    assert decor["text_annotations"] == []
+    assert decor["rowechelon_paths"] == []
+    assert decor["callouts"] == []
+
+
+def test_decorate_ge_retains_julia_compatibility_lists():
+    import importlib
+    ge_mod = importlib.import_module("LAFigureSpecs.ge")
+
+    A = sym.Matrix([[1, 2], [3, 4]])
+    tr = ge_mod.ge_trace(A, pivoting="partial")
+
+    decor = ge_mod.decorate_ge(tr, index_base=1)
+
     assert decor["pivot_list"][-1][1] == [(0, 0), (1, 1)]
+    assert decor["bg_list"]
+    assert decor["ref_path_list"] == decor["path_list"]
 
 
 def test_decorate_ge_excludes_rhs_from_variable_types():

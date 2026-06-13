@@ -562,10 +562,12 @@ def decorate_ge(
         - ``variable_types``: list of booleans indicating pivot columns for each
           coefficient column (RHS columns excluded).
 
-        Additional keys mirror the Julia ``decorate_ge`` helper:
+        Additional compatibility keys mirror the Julia ``decorate_ge`` helper:
         ``pivot_list``, ``bg_list``, ``path_list`` (aka ``ref_path_list``),
-        ``variable_summary``. Placeholder keys ``text_annotations`` and
-        ``rowechelon_paths`` are included for future increments.
+        and ``variable_summary``. The high-level spec builders convert those
+        compatibility values into matrixlayout-facing fields such as
+        ``decorators``, ``codebefore``, and ``rowechelon_paths`` once the full
+        rendered grid is known.
     """
 
     # Number of coefficient columns. Prefer the recorded shape metadata.
@@ -729,7 +731,7 @@ def decorate_ge(
         "pivot_positions": list(trace.pivot_positions),
         "pivot_cols": list(trace.pivot_cols),
         "free_cols": list(trace.free_cols),
-        # Placeholders for later GE decoration increments.
+        # Canonical renderer fields that do not require grid-span conversion.
         "text_annotations": [],
         "rowechelon_paths": [],
         "callouts": [],
