@@ -555,6 +555,83 @@ def ge_stack_svg(
     block_align = render_opts.get("block_align")
     block_valign = render_opts.get("block_valign")
 
+    render_inputs = _legacy_ge_stack_render_inputs(
+        matrices,
+        n_rhs=n_rhs,
+        pivot_list=pivot_list,
+        bg_for_entries=bg_for_entries,
+        variable_colors=variable_colors,
+        pivot_text_color=pivot_text_color,
+        ref_path_list=ref_path_list,
+        comment_list=comment_list,
+        comment_shift_x_mm=comment_shift_x_mm,
+        comment_shift_y_mm=comment_shift_y_mm,
+        variable_summary=variable_summary,
+        rhs_status=rhs_status,
+        callouts=callouts,
+        array_names=array_names,
+        array_name_indices=array_name_indices,
+        start_index=start_index,
+        func=func,
+        decorations=decorations,
+        block_align=block_align,
+        block_valign=block_valign,
+    )
+
+    from matrixlayout.ge import render_ge_svg
+
+    svg = render_ge_svg(
+        matrices=matrices,
+        n_rhs=n_rhs,
+        formatter=formatter,
+        outer_hspace_mm=outer_hspace_mm,
+        legacy_submatrix_names=True,
+        legacy_format=True,
+        fig_scale=fig_scale,
+        body_preamble=body_preamble or "",
+        document_preamble=document_preamble or "",
+        decorators=decorators,
+        strict=bool(strict) if strict is not None else False,
+        output_dir=render_dir,
+        output_stem=output_stem or "output",
+        frame=frame,
+        **render_inputs,
+        **render_opts,
+    )
+    _preserve_output_artifacts(
+        keep_file=keep_file,
+        render_dir=render_dir,
+        output_dir=preserve_output_dir,
+        output_stem=output_stem or "output",
+    )
+    return svg
+
+
+def _legacy_ge_stack_render_inputs(
+    matrices: Sequence[Sequence[Any]],
+    *,
+    n_rhs: Any,
+    pivot_list: Optional[Sequence[Any]],
+    bg_for_entries: Optional[Any],
+    variable_colors: Sequence[str],
+    pivot_text_color: str,
+    ref_path_list: Optional[Any],
+    comment_list: Optional[Any],
+    comment_shift_x_mm: float,
+    comment_shift_y_mm: float,
+    variable_summary: Optional[Any],
+    rhs_status: Optional[Sequence[Any]],
+    callouts: Optional[Any],
+    array_names: Optional[Any],
+    array_name_indices: bool,
+    start_index: Optional[int],
+    func: Optional[Any],
+    decorations: Optional[Sequence[Any]],
+    block_align: Optional[Any],
+    block_valign: Optional[Any],
+) -> Dict[str, Any]:
+    """Translate legacy GE wrapper inputs into canonical matrixlayout kwargs."""
+
     pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
     pivot_locs = (
         _legacy_pivot_list_to_pivot_locs(
@@ -671,42 +748,18 @@ def ge_stack_svg(
             )
         )
 
-    from matrixlayout.ge import render_ge_svg
-
-    svg = render_ge_svg(
-        matrices=matrices,
-        n_rhs=n_rhs,
-        formatter=formatter,
-        outer_hspace_mm=outer_hspace_mm,
-        legacy_submatrix_names=True,
-        legacy_format=True,
-        pivot_locs=pivot_locs,
-        codebefore=codebefore,
-        text_annotations=text_annotations,
-        label_rows=label_rows,
-        rowechelon_paths=rowechelon_paths,
-        callouts=render_callouts or None,
-        create_extra_nodes=True if (ref_path_list or needs_medium_nodes) else None,
-        create_medium_nodes=True if (ref_path_list or needs_medium_nodes) else None,
-        decorations=render_decorations or None,
-        format_nrhs=False if generated_decorations else True,
-        fig_scale=fig_scale,
-        body_preamble=body_preamble or "",
-        document_preamble=document_preamble or "",
-        decorators=decorators,
-        strict=bool(strict) if strict is not None else False,
-        output_dir=render_dir,
-        output_stem=output_stem or "output",
-        frame=frame,
-        **render_opts,
-    )
-    _preserve_output_artifacts(
-        keep_file=keep_file,
-        render_dir=render_dir,
-        output_dir=preserve_output_dir,
-        output_stem=output_stem or "output",
-    )
-    return svg
+    return {
+        "pivot_locs": pivot_locs,
+        "codebefore": codebefore,
+        "text_annotations": text_annotations,
+        "label_rows": label_rows,
+        "rowechelon_paths": rowechelon_paths,
+        "callouts": render_callouts or None,
+        "create_extra_nodes": True if (ref_path_list or needs_medium_nodes) else None,
+        "create_medium_nodes": True if (ref_path_list or needs_medium_nodes) else None,
+        "decorations": render_decorations or None,
+        "format_nrhs": False if generated_decorations else True,
+    }
 
 
 def show_ge(*args: Any, **kwargs: Any) -> Any:
