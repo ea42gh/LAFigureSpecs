@@ -157,7 +157,6 @@ def svd_spec(
     *,
     Ascale: Optional[Any] = None,
     eig_digits: Optional[int] = None,
-    sigma2_digits: Optional[int] = None,
     sigma_digits: Optional[int] = None,
     vec_digits: Optional[int] = None,
 ) -> Dict[str, Any]:
@@ -171,9 +170,8 @@ def svd_spec(
         Optional scaling:
         - eigenvalues are divided by ``Ascale**2``
         - left singular vectors use ``1/(sigma*Ascale)``
-    eig_digits, sigma2_digits, sigma_digits, vec_digits:
+    eig_digits, sigma_digits, vec_digits:
         Optional rounding controls.
-        ``sigma2_digits`` is an alias for ``eig_digits``.
 
     Returns
     -------
@@ -191,9 +189,6 @@ def svd_spec(
     A = to_sympy_matrix(A)
     if A is None:
         raise ValueError("A must not be None")
-
-    if eig_digits is None and sigma2_digits is not None:
-        eig_digits = sigma2_digits
 
     # Use the same implementation path as the precomputed-right-singular-vectors API.
     G = A.T * A

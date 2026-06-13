@@ -339,7 +339,6 @@ def svd_tex(
     A: Any,
     *,
     Ascale: Optional[Any] = None,
-    sigma2_digits: Optional[int] = None,
     eig_digits: Optional[int] = None,
     sigma_digits: Optional[int] = None,
     vec_digits: Optional[int] = None,
@@ -360,7 +359,6 @@ def svd_tex(
         A,
         Ascale=Ascale,
         eig_digits=eig_digits,
-        sigma2_digits=sigma2_digits,
         sigma_digits=sigma_digits,
         vec_digits=vec_digits,
     )
@@ -387,7 +385,6 @@ def svd_svg(
     A: Any,
     *,
     Ascale: Optional[Any] = None,
-    sigma2_digits: Optional[int] = None,
     eig_digits: Optional[int] = None,
     sigma_digits: Optional[int] = None,
     vec_digits: Optional[int] = None,
@@ -415,7 +412,6 @@ def svd_svg(
         A,
         Ascale=Ascale,
         eig_digits=eig_digits,
-        sigma2_digits=sigma2_digits,
         sigma_digits=sigma_digits,
         vec_digits=vec_digits,
     )
@@ -457,11 +453,13 @@ def svd_svg(
 def svd_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
 
+    if "sigma2_digits" in kwargs:
+        raise TypeError("sigma2_digits is removed; use eig_digits instead.")
+
     spec = svd_spec(
         A,
         Ascale=kwargs.get("Ascale"),
         eig_digits=kwargs.get("eig_digits"),
-        sigma2_digits=kwargs.get("sigma2_digits"),
         sigma_digits=kwargs.get("sigma_digits"),
         vec_digits=kwargs.get("vec_digits"),
     )

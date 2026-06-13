@@ -82,3 +82,18 @@ def test_bundle_return_contracts_have_spec_tex_svg_keys():
 
     qr_bundle = LAFigureSpecs.qr_bundle([[1, 0], [0, 1]])
     assert {"spec", "tex", "svg", "data", "render_error"}.issubset(qr_bundle.keys())
+
+
+def test_svd_high_level_apis_reject_removed_sigma2_digits_alias():
+    import pytest
+
+    import LAFigureSpecs
+
+    with pytest.raises(TypeError, match="sigma2_digits"):
+        LAFigureSpecs.svd_spec([[1, 0], [0, 1]], sigma2_digits=0)
+    with pytest.raises(TypeError, match="sigma2_digits"):
+        LAFigureSpecs.svd_tex([[1, 0], [0, 1]], sigma2_digits=0)
+    with pytest.raises(TypeError, match="sigma2_digits"):
+        LAFigureSpecs.svd_svg([[1, 0], [0, 1]], sigma2_digits=0)
+    with pytest.raises(TypeError, match="eig_digits"):
+        LAFigureSpecs.svd_bundle([[1, 0], [0, 1]], sigma2_digits=0)
