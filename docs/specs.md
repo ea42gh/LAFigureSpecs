@@ -63,22 +63,33 @@ parameters: `toolchain_name`, `crop`, `padding`, `output_dir`, `output_stem`,
 
 For most users, prefer `ge_svg(...)` over direct `render_ge_svg(...)`.
 
-`ge_svg(...)` parameters (subset shown):
+`ge_tex`, `ge_svg`, and `ge_bundle` accept the same algorithmic parameters as
+`ge_spec` plus renderer options (for SVG).
+
+`ge_stack_svg(...)` is the compatibility renderer for precomputed GE matrix
+grids. It remains available for notebooks and wrappers that already computed the
+row-reduction stack, but new algorithm-facing code should prefer `ge_svg(...)`
+or `ge_bundle(...)`.
+
+`ge_stack_svg(...)` parameters (subset shown):
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
 | `matrices` | grid | required | Matrix grid. |
 | `n_rhs` | int/list | 0 | RHS partitioning for matrixlayout specs. |
-| `pivot_list` | list | None | Legacy pivot specs. |
-| `bg_for_entries` | list | None | Background highlights. |
-| `ref_path_list` | list | None | Row‑echelon paths. |
-| `comment_list` | list | None | Right‑side comments. |
-| `array_names` | list/bool | None | Matrix labels. |
+| `pivot_list` | list | None | Compatibility pivot specs converted to renderer decorators. |
+| `bg_for_entries` | list | None | Compatibility background highlights converted to renderer code. |
+| `ref_path_list` | list | None | Compatibility row‑echelon paths converted to renderer paths. |
+| `comment_list` | list | None | Compatibility right-side comments converted to text annotations. |
+| `callouts` | list | None | Explicit matrix arrow labels. |
+| `array_names` | list/bool | None | Shorthand matrix labels converted to callouts. |
 | `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
 | `decorators` | list | None | Entry decorators. |
 
-`ge_tex`, `ge_svg`, `ge_bundle` accept the same algorithmic
-parameters as `ge_spec` plus renderer options (for SVG).
+The old `pivot_list`, `bg_for_entries`, `ref_path_list`, and `comment_list`
+inputs are intentionally isolated as compatibility inputs. Matrixlayout-facing
+specs should use canonical renderer fields such as `decorators`, `decorations`,
+`text_annotations`, `rowechelon_paths`, and `callouts`.
 
 Bundle return contract (`ge_bundle`):
 
