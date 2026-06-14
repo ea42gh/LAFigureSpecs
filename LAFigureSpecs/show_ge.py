@@ -6,7 +6,12 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 from .ge import Pivoting, ge_trace, trace_to_layer_matrices
 from .backsub import backsubstitution_tex, linear_system_tex, standard_solution_tex
 from .ge_convenience import ge_svg
-from ._ge_legacy_compat import _name_specs_to_callouts
+from ._ge_legacy_compat import (
+    _legacy_bg_for_entries_to_codebefore,
+    _legacy_pivot_list_to_pivot_locs,
+    _legacy_ref_paths_to_rowechelon_paths,
+    _name_specs_to_callouts,
+)
 from ._sympy_utils import to_sympy_col, to_sympy_matrix
 
 
@@ -45,6 +50,39 @@ def _normal_eq_name_specs(n_rows: int, rhs_labels: Sequence[str]) -> List[Tuple[
         specs.append(((i, 0), "al", f"$\\mathbf{{ E_{i - 1} }}$"))
         specs.append(((i, 1), "ar", f"$\\mathbf{{ {rhs_i} }}$"))
     return specs
+
+
+def _decorated_stack_render_kwargs(
+    matrices: Sequence[Sequence[Any]],
+    decor: Dict[str, Any],
+    *,
+    show_pivots: Optional[bool],
+    pivot_text_color: str,
+) -> Dict[str, Any]:
+    """Convert ``decorate_ge`` compatibility output to canonical stack kwargs."""
+
+    pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
+    pivot_locs = None
+    if show_pivots and decor.get("pivot_list"):
+        pivot_locs = _legacy_pivot_list_to_pivot_locs(
+            matrices,
+            decor.get("pivot_list") or [],
+            index_base=1,
+            pivot_style=pivot_style,
+        )
+
+    bg_specs = decor.get("bg_list") or []
+    codebefore = _legacy_bg_for_entries_to_codebefore(matrices, bg_specs) if bg_specs else []
+
+    ref_paths = decor.get("ref_path_list") or decor.get("path_list") or []
+    rowechelon_paths = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_paths) if ref_paths else []
+    rowechelon_paths.extend(list(decor.get("rowechelon_paths") or []))
+
+    return {
+        "pivot_locs": pivot_locs,
+        "codebefore": codebefore,
+        "rowechelon_paths": rowechelon_paths,
+    }
 
 
 @dataclass
@@ -337,9 +375,6 @@ class ShowGE:
             trace = self._get_trace()
             layers = self._get_layers()
             decor = decorate_ge(trace, index_base=self.index_base)
-            bg_for_entries = decor.get("bg_for_entries")
-            if bg_for_entries is None:
-                bg_for_entries = decor.get("bg_list")
             var_summary = self.variable_summary
             if var_summary is None:
                 var_summary = decor.get("basic_var")
@@ -362,9 +397,12 @@ class ShowGE:
             svg = ge_stack_svg(
                 layers.get("matrices"),
                 n_rhs=layers.get("n_rhs") or 0,
-                pivot_list=decor.get("pivot_list") if self.show_pivots else None,
-                bg_for_entries=bg_for_entries,
-                ref_path_list=decor.get("ref_path_list"),
+                **_decorated_stack_render_kwargs(
+                    layers.get("matrices") or [],
+                    decor,
+                    show_pivots=self.show_pivots,
+                    pivot_text_color=self.pivot_text_color,
+                ),
                 variable_summary=var_summary,
                 variable_colors=self.variable_colors,
                 callouts=callouts,
@@ -388,9 +426,6 @@ class ShowGE:
 
                 trace = self._get_trace()
                 decor = decorate_ge(trace, index_base=self.index_base)
-                bg_for_entries = decor.get("bg_for_entries")
-                if bg_for_entries is None:
-                    bg_for_entries = decor.get("bg_list")
                 var_summary = self.variable_summary
                 if var_summary is None:
                     var_summary = decor.get("basic_var")
@@ -399,9 +434,12 @@ class ShowGE:
                 svg = ge_stack_svg(
                     mats,
                     n_rhs=layers.get("n_rhs") or 0,
-                    pivot_list=decor.get("pivot_list") if self.show_pivots else None,
-                    bg_for_entries=bg_for_entries,
-                    ref_path_list=decor.get("ref_path_list"),
+                    **_decorated_stack_render_kwargs(
+                        mats,
+                        decor,
+                        show_pivots=self.show_pivots,
+                        pivot_text_color=self.pivot_text_color,
+                    ),
                     variable_summary=var_summary,
                     variable_colors=self.variable_colors,
                     callouts=self.callouts,

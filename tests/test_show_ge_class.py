@@ -280,7 +280,7 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
     assert captured["callouts"] == callouts
 
 
-def test_show_ge_layout_forwards_python_decorate_ge_backgrounds(monkeypatch):
+def test_show_ge_layout_forwards_canonical_stack_decorations(monkeypatch):
     import LAFigureSpecs
     import sympy as sym
 
@@ -298,7 +298,12 @@ def test_show_ge_layout_forwards_python_decorate_ge_backgrounds(monkeypatch):
     show.ref()
     show.show_layout()
 
-    assert captured.get("bg_for_entries")
+    assert captured.get("codebefore")
+    assert captured.get("pivot_locs")
+    assert captured.get("rowechelon_paths")
+    assert "bg_for_entries" not in captured
+    assert "pivot_list" not in captured
+    assert "ref_path_list" not in captured
 
 
 def test_show_ge_rhs_block_accessor():
