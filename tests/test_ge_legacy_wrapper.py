@@ -545,6 +545,53 @@ def test_ge_legacy_wrapper_supports_canonical_n_rhs_keyword():
     assert captured["n_rhs"] == 1
 
 
+def test_ge_svg_with_n_rhs_delegates_to_stack_renderer():
+    from LAFigureSpecs.convenience_ge import ge_svg
+    from matrixlayout import ge as ml_ge
+
+    matrices = [[None, sym.Matrix([[1, 2, 3], [4, 5, 6]])]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    ge_svg_orig = ml_ge.render_ge_svg
+    ml_ge.render_ge_svg = fake_svg
+    try:
+        assert ge_svg(matrices, n_rhs=1, formatter=str, crop="tight") == "<svg/>"
+    finally:
+        ml_ge.render_ge_svg = ge_svg_orig
+
+    assert captured["matrices"] == matrices
+    assert captured["n_rhs"] == 1
+    assert captured["formatter"] is str
+    assert captured["crop"] == "tight"
+
+
+def test_ge_svg_with_stack_only_option_delegates_to_stack_renderer():
+    from LAFigureSpecs.convenience_ge import ge_svg
+    from matrixlayout import ge as ml_ge
+
+    matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    ge_svg_orig = ml_ge.render_ge_svg
+    ml_ge.render_ge_svg = fake_svg
+    try:
+        assert ge_svg(matrices, formatter=str) == "<svg/>"
+    finally:
+        ml_ge.render_ge_svg = ge_svg_orig
+
+    assert captured["matrices"] == matrices
+    assert captured["n_rhs"] == 0
+    assert captured["formatter"] is str
+
+
 def test_ge_legacy_wrapper_uses_canonical_tex_hook_names(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge

@@ -1154,6 +1154,7 @@ def ge_svg(
     A: Any,
     rhs: Any = None,
     *,
+    n_rhs: Any = _UNSET,
     pivoting: str = "none",
     gj: bool = False,
     show_pivots: Optional[bool] = False,
@@ -1183,8 +1184,67 @@ def ge_svg(
     variable_colors: Sequence[str] = ("red", "black"),
     rhs_status: Optional[Sequence[Any]] = None,
     strict: Optional[bool] = None,
+    **stack_opts: Any,
 ) -> str:
     """Compute + render: build GE data from reference inputs and return SVG."""
+
+    if n_rhs is not _UNSET or stack_opts:
+        if rhs is not None:
+            raise TypeError("ge_svg stack rendering does not accept rhs=; pass rhs only for algorithmic GE")
+        if pivoting != "none":
+            raise TypeError("ge_svg stack rendering does not support pivoting=; use algorithmic ge_svg(A, rhs=...)")
+        if gj:
+            raise TypeError("ge_svg stack rendering does not support gj=; use algorithmic ge_svg(A, rhs=...)")
+        if show_pivots:
+            raise TypeError("ge_svg stack rendering does not support show_pivots=; pass pivot_locs= or use ge_stack_svg")
+        if index_base != 1:
+            raise TypeError("ge_svg stack rendering does not support index_base=; use ge_stack_svg")
+        if pivot_style:
+            raise TypeError("ge_svg stack rendering does not support pivot_style=; pass pivot_locs= or use ge_stack_svg")
+        if row_stretch is not None:
+            raise TypeError("ge_svg stack rendering does not support row_stretch=; use body_preamble=/document_preamble=")
+        if nice_options:
+            raise TypeError("ge_svg stack rendering does not support nice_options=; use ge_stack_svg")
+        if outer_delims:
+            raise TypeError("ge_svg stack rendering does not support outer_delims=; use ge_stack_svg")
+        if cell_align != "r":
+            raise TypeError("ge_svg stack rendering does not support cell_align=; use ge_stack_svg")
+
+        stack_render_opts: Dict[str, Any] = {}
+        if toolchain_name is not None:
+            stack_render_opts["toolchain_name"] = toolchain_name
+        if crop is not _UNSET:
+            stack_render_opts["crop"] = crop
+        if padding is not _UNSET:
+            stack_render_opts["padding"] = padding
+        if exact_bbox is not None:
+            stack_render_opts["exact_bbox"] = exact_bbox
+        if render_opts:
+            stack_render_opts.update(render_opts)
+        if body_preamble:
+            stack_render_opts["body_preamble"] = body_preamble
+        if document_preamble:
+            stack_render_opts["document_preamble"] = document_preamble
+        stack_render_opts.update(stack_opts)
+
+        return ge_stack_svg(
+            A,
+            n_rhs=n_rhs,
+            pivot_text_color=pivot_text_color,
+            outer_hspace_mm=outer_hspace_mm,
+            output_dir=output_dir,
+            frame=frame,
+            callouts=callouts,
+            array_names=array_names,
+            array_name_indices=array_name_indices,
+            decorators=decorators,
+            fig_scale=fig_scale,
+            variable_summary=variable_summary,
+            variable_colors=variable_colors,
+            rhs_status=rhs_status,
+            strict=strict,
+            **stack_render_opts,
+        )
 
     spec = ge_spec(
         A,
