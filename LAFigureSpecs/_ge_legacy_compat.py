@@ -388,7 +388,7 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             else:
                 x = f"{i + 1 + tlr}"
                 y = f"{j + 1 + tlc}"
-                p = f"({x}-|{y})"
+                p = f"({x}-{y})"
 
             if j == 0 and left_pad:
                 p = f"($ {p} + (-{left_pad:2},0) $)"
@@ -425,17 +425,39 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             f"\\p2 = ({name}.south east), "
         )
 
+        def cell_anchor(
+            i: int,
+            j: int,
+            *,
+            shape: Tuple[int, int] = shape,
+            tlr: int = tlr,
+            tlc: int = tlc,
+        ) -> str:
+            """Return a valid NiceMatrix cell node anchor.
+
+            The row-echelon path may contain boundary sentinel coordinates such
+            as ``(row, shape[1])`` to mean "continue to the right edge".  TikZ
+            cannot use those sentinels directly because the corresponding
+            NiceMatrix node does not exist.  Clamp only these helper anchors to
+            existing cells; the actual boundary segments are still drawn from
+            the submatrix corners.
+            """
+
+            row = min(max(int(i), 0), max(shape[0] - 1, 0)) + tlr + 1
+            col = min(max(int(j), 0), max(shape[1] - 1, 0)) + tlc + 1
+            return f"({row}-{col})"
+
         if (case == "vv") or (case == "vh"):
-            p3 = f"\\p3 = ({ll[1][0] + tlr + 1}-|{ll[1][1] + tlc + 1}), "
+            p3 = f"\\p3 = {cell_anchor(ll[1][0], ll[1][1])}, "
         else:
-            p3 = f"\\p3 = ({ll[0][0] + tlr + 1}-|{ll[0][1] + tlc + 1}), "
+            p3 = f"\\p3 = {cell_anchor(ll[0][0], ll[0][1])}, "
 
         if (case == "vh") or (case == "hh"):
             i, j = ll[-2]
-            p4 = f"\\p4 = ({i + tlr + 1}-|{j + tlc + 1}) in "
+            p4 = f"\\p4 = {cell_anchor(i, j)} in "
         else:
             i, j = ll[-1]
-            p4 = f"\\p4 = ({i + tlr + 1}-|{j + tlc + 1}) in "
+            p4 = f"\\p4 = {cell_anchor(i, j)} in "
 
         cmd = "\\draw[" + color + "] " + corners + p3 + p4 + " -- ".join(
             [coords(*p) for p in ll]

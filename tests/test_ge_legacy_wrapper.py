@@ -215,6 +215,41 @@ def test_ge_stack_svg_accepts_grid_row_text_annotations(monkeypatch):
     ]
 
 
+def test_ge_stack_svg_grid_row_text_annotations_skip_variable_summary_rows(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    A = sym.Matrix([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]])
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    out = ge_stack_svg(
+        [[A]],
+        n_rhs=1,
+        variable_summary=[True, True, False, True],
+        text_annotations=[
+            {
+                "grid_row": 0,
+                "text": r"\qquad zero out entries underneath the pivot",
+            }
+        ],
+    )
+
+    assert out == "<svg/>"
+    assert captured["text_annotations"] == [
+        (
+            "(3-5.east)",
+            r"\qquad zero out entries underneath the pivot",
+            "right,align=left,text=violet, xshift=50.0mm",
+        )
+    ]
+
+
 def test_ge_stack_svg_preserves_raw_text_annotations(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge

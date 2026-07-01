@@ -6,7 +6,7 @@ def test_legacy_ref_paths_do_not_use_projection_operator():
     ref_path_list = [(0, 1, [(0, 0), (1, 1)], "hh")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
-    assert all("-|" in p for p in paths)
+    assert all("-|" not in p and "|-" not in p for p in paths)
     assert all(not p.startswith(r"\tikz") for p in paths)
 
 
@@ -18,7 +18,8 @@ def test_ref_paths_interior_pivot_anchors_for_all_cases():
         paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
         assert paths
         path = paths[0]
-        assert "-|" in path
+        assert "-|" not in path
+        assert "|-" not in path
         assert ".west" not in path
         assert not path.startswith(r"\tikz")
 
@@ -32,7 +33,8 @@ def test_ref_path_vh_uses_left_border_for_nonzero_columns():
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
-    assert "-|" in path
+    assert "-|" not in path
+    assert "|-" not in path
 
 
 def test_ref_path_uses_row_col_projection_operator_order():
@@ -42,7 +44,7 @@ def test_ref_path_uses_row_col_projection_operator_order():
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
-    assert "-|" in path
+    assert "-|" not in path
     assert "|-" not in path
 
 
@@ -58,16 +60,15 @@ def test_ref_path_vh_sequence_matches_expected_turns():
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
-    # Use the legacy submatrix name A0x1 and projected coordinates with -|.
+    # Use the legacy submatrix name A0x1 and valid NiceMatrix cell nodes.
     assert "\\p1 = (A0x1.north west)" in path
     assert "\\p2 = (A0x1.south east)" in path
     # Key projected points along the path (row,col in 1-based NiceArray terms).
-    assert "(2-|4)" in path
-    assert "(2-|8)" in path
-    assert "(3-|8)" in path
-    assert "(3-|9)" in path
-    # Must use projection operator (not mirrored).
-    assert "-|" in path and "|-" not in path
+    assert "(2-4)" in path
+    assert "(2-8)" in path
+    assert "(3-8)" in path
+    assert "(3-9)" in path
+    assert "-|" not in path and "|-" not in path
 
 
 def test_ref_path_vv_single_pivot_top_left_corner():
@@ -80,3 +81,35 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     # Starts at top-left border and goes down to bottom border.
     assert "(\\x1,\\y1)" in path
     assert "(\\x4,\\y2)" in path
+
+
+def test_ref_path_right_edge_helper_anchors_stay_on_existing_nodes():
+    identity = [
+        [1, 0, 0, 0],
+        [0, 1, 0, 0],
+        [0, 0, 1, 0],
+        [0, 0, 0, 1],
+    ]
+    augmented = [
+        [1, 1, 1, 2, 2, 3],
+        [0, 1, -1, 1, 0, 4],
+        [0, 0, 0, 0, 0, 5],
+        [0, 0, 0, 1, -2, 6],
+    ]
+    matrices = [
+        [None, augmented],
+        [identity, augmented],
+        [identity, augmented],
+        [identity, augmented],
+    ]
+    paths = _legacy_ref_path_list_to_rowechelon_paths(
+        matrices,
+        [(3, 1, [(0, 0), (1, 1), (2, 5)], "hh")],
+        legacy_submatrix_names=True,
+    )
+
+    assert paths
+    path = paths[0]
+    assert "-|" not in path and "|-" not in path
+    assert "\\p4 = (16-10) in " in path
+    assert "(\\x2,\\y4)" in path

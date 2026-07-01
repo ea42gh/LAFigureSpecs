@@ -92,6 +92,7 @@ def _normalize_stack_text_annotations(
     *,
     comment_shift_x_mm: float,
     comment_shift_y_mm: float,
+    label_rows: Optional[Sequence[Any]] = None,
 ) -> List[Any]:
     """Resolve high-level GE-stack text annotations to renderer coordinates."""
 
@@ -99,6 +100,33 @@ def _normalize_stack_text_annotations(
         return []
 
     _, block_widths, row_starts, col_starts = _ge_compat._grid_offsets(matrices, index_base=1)
+
+    def _labels_row_count(labels: Any) -> int:
+        if labels is None:
+            return 0
+        if isinstance(labels, (str, bytes)):
+            return 1
+        if isinstance(labels, (list, tuple)):
+            if not labels:
+                return 0
+            if all(isinstance(row, (list, tuple)) for row in labels):
+                return len(labels)
+            return 1
+        return 1
+
+    label_rows_above: Dict[Tuple[int, int], int] = {}
+    for spec in label_rows or []:
+        if not isinstance(spec, dict):
+            continue
+        try:
+            grid = spec.get("grid", (0, 0))
+            gM, gN = int(grid[0]), int(grid[1])
+        except Exception:
+            continue
+        side = str(spec.get("side", "above")).strip().lower()
+        if side == "above":
+            label_rows_above[(gM, gN)] = label_rows_above.get((gM, gN), 0) + _labels_row_count(spec.get("labels"))
+
     out: List[Any] = []
     for item in text_annotations:
         if not isinstance(item, dict) or "grid_row" not in item:
@@ -124,7 +152,7 @@ def _normalize_stack_text_annotations(
         if side not in {"right", "left"}:
             raise ValueError(f"text annotation side must be 'right' or 'left', got {side!r}")
 
-        row = row_starts[grid_row]
+        row = row_starts[grid_row] + label_rows_above.get((grid_row, grid_col), 0)
         if side == "right":
             col = col_starts[grid_col] + max(block_widths[grid_col] - 1, 0)
             coord = f"({row}-{col}.east)"
@@ -849,6 +877,19 @@ def _legacy_ge_stack_render_inputs(
     render_codebefore.extend(legacy_codebefore)
     needs_medium_nodes = bool(render_codebefore)
 
+    render_label_rows: Optional[List[Any]] = list(label_rows) if label_rows else None
+    if variable_summary:
+        summary_label_rows = _variable_summary_label_rows(
+            matrices,
+            variable_summary,
+            variable_colors,
+            rhs_status=rhs_status,
+        )
+        if render_label_rows is None:
+            render_label_rows = summary_label_rows
+        else:
+            render_label_rows.extend(summary_label_rows)
+
     legacy_text_annotations = _ge_compat._legacy_comment_list_to_text_annotations(
         matrices,
         comment_list,
@@ -864,22 +905,10 @@ def _legacy_ge_stack_render_inputs(
                 text_annotations,
                 comment_shift_x_mm=comment_shift_x_mm,
                 comment_shift_y_mm=comment_shift_y_mm,
+                label_rows=render_label_rows,
             )
         )
     render_text_annotations.extend(legacy_text_annotations)
-
-    render_label_rows: Optional[List[Any]] = list(label_rows) if label_rows else None
-    if variable_summary:
-        summary_label_rows = _variable_summary_label_rows(
-            matrices,
-            variable_summary,
-            variable_colors,
-            rhs_status=rhs_status,
-        )
-        if render_label_rows is None:
-            render_label_rows = summary_label_rows
-        else:
-            render_label_rows.extend(summary_label_rows)
 
     generated_decorations: List[Dict[str, Any]] = []
     nrhs_total: int
