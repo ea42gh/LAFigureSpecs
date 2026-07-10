@@ -101,10 +101,10 @@ jobs:
           import LAFigureSpecs as lf
 
           assert lf.__version__
-          assert callable(lf.ge_tbl_spec)
-          assert callable(lf.qr_tbl_spec)
-          assert callable(lf.eig_tbl_spec)
-          assert callable(lf.svd_tbl_spec)
+          assert callable(lf.ge_spec)
+          assert callable(lf.qr_spec)
+          assert callable(lf.eig_spec)
+          assert callable(lf.svd_spec)
           PY
 
   render-smoke:
