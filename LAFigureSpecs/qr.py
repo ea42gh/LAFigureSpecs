@@ -24,6 +24,18 @@ class QRGridMatrices(dict):
     def as_dict(self) -> Dict[str, Any]:
         return {k: self.get(k) for k in self._order}
 
+def _should_scale_qr_columns(A: sym.Matrix) -> bool:
+    """Use LCD column scaling only for exact inputs.
+
+    Scaling by the LCD is useful for rational teaching examples, but applying it
+    to SymPy Float values rationalizes binary floats and can create enormous
+    denominators such as 2^52. Those denominators then blow up the displayed
+    Gram-Schmidt vectors.
+    """
+
+    return not any(getattr(value, "is_Float", False) for value in A)
+
+
 def compute_qr_matrices(A: Any) -> Sequence[Sequence[sym.Matrix]]:
     """Return the matrix grid used by the QR layout.
 
@@ -36,7 +48,7 @@ def compute_qr_matrices(A: Any) -> Sequence[Sequence[sym.Matrix]]:
     A_mat = to_sympy_matrix(A)
     if A_mat is None:
         raise ValueError("compute_qr_matrices requires non-empty A")
-    W_mat = naive_gram_schmidt_w(A_mat, scale_lcd=True)
+    W_mat = naive_gram_schmidt_w(A_mat, scale_lcd=_should_scale_qr_columns(A_mat))
 
     WtW = W_mat.T @ W_mat
     WtA = W_mat.T @ A_mat
@@ -75,7 +87,7 @@ def gram_schmidt_qr_matrices(
     A_mat = to_sympy_matrix(A)
     if A_mat is None:
         raise ValueError("gram_schmidt_qr_matrices requires non-empty A")
-    W_mat = naive_gram_schmidt_w(A_mat, scale_lcd=True)
+    W_mat = naive_gram_schmidt_w(A_mat, scale_lcd=_should_scale_qr_columns(A_mat))
 
     mode = (rank_deficient or "").strip().lower() or None
     orig_cols = W_mat.cols

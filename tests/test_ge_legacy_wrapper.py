@@ -179,7 +179,7 @@ def test_ge_stack_svg_accepts_structured_rowechelon_paths(monkeypatch):
     paths = captured["rowechelon_paths"]
     assert len(paths) == 1
     assert paths[0].startswith(r"\draw[red]")
-    assert "A1" in paths[0]
+    assert paths[0] == r"\draw[red] (3-3.south east) -- (3-4.south east) -- (4-4.south east) -- (4-4.south east);"
 
 
 def test_ge_stack_svg_accepts_grid_row_text_annotations(monkeypatch):
@@ -215,7 +215,7 @@ def test_ge_stack_svg_accepts_grid_row_text_annotations(monkeypatch):
     ]
 
 
-def test_ge_stack_svg_grid_row_text_annotations_skip_variable_summary_rows(monkeypatch):
+def test_ge_stack_svg_grid_row_text_annotations_ignore_below_variable_summary_rows(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
@@ -243,10 +243,67 @@ def test_ge_stack_svg_grid_row_text_annotations_skip_variable_summary_rows(monke
     assert out == "<svg/>"
     assert captured["text_annotations"] == [
         (
-            "(3-5.east)",
+            "(1-5.east)",
             r"\qquad zero out entries underneath the pivot",
             "right,align=left,text=violet, xshift=50.0mm",
         )
+    ]
+    assert captured["label_rows"] == [
+        {
+            "grid": (0, 0),
+            "side": "below",
+            "labels": [
+                [
+                    r"\textcolor{red}{\ensuremath{\Uparrow}}",
+                    r"\textcolor{red}{\ensuremath{\Uparrow}}",
+                    r"\textcolor{black}{\ensuremath{\uparrow}}",
+                    r"\textcolor{red}{\ensuremath{\Uparrow}}",
+                    "",
+                ],
+                [
+                    r"\textcolor{red}{\ensuremath{x_{1}}}",
+                    r"\textcolor{red}{\ensuremath{x_{2}}}",
+                    r"\textcolor{black}{\ensuremath{x_{3}}}",
+                    r"\textcolor{red}{\ensuremath{x_{4}}}",
+                    "",
+                ],
+            ],
+        }
+    ]
+
+
+def test_ge_stack_svg_single_matrix_keeps_annotations_label_as_callout(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_svg
+    from matrixlayout import ge as ml_ge
+
+    A = sym.Matrix([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]])
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    out = ge_svg(
+        [[A]],
+        n_rhs=1,
+        variable_summary=[True, True, False, True],
+        pivot_locs=[{"grid": (0, 0), "entries": [(0, 0)]}],
+        rowechelon_paths=[{"grid": (0, 0), "pivots": [(0, 0), (1, 1)], "case": "vv"}],
+        text_annotations=[{"grid_row": 0, "text": r"\qquad zero out entries underneath the pivot"}],
+        annotations=[{"grid": (0, 0), "label": r"$[A\mid b]$", "side": "right", "color": "blue"}],
+    )
+
+    assert out == "<svg/>"
+    assert captured["matrices"] == [[A]]
+    assert captured["label_rows"][0]["side"] == "below"
+    assert captured["callouts"] == [
+        {"grid": (0, 0), "label": r"$[A\mid b]$", "side": "right", "color": "blue"}
+    ]
+    assert captured.get("annotations") is None
+    assert captured["rowechelon_paths"] == [
+        r"\draw[blue,line width=0.4mm] (1-1.north east) -- (1-1.south east) -- (1-2.south east) -- (3-2.south east);"
     ]
 
 

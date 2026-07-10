@@ -346,7 +346,7 @@ def _legacy_ref_path_list_to_rowechelon_paths(
         pivots = spec[2]
         case = spec[3] if len(spec) > 3 else "hh"
         color = spec[4] if len(spec) > 4 else "blue,line width=0.4mm"
-        adj = spec[5] if len(spec) > 5 else 0.1
+        _adj = spec[5] if len(spec) > 5 else 0.1
         left_pad = spec[6] if len(spec) > 6 else 0.0
         span = span_map.get((gM, gN))
         if span is None:
@@ -357,43 +357,31 @@ def _legacy_ref_path_list_to_rowechelon_paths(
 
         tlr = span.row_start - 1
         tlc = span.col_start - 1
-        name = span.name
 
         def coords(
             i: int,
             j: int,
             *,
             shape: Tuple[int, int] = shape,
-            gN: int = gN,
             tlr: int = tlr,
             tlc: int = tlc,
             left_pad: float = left_pad,
-            adj: float = adj,
         ) -> str:
-            if i >= shape[0]:
-                if gN == 0 and j == 0:
-                    x = r"\x1"
-                else:
-                    x = r"\x2" if j >= shape[1] else r"\x4"
-                y = r"\y2"
-                p = f"({x},{y})"
-            elif j >= shape[1]:
-                x = r"\x2"
-                y = r"\y4"
-                p = f"({x},{y})"
-            elif j == 0:
-                x = r"\x1"
-                y = r"\y1" if i == 0 else r"\y3"
-                p = f"({x},{y})"
+            if i <= 0:
+                row_i = 0
+                vertical_anchor = "north"
             else:
-                x = f"{i + 1 + tlr}"
-                y = f"{j + 1 + tlc}"
-                p = f"({x}-{y})"
+                row_i = min(int(i) - 1, max(shape[0] - 1, 0))
+                vertical_anchor = "south"
+            col_j = min(max(int(j), 0), max(shape[1] - 1, 0))
+            row = row_i + tlr + 1
+            col = col_j + tlc + 1
+
+            anchor = f"{vertical_anchor} east"
+            p = f"({row}-{col}.{anchor})"
 
             if j == 0 and left_pad:
                 p = f"($ {p} + (-{left_pad:2},0) $)"
-            elif j != 0 and j < shape[1] and adj != 0:
-                p = f"($ {p} + ({adj:2},0) $)"
             return p
 
         cur = pivots[0]
@@ -420,48 +408,7 @@ def _legacy_ref_path_list_to_rowechelon_paths(
         else:
             ll.append((shape[0], cur[1]))
 
-        corners = (
-            f"let \\p1 = ({name}.north west), "
-            f"\\p2 = ({name}.south east), "
-        )
-
-        def cell_anchor(
-            i: int,
-            j: int,
-            *,
-            shape: Tuple[int, int] = shape,
-            tlr: int = tlr,
-            tlc: int = tlc,
-        ) -> str:
-            """Return a valid NiceMatrix cell node anchor.
-
-            The row-echelon path may contain boundary sentinel coordinates such
-            as ``(row, shape[1])`` to mean "continue to the right edge".  TikZ
-            cannot use those sentinels directly because the corresponding
-            NiceMatrix node does not exist.  Clamp only these helper anchors to
-            existing cells; the actual boundary segments are still drawn from
-            the submatrix corners.
-            """
-
-            row = min(max(int(i), 0), max(shape[0] - 1, 0)) + tlr + 1
-            col = min(max(int(j), 0), max(shape[1] - 1, 0)) + tlc + 1
-            return f"({row}-{col})"
-
-        if (case == "vv") or (case == "vh"):
-            p3 = f"\\p3 = {cell_anchor(ll[1][0], ll[1][1])}, "
-        else:
-            p3 = f"\\p3 = {cell_anchor(ll[0][0], ll[0][1])}, "
-
-        if (case == "vh") or (case == "hh"):
-            i, j = ll[-2]
-            p4 = f"\\p4 = {cell_anchor(i, j)} in "
-        else:
-            i, j = ll[-1]
-            p4 = f"\\p4 = {cell_anchor(i, j)} in "
-
-        cmd = "\\draw[" + color + "] " + corners + p3 + p4 + " -- ".join(
-            [coords(*p) for p in ll]
-        ) + ";"
+        cmd = "\\draw[" + color + "] " + " -- ".join([coords(*p) for p in ll]) + ";"
         out.append(cmd)
     return out
 

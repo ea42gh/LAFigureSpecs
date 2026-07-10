@@ -71,6 +71,27 @@ def test_to_sympy_matrix_accepts_juliacall_arrayvalue_wrapper():
     assert int(M[1, 1]) == 4
 
 
+def test_to_sympy_matrix_prefers_juliacall_indexing_over_numpy_hook():
+    import numpy as np
+
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
+
+    class FakeArrayValue:
+        __module__ = "juliacall"
+
+        shape = (2, 2)
+
+        def __getitem__(self, idx):
+            i, j = idx
+            return [[1, 2], [3, 4]][i - 1][j - 1]
+
+        def to_numpy(self):
+            return np.array([[99, 98], [97, 96]])
+
+    M = to_sympy_matrix(FakeArrayValue())
+    assert M == sym.Matrix([[1, 2], [3, 4]])
+
+
 def test_to_sympy_matrix_accepts_juliacall_to_numpy_hook():
     import numpy as np
 

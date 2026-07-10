@@ -30,27 +30,25 @@ def _juliacall_array_to_nested_list(A: Any) -> Optional[list]:
     """Best-effort conversion for ``juliacall.ArrayValue`` inputs.
 
     SymPy does not understand the JuliaCall array wrappers directly.
-    The wrappers often satisfy the NumPy array interface, but not all call
-    sites have NumPy available or want to depend on it. This helper attempts a
-    minimal, dependency-free conversion.
+    Materialize by explicit Julia indexing first so the result does not depend
+    on NumPy view/stride behavior for Julia-owned memory.
     """
 
     if not _looks_like_juliacall_wrapper(A):
         return None
 
-    # Prefer a dedicated conversion hook if present.
-    to_numpy = getattr(A, "to_numpy", None)
-    if callable(to_numpy):
-        try:
-            arr = to_numpy()
-            # NumPy arrays provide ``tolist``.
-            if hasattr(arr, "tolist"):
-                return arr.tolist()
-        except Exception:
-            pass
-
     shp = getattr(A, "shape", None)
     if shp is None:
+        # Fall back to a dedicated conversion hook if the wrapper does not
+        # expose shape/indexing in the usual JuliaCall form.
+        to_numpy = getattr(A, "to_numpy", None)
+        if callable(to_numpy):
+            try:
+                arr = to_numpy()
+                if hasattr(arr, "tolist"):
+                    return arr.tolist()
+            except Exception:
+                pass
         return None
 
     try:
@@ -70,7 +68,18 @@ def _juliacall_array_to_nested_list(A: Any) -> Optional[list]:
         try:
             return [A[i + 1] for i in range(n)]
         except Exception:
-            return None
+            pass
+
+    # Final fallback: some wrappers provide a reliable NumPy conversion even
+    # when direct indexing is unavailable.
+    to_numpy = getattr(A, "to_numpy", None)
+    if callable(to_numpy):
+        try:
+            arr = to_numpy()
+            if hasattr(arr, "tolist"):
+                return arr.tolist()
+        except Exception:
+            pass
     return None
 
 

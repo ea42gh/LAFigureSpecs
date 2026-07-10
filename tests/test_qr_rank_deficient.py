@@ -58,6 +58,47 @@ def test_naive_gram_schmidt_handles_empty_and_fractional_columns():
     assert W_raw[0, 0] == sym.Rational(1, 2)
 
 
+def test_qr_float_inputs_do_not_lcd_scale_binary_float_denominators():
+    A = sym.Matrix(
+        [
+            [1.0, 0.0, 1.0],
+            [0.0, 1.0, 1.0],
+            [1.0, 1.0, 0.0],
+            [1.0, -1.0, 1.0],
+        ]
+    )
+
+    mats = gram_schmidt_qr_matrices(A)
+    W = mats[0][3]
+
+    assert W[:, 0] == A[:, 0]
+    assert W[0, 0] == sym.Float(1.0)
+    assert max(abs(float(value)) for value in W) < 10
+
+
+def test_qr_formatter_applies_to_s_block_for_float_inputs():
+    from LAFigureSpecs.qr import qr_spec_from_matrices
+    from matrixlayout.qr import render_qr_tex
+
+    A = sym.Matrix(
+        [
+            [1.0, 0.0, 1.0],
+            [0.0, 1.0, 1.0],
+            [1.0, 1.0, 0.0],
+            [1.0, -1.0, 1.0],
+        ]
+    )
+    mats = gram_schmidt_qr_matrices(A)
+    tex = render_qr_tex(
+        spec=qr_spec_from_matrices(mats),
+        formatter=lambda value: f"[{float(value):.2f}]",
+        array_names=False,
+    )
+
+    assert "[0.58]" in tex
+    assert "sqrt" not in tex
+
+
 def test_naive_qr_rejects_bad_inputs_and_runs_square_case():
     import pytest
 

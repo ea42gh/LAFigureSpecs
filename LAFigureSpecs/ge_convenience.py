@@ -81,6 +81,7 @@ def _variable_summary_label_rows(
     return [
         {
             "grid": (n_block_rows - 1, n_block_cols - 1),
+            "side": "below",
             "labels": [arrows, labels],
         }
     ]
@@ -661,6 +662,20 @@ def ge_stack_svg(
         elif isinstance(callouts, list):
             callouts = list(callouts) + specs_callouts
 
+    annotations, annotation_callouts = _split_annotation_callouts(render_opts.get("annotations"))
+    if annotation_callouts:
+        if annotations is None:
+            render_opts.pop("annotations", None)
+        else:
+            render_opts["annotations"] = annotations
+
+        if callouts is None or callouts is False:
+            callouts = annotation_callouts
+        elif callouts is True:
+            callouts = annotation_callouts
+        elif isinstance(callouts, list):
+            callouts = list(callouts) + annotation_callouts
+
     render_inputs = _legacy_ge_stack_render_inputs(
         matrices,
         n_rhs=n_rhs,
@@ -812,6 +827,26 @@ def _legacy_specs_to_callouts(specs: Optional[Any]) -> List[Dict[str, Any]]:
             spec["label_shift_mm"] = (0.0 if shift_x is None else shift_x, 0.0 if shift_y is None else shift_y)
         callouts.append(spec)
     return callouts
+
+
+def _split_annotation_callouts(annotations: Optional[Any]) -> Tuple[Optional[Any], List[Dict[str, Any]]]:
+    """Accept notebook-era ``annotations=[{label=...}]`` as GE callouts."""
+
+    if not annotations:
+        return annotations, []
+
+    items = annotations if isinstance(annotations, (list, tuple)) else [annotations]
+    remaining: List[Any] = []
+    callouts: List[Dict[str, Any]] = []
+    for item in items:
+        if isinstance(item, dict) and "label" in item and "labels" not in item:
+            callouts.append(dict(item))
+        else:
+            remaining.append(item)
+
+    if not callouts:
+        return annotations, []
+    return (remaining or None), callouts
 
 
 def _legacy_ge_stack_render_inputs(
