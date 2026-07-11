@@ -68,6 +68,21 @@ def _normalize_bridge_scalar(x: Any) -> Any:
     return x
 
 
+def _normalize_nested_exact(x: Any) -> Any:
+    """Recursively convert bridge-encoded exact numbers inside containers."""
+
+    scalar = _normalize_bridge_scalar(x)
+    if scalar is not x:
+        return scalar
+    if isinstance(x, list):
+        return [_normalize_nested_exact(v) for v in x]
+    if isinstance(x, tuple):
+        if _is_rational_tuple(x) or _is_complex_rational_tuple(x):
+            return _normalize_bridge_scalar(x)
+        return tuple(_normalize_nested_exact(v) for v in x)
+    return x
+
+
 def _juliacall_array_to_nested_list(A: Any) -> Optional[list]:
     """Best-effort conversion for ``juliacall.ArrayValue`` inputs.
 
@@ -220,6 +235,7 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
     # (or to a NumPy array if available through the wrapper).
     jl_list = _juliacall_array_to_nested_list(A)
     if jl_list is not None:
+        jl_list = _normalize_nested_exact(jl_list)
         if isinstance(jl_list, list) and jl_list:
             first = jl_list[0]
             if isinstance(first, (list, tuple)) and first and _is_exact_tuple(first[0]):

@@ -243,6 +243,22 @@ def test_to_sympy_matrix_accepts_juliacall_nested_vector_literal():
     assert M == sym.Matrix([[sym.Rational(1, 2), 0], [sym.Rational(-3, 4), sym.Rational(5, 6)]])
 
 
+def test_to_sympy_matrix_normalizes_materialized_juliacall_nested_tuple_literals(monkeypatch):
+    import LAFigureSpecs._sympy_utils as sympy_utils
+
+    class FakeVectorOfVectors:
+        __module__ = "juliacall"
+
+    def fake_array_to_nested_list(_A):
+        return [[(1, 1), (1, 1), (-2, 1)], [(0, 1), (0, 1), (-1, 1)]]
+
+    monkeypatch.setattr(sympy_utils, "_juliacall_array_to_nested_list", fake_array_to_nested_list)
+
+    M = sympy_utils.to_sympy_matrix(FakeVectorOfVectors())
+    assert M == sym.Matrix([[1, 1, -2], [0, 0, -1]])
+    assert all(not isinstance(entry, sym.Tuple) for entry in M)
+
+
 def test_to_sympy_matrix_accepts_juliacall_to_numpy_hook():
     import numpy as np
 
