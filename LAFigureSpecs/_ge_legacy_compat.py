@@ -407,9 +407,13 @@ def _legacy_ref_path_list_to_rowechelon_paths(
 
         cur = pivots[0]
         if case == "vv" and len(pivots) == 1:
-            cutoff_col = min(int(cur[1]) + 1, shape[1])
-            ll = [(int(cur[0]), cutoff_col)]
-            cur = (int(cur[0]), cutoff_col)
+            # NiceMatrix rule coordinates are offset from matrix-entry
+            # coordinates: for the first entry in a shifted block, col+1 is the
+            # left edge of that entry. Using col instead lands on the previous
+            # block boundary, outside the matrix.
+            pivot_left_rule_col = min(int(cur[1]) + 1, shape[1])
+            ll = [(int(cur[0]), pivot_left_rule_col)]
+            cur = (int(cur[0]), pivot_left_rule_col)
         else:
             ll = [cur] if (case == "vv") or (case == "vh") else []
         for nxt in pivots[1:]:

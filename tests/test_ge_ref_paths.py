@@ -159,8 +159,8 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
-    # A single-pivot vertical cutoff is drawn after the pivot column, not on
-    # the outer left edge of a shifted matrix block.
+    # A single-pivot vertical cutoff is drawn on the left edge of the pivot
+    # entry, not on the previous block boundary outside a shifted matrix.
     assert paths == [r"\draw[blue,line width=0.4mm] (1-|4) -- (3-|4);"]
     _assert_manhattan_path(path)
 
