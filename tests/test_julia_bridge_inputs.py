@@ -92,6 +92,83 @@ def test_to_sympy_matrix_prefers_juliacall_indexing_over_numpy_hook():
     assert M == sym.Matrix([[1, 2], [3, 4]])
 
 
+def test_to_sympy_matrix_accepts_juliacall_tuple_rationals():
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
+
+    class FakeTupleValue:
+        __module__ = "juliacall"
+
+        def __init__(self, *items):
+            self._items = items
+
+        def __len__(self):
+            return len(self._items)
+
+        def __getitem__(self, idx):
+            if idx < 1:
+                raise IndexError("1-based")
+            return self._items[idx - 1]
+
+    class FakeArrayValue:
+        __module__ = "juliacall"
+
+        shape = (2, 2)
+
+        def __getitem__(self, idx):
+            i, j = idx
+            data = [
+                [FakeTupleValue(1, 2), FakeTupleValue(0, 1)],
+                [FakeTupleValue(-3, 4), FakeTupleValue(5, 6)],
+            ]
+            return data[i - 1][j - 1]
+
+    M = to_sympy_matrix(FakeArrayValue())
+    assert M == sym.Matrix([[sym.Rational(1, 2), 0], [sym.Rational(-3, 4), sym.Rational(5, 6)]])
+
+
+def test_to_sympy_matrix_accepts_juliacall_nested_vector_literal():
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
+
+    class FakeTupleValue:
+        __module__ = "juliacall"
+
+        def __init__(self, *items):
+            self._items = items
+
+        def __len__(self):
+            return len(self._items)
+
+        def __getitem__(self, idx):
+            if idx < 1:
+                raise IndexError("1-based")
+            return self._items[idx - 1]
+
+    class FakeVectorValue:
+        __module__ = "juliacall"
+
+        def __init__(self, data):
+            self._data = data
+            self.shape = (len(data),)
+
+        def __len__(self):
+            return len(self._data)
+
+        def __getitem__(self, idx):
+            if idx < 1:
+                raise IndexError("1-based")
+            return self._data[idx - 1]
+
+    A = FakeVectorValue(
+        [
+            FakeVectorValue([FakeTupleValue(1, 2), FakeTupleValue(0, 1)]),
+            FakeVectorValue([FakeTupleValue(-3, 4), FakeTupleValue(5, 6)]),
+        ]
+    )
+
+    M = to_sympy_matrix(A)
+    assert M == sym.Matrix([[sym.Rational(1, 2), 0], [sym.Rational(-3, 4), sym.Rational(5, 6)]])
+
+
 def test_to_sympy_matrix_accepts_juliacall_to_numpy_hook():
     import numpy as np
 

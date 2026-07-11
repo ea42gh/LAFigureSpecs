@@ -328,6 +328,26 @@ def _name_specs_to_callouts(
     return out
 
 
+def _normalize_path_offsets(value: Any = 0.1) -> Tuple[float, float]:
+    if isinstance(value, (list, tuple)):
+        if not value:
+            return (0.1, 0.1)
+        if len(value) == 1:
+            v = float(value[0])
+            return (v, v)
+        return (float(value[0]), float(value[1]))
+    v = float(value)
+    return (v, v)
+
+
+def _offset_point(point: str, *, x_left: float = 0.0, y_down: float = 0.0) -> str:
+    if not x_left and not y_down:
+        return point
+    x = 0.0 if not x_left else -x_left
+    y = 0.0 if not y_down else -y_down
+    return f"($ {point} + ({x:g},{y:g}) $)"
+
+
 def _legacy_ref_path_list_to_rowechelon_paths(
     matrices: Sequence[Sequence[Any]],
     ref_path_list: Sequence[Any],
@@ -346,7 +366,7 @@ def _legacy_ref_path_list_to_rowechelon_paths(
         pivots = spec[2]
         case = spec[3] if len(spec) > 3 else "hh"
         color = spec[4] if len(spec) > 4 else "blue,line width=0.4mm"
-        _adj = spec[5] if len(spec) > 5 else 0.1
+        x_offset, y_offset = _normalize_path_offsets(spec[5] if len(spec) > 5 else 0.1)
         left_pad = spec[6] if len(spec) > 6 else 0.0
         span = span_map.get((gM, gN))
         if span is None:
@@ -362,27 +382,73 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             i: int,
             j: int,
             *,
+            horizontal_anchor: str = "east",
+            vertical_anchor: Optional[str] = None,
             shape: Tuple[int, int] = shape,
             tlr: int = tlr,
             tlc: int = tlc,
             left_pad: float = left_pad,
+            x_offset: float = x_offset,
+            y_offset: float = y_offset,
         ) -> str:
             if i <= 0:
                 row_i = 0
-                vertical_anchor = "north"
+                default_vertical_anchor = "north"
             else:
                 row_i = min(int(i) - 1, max(shape[0] - 1, 0))
-                vertical_anchor = "south"
+                default_vertical_anchor = "south"
             col_j = min(max(int(j), 0), max(shape[1] - 1, 0))
             row = row_i + tlr + 1
             col = col_j + tlc + 1
 
-            anchor = f"{vertical_anchor} east"
+            vertical_anchor = vertical_anchor or default_vertical_anchor
+            anchor = f"{vertical_anchor} {horizontal_anchor}"
             p = f"({row}-{col}.{anchor})"
 
+            x_clearance = 0.0
+            if horizontal_anchor == "west":
+                x_clearance += x_offset
             if j == 0 and left_pad:
-                p = f"($ {p} + (-{left_pad:2},0) $)"
-            return p
+                x_clearance += float(left_pad)
+            y_clearance = y_offset if vertical_anchor == "south" else 0.0
+            return _offset_point(p, x_left=x_clearance, y_down=y_clearance)
+
+        def entry_coords(
+            row_i: int,
+            j: int,
+            *,
+            vertical_anchor: str,
+            horizontal_anchor: str = "west",
+            shape: Tuple[int, int] = shape,
+            tlr: int = tlr,
+            tlc: int = tlc,
+            left_pad: float = left_pad,
+            x_offset: float = x_offset,
+        ) -> str:
+            row_i = min(max(int(row_i), 0), max(shape[0] - 1, 0))
+            col_j = min(max(int(j), 0), max(shape[1] - 1, 0))
+            row = row_i + tlr + 1
+            col = col_j + tlc + 1
+            p = f"({row}-{col}.{vertical_anchor} {horizontal_anchor})"
+
+            x_clearance = 0.0
+            if horizontal_anchor == "west":
+                x_clearance += x_offset
+            if j == 0 and left_pad:
+                x_clearance += float(left_pad)
+            return _offset_point(p, x_left=x_clearance)
+
+        def vertical_segment_points(i0: int, i1: int, j: int, *, shape: Tuple[int, int] = shape) -> List[str]:
+            top = min(int(i0), int(i1))
+            bottom = max(int(i0), int(i1))
+            if bottom <= top:
+                return [coords(i1, j, horizontal_anchor="west")]
+            top_row = min(max(top, 0), max(shape[0] - 1, 0))
+            bottom_row = min(max(bottom - 1, 0), max(shape[0] - 1, 0))
+            return [
+                entry_coords(top_row, j, horizontal_anchor="west", vertical_anchor="north"),
+                entry_coords(bottom_row, j, horizontal_anchor="west", vertical_anchor="south"),
+            ]
 
         cur = pivots[0]
         ll = [cur] if (case == "vv") or (case == "vh") else []
@@ -408,7 +474,27 @@ def _legacy_ref_path_list_to_rowechelon_paths(
         else:
             ll.append((shape[0], cur[1]))
 
-        cmd = "\\draw[" + color + "] " + " -- ".join([coords(*p) for p in ll]) + ";"
+        path_points = []
+        for idx in range(max(len(ll) - 1, 0)):
+            i0, j0 = ll[idx]
+            i1, j1 = ll[idx + 1]
+            if j0 == j1 and i0 != i1 and int(j0) < shape[1]:
+                path_points.extend(vertical_segment_points(i0, i1, j0))
+            elif i0 == i1 and j0 != j1:
+                if not path_points:
+                    path_points.append(coords(i0, j0, horizontal_anchor="east"))
+                h_anchor = "west" if int(j1) < shape[1] else "east"
+                path_points.append(coords(i1, j1, horizontal_anchor=h_anchor))
+            else:
+                if not path_points:
+                    path_points.append(coords(i0, j0, horizontal_anchor="east" if int(j0) >= shape[1] else "west"))
+                path_points.append(coords(i1, j1, horizontal_anchor="east" if int(j1) >= shape[1] else "west"))
+
+        if not path_points and ll:
+            i, j = ll[0]
+            path_points.append(coords(i, j, horizontal_anchor="east" if int(j) >= shape[1] else "west"))
+
+        cmd = "\\draw[" + color + "] " + " -- ".join(path_points) + ";"
         out.append(cmd)
     return out
 

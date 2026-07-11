@@ -26,6 +26,34 @@ def _looks_like_juliacall_wrapper(x: Any) -> bool:
     return mod.startswith("juliacall")
 
 
+def _juliacall_sequence_items(x: Any) -> Optional[list]:
+    if not _looks_like_juliacall_wrapper(x):
+        return None
+    try:
+        n = int(len(x))
+    except Exception:
+        return None
+    for base in (0, 1):
+        try:
+            return [_normalize_bridge_scalar(x[i + base]) for i in range(n)]
+        except Exception:
+            continue
+    return None
+
+
+def _normalize_bridge_scalar(x: Any) -> Any:
+    """Materialize JuliaCall scalar containers such as encoded rationals."""
+
+    if _is_rational_tuple(x):
+        return sym.Rational(int(x[0]), int(x[1]))
+    items = _juliacall_sequence_items(x)
+    if items is not None:
+        if len(items) == 2 and all(isinstance(v, numbers.Integral) for v in items):
+            return sym.Rational(int(items[0]), int(items[1]))
+        return items
+    return x
+
+
 def _juliacall_array_to_nested_list(A: Any) -> Optional[list]:
     """Best-effort conversion for ``juliacall.ArrayValue`` inputs.
 
@@ -60,13 +88,13 @@ def _juliacall_array_to_nested_list(A: Any) -> Optional[list]:
     if len(dims) == 2:
         m, n = dims
         try:
-            return [[A[i + 1, j + 1] for j in range(n)] for i in range(m)]
+            return [[_normalize_bridge_scalar(A[i + 1, j + 1]) for j in range(n)] for i in range(m)]
         except Exception:
             return None
     if len(dims) == 1:
         n = dims[0]
         try:
-            return [A[i + 1] for i in range(n)]
+            return [_normalize_bridge_scalar(A[i + 1]) for i in range(n)]
         except Exception:
             pass
 
@@ -85,12 +113,12 @@ def _juliacall_array_to_nested_list(A: Any) -> Optional[list]:
 
 def _tuples_to_rationals_2d(A: Sequence[Sequence[Tuple[int, int]]]) -> sym.Matrix:
     """Convert a 2D array of ``(num, denom)`` pairs to a SymPy Matrix."""
-    return sym.Matrix([[sym.Rational(num, denom) for (num, denom) in row] for row in A])
+    return sym.Matrix([[_normalize_bridge_scalar(x) for x in row] for row in A])
 
 
 def _tuples_to_rationals_1d(v: Sequence[Tuple[int, int]]) -> sym.Matrix:
     """Convert a 1D list of ``(num, denom)`` pairs to a SymPy column vector."""
-    return sym.Matrix([sym.Rational(num, denom) for (num, denom) in v])
+    return sym.Matrix([_normalize_bridge_scalar(x) for x in v])
 
 
 def _is_rational_tuple(x: Any) -> bool:

@@ -50,7 +50,7 @@ def test_ref_paths_interior_pivot_anchors_for_all_cases():
         _assert_manhattan_path(path)
 
 
-def test_ref_path_vh_uses_right_boundary_for_nonzero_columns():
+def test_ref_path_vh_uses_left_boundary_for_vertical_segments():
     matrices = [[None, [[1, 2, 3, 4, 5, 6],
                         [7, 8, 9, 10, 11, 12],
                         [13, 14, 15, 16, 17, 18]]]]
@@ -82,36 +82,36 @@ def test_ref_path_hh_traces_lower_pivot_boundary():
     ref_path_list = [(0, 1, pivots, "hh", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-4.south east) -- (1-5.south east) -- (2-5.south east) -- (2-7.south east);"
+        r"\draw[red] ($ (1-4.south east) + (0,-0.1) $) -- ($ (1-5.south west) + (-0.1,-0.1) $) -- ($ (2-5.north west) + (-0.1,0) $) -- ($ (2-5.south west) + (-0.1,0) $) -- ($ (2-7.south east) + (0,-0.1) $);"
     ]
     _assert_manhattan_path(paths[0])
 
 
-def test_ref_path_vh_traces_right_pivot_boundary():
+def test_ref_path_vh_traces_left_pivot_boundary():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     ref_path_list = [(0, 1, pivots, "vh", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-4.north east) -- (1-4.south east) -- (1-5.south east) -- (2-5.south east) -- (2-7.south east);"
+        r"\draw[red] ($ (1-4.north west) + (-0.1,0) $) -- ($ (1-4.south west) + (-0.1,0) $) -- ($ (1-5.south west) + (-0.1,-0.1) $) -- ($ (2-5.north west) + (-0.1,0) $) -- ($ (2-5.south west) + (-0.1,0) $) -- ($ (2-7.south east) + (0,-0.1) $);"
     ]
     _assert_manhattan_path(paths[0])
 
 
-def test_ref_path_vv_traces_right_pivot_boundary_to_bottom():
+def test_ref_path_vv_traces_left_pivot_boundary_to_bottom():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     ref_path_list = [(0, 1, pivots, "vv", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-4.north east) -- (1-4.south east) -- (1-5.south east) -- (3-5.south east);"
+        r"\draw[red] ($ (1-4.north west) + (-0.1,0) $) -- ($ (1-4.south west) + (-0.1,0) $) -- ($ (1-5.south west) + (-0.1,-0.1) $) -- ($ (2-5.north west) + (-0.1,0) $) -- ($ (3-5.south west) + (-0.1,0) $);"
     ]
     _assert_manhattan_path(paths[0])
 
 
 def test_ref_path_vh_sequence_matches_expected_turns():
     # 3x6 matrix with pivots at (0,0), (1,4), (2,5) in 0-based coords.
-    # Expect: start at the top-right boundary of (0,0), go down, then
+    # Expect: start at the top-left boundary of (0,0), go down, then
     # horizontal at pivot columns, and end at the right boundary of the final
     # pivot row. Validate key boundary points appear.
     matrices = [[None, [[1, 2, 3, 4, 5, 6],
@@ -123,9 +123,9 @@ def test_ref_path_vh_sequence_matches_expected_turns():
     assert paths
     path = paths[0]
     # Key projected points along the path (row,col in 1-based NiceArray terms).
-    assert "(1-4.north east)" in path
-    assert "(1-4.south east)" in path
-    assert "(2-8.south east)" in path
+    assert "(1-4.north west)" in path
+    assert "(1-4.south west)" in path
+    assert "(2-8.south west)" in path
     assert "(3-9.south east)" in path
     assert "-|" not in path and "|-" not in path
     _assert_manhattan_path(path)
@@ -138,9 +138,9 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
-    # Starts at top-right border and goes down to bottom border.
-    assert "(1-3.north east)" in path
-    assert "(2-3.south east)" in path
+    # Starts at top-left border and goes down to bottom border.
+    assert "(1-3.north west)" in path
+    assert "(2-3.south west)" in path
     _assert_manhattan_path(path)
 
 

@@ -55,6 +55,52 @@ def test_linear_system_tex_handles_zero_and_symbolic_rows():
     assert r"- y_2" in tex
 
 
+def test_linear_system_tex_handles_juliacall_encoded_rationals_without_vector_terms():
+    from LAFigureSpecs import linear_system_tex
+
+    class FakeTupleValue:
+        __module__ = "juliacall"
+
+        def __init__(self, *items):
+            self._items = items
+
+        def __len__(self):
+            return len(self._items)
+
+        def __getitem__(self, idx):
+            if idx < 1:
+                raise IndexError("1-based")
+            return self._items[idx - 1]
+
+    class FakeArrayValue:
+        __module__ = "juliacall"
+
+        def __init__(self, data):
+            self._data = data
+            self.shape = (len(data), len(data[0]))
+
+        def __getitem__(self, idx):
+            i, j = idx
+            return self._data[i - 1][j - 1]
+
+    A = FakeArrayValue(
+        [
+            [FakeTupleValue(1, 1), FakeTupleValue(-2, 1)],
+            [FakeTupleValue(3, 2), FakeTupleValue(0, 1)],
+        ]
+    )
+    b = FakeArrayValue([[FakeTupleValue(4, 1)], [FakeTupleValue(-5, 2)]])
+
+    tex = linear_system_tex(A, b)
+
+    assert r"\systeme" in tex
+    assert r"\cr" not in tex
+    assert r"\left" not in tex
+    assert r"\right" not in tex
+    assert r"\frac{3}{2}" in tex
+    assert r"\frac{5}{2}" in tex
+
+
 def test_backsub_helpers_reject_missing_inputs():
     import pytest
 

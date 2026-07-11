@@ -793,10 +793,14 @@ def _normalize_stack_rowechelon_paths(
             str(item.get("case", "hh")),
             str(item.get("color", "blue,line width=0.4mm")),
         ]
-        if "adj" in item:
+        has_path_offsets = "path_offsets" in item
+        has_adj = "adj" in item
+        if has_path_offsets:
+            spec.append(item.get("path_offsets"))
+        elif has_adj:
             spec.append(item.get("adj"))
         if "left_pad" in item:
-            if "adj" not in item:
+            if not has_path_offsets and not has_adj:
                 spec.append(0.1)
             spec.append(item.get("left_pad"))
         out.extend(_ge_compat._legacy_ref_path_list_to_rowechelon_paths(matrices, [spec], legacy_submatrix_names=True))
