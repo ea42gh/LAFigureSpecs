@@ -153,15 +153,15 @@ def test_ref_path_vh_sequence_matches_expected_turns():
 
 
 def test_ref_path_vv_single_pivot_top_left_corner():
-    matrices = [[None, [[1, 2], [3, 4]]]]
+    matrices = [[None, [[1, 2], [3, 4]]], [[[1, 0], [0, 1]], [[1, 2], [3, 4]]]]
     pivots = [(0, 0)]
     ref_path_list = [(0, 1, pivots, "vv")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
-    # Starts at top-right border and goes down to bottom border.
-    assert "(1-|3)" in path
-    assert "(3-|3)" in path
+    # A single-pivot vertical cutoff is drawn after the pivot column, not on
+    # the outer left edge of a shifted matrix block.
+    assert paths == [r"\draw[blue,line width=0.4mm] (1-|4) -- (3-|4);"]
     _assert_manhattan_path(path)
 
 

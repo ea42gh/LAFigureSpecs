@@ -406,7 +406,12 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             return _offset_node(p, node_offsets)
 
         cur = pivots[0]
-        ll = [cur] if (case == "vv") or (case == "vh") else []
+        if case == "vv" and len(pivots) == 1:
+            cutoff_col = min(int(cur[1]) + 1, shape[1])
+            ll = [(int(cur[0]), cutoff_col)]
+            cur = (int(cur[0]), cutoff_col)
+        else:
+            ll = [cur] if (case == "vv") or (case == "vh") else []
         for nxt in pivots[1:]:
             if cur[0] != nxt[0]:
                 cur = (cur[0] + 1, cur[1])
