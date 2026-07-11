@@ -92,7 +92,7 @@ def test_ref_path_hh_traces_lower_pivot_boundary():
     ref_path_list = [(0, 1, pivots, "hh", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-|5) -- (1-|6) -- (2-|6) -- (2-|8);"
+        r"\draw[red] (2-|4) -- (2-|5) -- (3-|5) -- (3-|8);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -103,7 +103,7 @@ def test_ref_path_vh_traces_right_pivot_boundary():
     ref_path_list = [(0, 1, pivots, "vh", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-|5) -- (1-|5) -- (1-|6) -- (2-|6) -- (2-|8);"
+        r"\draw[red] (1-|4) -- (2-|4) -- (2-|5) -- (3-|5) -- (3-|8);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -114,7 +114,7 @@ def test_ref_path_vv_traces_right_pivot_boundary_to_bottom():
     ref_path_list = [(0, 1, pivots, "vv", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-|5) -- (1-|5) -- (1-|6) -- (3-|6);"
+        r"\draw[red] (1-|4) -- (2-|4) -- (2-|5) -- (4-|5);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -125,7 +125,7 @@ def test_ref_path_node_offsets_shift_old_staircase_nodes():
     ref_path_list = [(0, 1, pivots, "vh", "red", 0.1, 0.0, (0.2, -0.05))]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] ($ (1-|5) + (0.2,-0.05) $) -- ($ (1-|5) + (0.2,-0.05) $) -- ($ (1-|6) + (0.2,-0.05) $) -- ($ (2-|6) + (0.2,-0.05) $) -- ($ (2-|8) + (0.2,-0.05) $);"
+        r"\draw[red] ($ (1-|4) + (0.2,-0.05) $) -- ($ (2-|4) + (0.2,-0.05) $) -- ($ (2-|5) + (0.2,-0.05) $) -- ($ (3-|5) + (0.2,-0.05) $) -- ($ (3-|8) + (0.2,-0.05) $);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -144,9 +144,9 @@ def test_ref_path_vh_sequence_matches_expected_turns():
     assert paths
     path = paths[0]
     # Key projected points along the path (row,col in 1-based NiceArray terms).
-    assert "(1-|5)" in path
-    assert "(2-|9)" in path
-    assert "(3-|10)" in path
+    assert "(1-|4)" in path
+    assert "(2-|8)" in path
+    assert "(3-|9)" in path
     assert "|-" not in path
     _assert_no_cell_anchor_path(path)
     _assert_manhattan_path(path)
@@ -160,8 +160,8 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     assert paths
     path = paths[0]
     # Starts at top-right border and goes down to bottom border.
-    assert "(1-|4)" in path
-    assert "(2-|4)" in path
+    assert "(1-|3)" in path
+    assert "(3-|3)" in path
     _assert_manhattan_path(path)
 
 
@@ -197,5 +197,5 @@ def test_ref_path_right_edge_helper_anchors_stay_on_existing_nodes():
     assert r"\p" not in path
     assert r"\x" not in path
     assert r"\y" not in path
-    assert "(15-|11)" in path
+    assert "(15-|10)" in path
     _assert_manhattan_path(path)

@@ -12,6 +12,17 @@ def test_to_sympy_matrix_tuple_rationals_2d_list():
     assert M[1, 0] == sym.Rational(3, 4)
 
 
+def test_to_sympy_matrix_complex_tuple_rationals_2d_list():
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
+
+    A = [[((1, 2), (3, 4)), (0, 1)], [((-3, 4), (5, 6)), ((2, 1), (0, 1))]]
+    M = to_sympy_matrix(A)
+    assert M.shape == (2, 2)
+    assert M[0, 0] == sym.Rational(1, 2) + sym.I * sym.Rational(3, 4)
+    assert M[1, 0] == sym.Rational(-3, 4) + sym.I * sym.Rational(5, 6)
+    assert M[1, 1] == 2
+
+
 def test_to_sympy_matrix_tuple_rationals_numpy_array():
     from LAFigureSpecs._sympy_utils import to_sympy_matrix
 
@@ -133,6 +144,51 @@ def test_to_sympy_matrix_accepts_juliacall_tuple_rationals():
 
     M = to_sympy_matrix(FakeArrayValue())
     assert M == sym.Matrix([[sym.Rational(1, 2), 0], [sym.Rational(-3, 4), sym.Rational(5, 6)]])
+
+
+def test_to_sympy_matrix_accepts_juliacall_complex_tuple_rationals():
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
+
+    class FakeIntValue:
+        __module__ = "juliacall"
+
+        def __init__(self, value):
+            self.value = value
+
+        def __int__(self):
+            return self.value
+
+    class FakeTupleValue:
+        __module__ = "juliacall"
+
+        def __init__(self, *items):
+            self._items = items
+
+        def __len__(self):
+            return len(self._items)
+
+        def __getitem__(self, idx):
+            if idx < 1:
+                raise IndexError("1-based")
+            item = self._items[idx - 1]
+            if isinstance(item, tuple):
+                return FakeTupleValue(*item)
+            return FakeIntValue(item)
+
+    class FakeArrayValue:
+        __module__ = "juliacall"
+
+        shape = (1, 2)
+
+        def __getitem__(self, idx):
+            if not isinstance(idx, tuple):
+                raise IndexError("2D only")
+            _i, j = idx
+            data = [FakeTupleValue((1, 2), (3, 4)), FakeTupleValue((-5, 6), (7, 8))]
+            return data[j - 1]
+
+    M = to_sympy_matrix(FakeArrayValue())
+    assert M == sym.Matrix([[sym.Rational(1, 2) + sym.I * sym.Rational(3, 4), sym.Rational(-5, 6) + sym.I * sym.Rational(7, 8)]])
 
 
 def test_to_sympy_matrix_accepts_juliacall_nested_vector_literal():

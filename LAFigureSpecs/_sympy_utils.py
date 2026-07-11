@@ -26,6 +26,10 @@ def _looks_like_juliacall_wrapper(x: Any) -> bool:
     return mod.startswith("juliacall")
 
 
+def _looks_like_juliacall_tuple(x: Any) -> bool:
+    return _looks_like_juliacall_wrapper(x) and "tuple" in type(x).__name__.lower()
+
+
 def _juliacall_sequence_items(x: Any) -> Optional[list]:
     if not _looks_like_juliacall_wrapper(x):
         return None
@@ -46,10 +50,20 @@ def _normalize_bridge_scalar(x: Any) -> Any:
 
     if _is_rational_tuple(x):
         return sym.Rational(_as_int(x[0]), _as_int(x[1]))
+    if _is_complex_rational_tuple(x):
+        re = sym.Rational(_as_int(x[0][0]), _as_int(x[0][1]))
+        im = sym.Rational(_as_int(x[1][0]), _as_int(x[1][1]))
+        return re + sym.I * im
     items = _juliacall_sequence_items(x)
     if items is not None:
         if _is_rational_pair(items):
             return sym.Rational(_as_int(items[0]), _as_int(items[1]))
+        if _is_complex_rational_pair(items):
+            re = sym.Rational(_as_int(items[0][0]), _as_int(items[0][1]))
+            im = sym.Rational(_as_int(items[1][0]), _as_int(items[1][1]))
+            return re + sym.I * im
+        if _looks_like_juliacall_tuple(x) and len(items) == 2 and all(isinstance(v, sym.Rational) for v in items):
+            return items[0] + sym.I * items[1]
         return items
     return x
 
@@ -128,6 +142,13 @@ def _is_rational_tuple(x: Any) -> bool:
     return _is_rational_pair(x)
 
 
+def _is_complex_rational_tuple(x: Any) -> bool:
+    """True iff ``x`` looks like ``((re_num, re_den), (im_num, im_den))``."""
+    if not isinstance(x, tuple) or len(x) != 2:
+        return False
+    return _is_complex_rational_pair(x)
+
+
 def _as_int(x: Any) -> int:
     return int(x)
 
@@ -147,7 +168,21 @@ def _is_int_like(x: Any) -> bool:
 
 
 def _is_rational_pair(x: Sequence[Any]) -> bool:
-    return len(x) == 2 and _is_int_like(x[0]) and _is_int_like(x[1])
+    try:
+        return len(x) == 2 and _is_int_like(x[0]) and _is_int_like(x[1])
+    except Exception:
+        return False
+
+
+def _is_complex_rational_pair(x: Sequence[Any]) -> bool:
+    try:
+        return len(x) == 2 and _is_rational_pair(x[0]) and _is_rational_pair(x[1])
+    except Exception:
+        return False
+
+
+def _is_exact_tuple(x: Any) -> bool:
+    return _is_rational_tuple(x) or _is_complex_rational_tuple(x)
 
 
 def _is_int(x: Any) -> bool:
@@ -187,9 +222,9 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
     if jl_list is not None:
         if isinstance(jl_list, list) and jl_list:
             first = jl_list[0]
-            if isinstance(first, (list, tuple)) and first and _is_rational_tuple(first[0]):
+            if isinstance(first, (list, tuple)) and first and _is_exact_tuple(first[0]):
                 return _tuples_to_rationals_2d(jl_list)
-            if _is_rational_tuple(first):
+            if _is_exact_tuple(first):
                 return _tuples_to_rationals_1d(jl_list)
         return sym.Matrix(jl_list)
 
@@ -197,9 +232,9 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
     # 2D Python sequences: [[(n,d), ...], ...]
     if isinstance(A, (list, tuple)) and A:
         first = A[0]
-        if isinstance(first, (list, tuple)) and first and _is_rational_tuple(first[0]):
+        if isinstance(first, (list, tuple)) and first and _is_exact_tuple(first[0]):
             return _tuples_to_rationals_2d(A)
-        if _is_rational_tuple(first):
+        if _is_exact_tuple(first):
             return _tuples_to_rationals_1d(A)
 
     # NumPy-like "matrix of pairs": shape (m,n,2)
@@ -217,7 +252,7 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
     # NumPy-like arrays: A[0,0] exists and may itself be a tuple.
     try:
         a00 = A[0, 0]
-        if _is_rational_tuple(a00) and hasattr(A, "tolist"):
+        if _is_exact_tuple(a00) and hasattr(A, "tolist"):
             return _tuples_to_rationals_2d(A.tolist())
     except Exception:
         pass
@@ -225,7 +260,7 @@ def to_sympy_matrix(A: Any) -> Optional[sym.Matrix]:
     # 1D array-likes (vectors) with tuple rationals
     try:
         a0 = A[0]
-        if _is_rational_tuple(a0):
+        if _is_exact_tuple(a0):
             if hasattr(A, "tolist"):
                 return _tuples_to_rationals_1d(A.tolist())
             return _tuples_to_rationals_1d(list(A))

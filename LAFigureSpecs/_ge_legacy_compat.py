@@ -389,12 +389,15 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             node_offsets: Tuple[float, float] = node_offsets,
         ) -> str:
             if i <= 0:
-                row_i = 0
+                row = tlr + 1
             else:
                 row_i = min(int(i) - 1, max(shape[0] - 1, 0))
-            col_j = min(max(int(j), 0), max(shape[1] - 1, 0))
-            row = row_i + tlr + 1
-            col = col_j + tlc + 2
+                row = row_i + tlr + 2
+            if j >= shape[1]:
+                col = tlc + shape[1] + 1
+            else:
+                col_j = min(max(int(j), 0), max(shape[1] - 1, 0))
+                col = col_j + tlc + 1
 
             p = f"({row}-|{col})"
 
