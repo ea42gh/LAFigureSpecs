@@ -179,10 +179,10 @@ def test_ge_stack_svg_accepts_structured_rowechelon_paths(monkeypatch):
     paths = captured["rowechelon_paths"]
     assert len(paths) == 1
     assert paths[0].startswith(r"\draw[red]")
-    assert paths[0] == r"\draw[red] ($ (3-3.south east) + (0,-0.1) $) -- ($ (3-4.south west) + (-0.1,-0.1) $) -- ($ (4-4.north west) + (-0.1,0) $) -- ($ (4-4.south west) + (-0.1,0) $) -- ($ (4-4.south east) + (0,-0.1) $);"
+    assert paths[0] == r"\draw[red] (3-|4) -- (3-|5) -- (4-|5) -- (4-|5);"
 
 
-def test_ge_stack_svg_structured_rowechelon_paths_accept_path_offsets(monkeypatch):
+def test_ge_stack_svg_structured_rowechelon_paths_accept_node_offsets(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
 
@@ -202,15 +202,15 @@ def test_ge_stack_svg_structured_rowechelon_paths_accept_path_offsets(monkeypatc
                 "grid": (0, 1),
                 "pivots": [(0, 0), (1, 1)],
                 "case": "hh",
-                "path_offsets": (0.2, 0.05),
+                "node_offsets": (0.2, -0.05),
             }
         ],
     )
 
     path = captured["rowechelon_paths"][0]
-    assert "(-0.2,-0.05)" in path
-    assert "(0,-0.05)" in path
-    assert "(-0.1" not in path
+    assert "($ (1-|4) + (0.2,-0.05) $)" in path
+    assert "($ (1-|5) + (0.2,-0.05) $)" in path
+    assert "($ (2-|5) + (0.2,-0.05) $)" in path
 
 
 def test_ge_stack_svg_accepts_grid_row_text_annotations(monkeypatch):
@@ -334,7 +334,7 @@ def test_ge_stack_svg_single_matrix_keeps_annotations_label_as_callout(monkeypat
     ]
     assert captured.get("annotations") is None
     assert captured["rowechelon_paths"] == [
-        r"\draw[blue,line width=0.4mm] ($ (1-1.north west) + (-0.1,0) $) -- ($ (1-1.south west) + (-0.1,0) $) -- ($ (1-2.south west) + (-0.1,-0.1) $) -- ($ (2-2.north west) + (-0.1,0) $) -- ($ (3-2.south west) + (-0.1,0) $);"
+        r"\draw[blue,line width=0.4mm] (1-|2) -- (1-|2) -- (1-|3) -- (3-|3);"
     ]
 
 

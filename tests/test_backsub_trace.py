@@ -58,6 +58,15 @@ def test_linear_system_tex_handles_zero_and_symbolic_rows():
 def test_linear_system_tex_handles_juliacall_encoded_rationals_without_vector_terms():
     from LAFigureSpecs import linear_system_tex
 
+    class FakeIntValue:
+        __module__ = "juliacall"
+
+        def __init__(self, value):
+            self.value = value
+
+        def __int__(self):
+            return self.value
+
     class FakeTupleValue:
         __module__ = "juliacall"
 
@@ -70,7 +79,7 @@ def test_linear_system_tex_handles_juliacall_encoded_rationals_without_vector_te
         def __getitem__(self, idx):
             if idx < 1:
                 raise IndexError("1-based")
-            return self._items[idx - 1]
+            return FakeIntValue(self._items[idx - 1])
 
     class FakeArrayValue:
         __module__ = "juliacall"

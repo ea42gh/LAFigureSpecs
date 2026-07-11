@@ -95,6 +95,15 @@ def test_to_sympy_matrix_prefers_juliacall_indexing_over_numpy_hook():
 def test_to_sympy_matrix_accepts_juliacall_tuple_rationals():
     from LAFigureSpecs._sympy_utils import to_sympy_matrix
 
+    class FakeIntValue:
+        __module__ = "juliacall"
+
+        def __init__(self, value):
+            self.value = value
+
+        def __int__(self):
+            return self.value
+
     class FakeTupleValue:
         __module__ = "juliacall"
 
@@ -107,7 +116,7 @@ def test_to_sympy_matrix_accepts_juliacall_tuple_rationals():
         def __getitem__(self, idx):
             if idx < 1:
                 raise IndexError("1-based")
-            return self._items[idx - 1]
+            return FakeIntValue(self._items[idx - 1])
 
     class FakeArrayValue:
         __module__ = "juliacall"
@@ -129,6 +138,15 @@ def test_to_sympy_matrix_accepts_juliacall_tuple_rationals():
 def test_to_sympy_matrix_accepts_juliacall_nested_vector_literal():
     from LAFigureSpecs._sympy_utils import to_sympy_matrix
 
+    class FakeIntValue:
+        __module__ = "juliacall"
+
+        def __init__(self, value):
+            self.value = value
+
+        def __int__(self):
+            return self.value
+
     class FakeTupleValue:
         __module__ = "juliacall"
 
@@ -141,7 +159,7 @@ def test_to_sympy_matrix_accepts_juliacall_nested_vector_literal():
         def __getitem__(self, idx):
             if idx < 1:
                 raise IndexError("1-based")
-            return self._items[idx - 1]
+            return FakeIntValue(self._items[idx - 1])
 
     class FakeVectorValue:
         __module__ = "juliacall"

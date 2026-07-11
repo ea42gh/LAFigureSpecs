@@ -45,11 +45,11 @@ def _normalize_bridge_scalar(x: Any) -> Any:
     """Materialize JuliaCall scalar containers such as encoded rationals."""
 
     if _is_rational_tuple(x):
-        return sym.Rational(int(x[0]), int(x[1]))
+        return sym.Rational(_as_int(x[0]), _as_int(x[1]))
     items = _juliacall_sequence_items(x)
     if items is not None:
-        if len(items) == 2 and all(isinstance(v, numbers.Integral) for v in items):
-            return sym.Rational(int(items[0]), int(items[1]))
+        if _is_rational_pair(items):
+            return sym.Rational(_as_int(items[0]), _as_int(items[1]))
         return items
     return x
 
@@ -125,8 +125,29 @@ def _is_rational_tuple(x: Any) -> bool:
     """True iff ``x`` looks like a rational encoded as ``(num, denom)``."""
     if not isinstance(x, tuple) or len(x) != 2:
         return False
-    a, b = x
-    return isinstance(a, numbers.Integral) and isinstance(b, numbers.Integral)
+    return _is_rational_pair(x)
+
+
+def _as_int(x: Any) -> int:
+    return int(x)
+
+
+def _is_int_like(x: Any) -> bool:
+    if isinstance(x, bool):
+        return False
+    if isinstance(x, numbers.Integral):
+        return True
+    if not _looks_like_juliacall_wrapper(x):
+        return False
+    try:
+        int(x)
+    except Exception:
+        return False
+    return True
+
+
+def _is_rational_pair(x: Sequence[Any]) -> bool:
+    return len(x) == 2 and _is_int_like(x[0]) and _is_int_like(x[1])
 
 
 def _is_int(x: Any) -> bool:
