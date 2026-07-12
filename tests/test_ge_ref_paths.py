@@ -166,6 +166,15 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     _assert_manhattan_path(path)
 
 
+def test_ref_path_vv_single_pivot_nonfirst_column_uses_column_left_edge():
+    matrices = [[None, [[1, 2, 4, 1], [0, "k", 8, "h"], [0, 0, 0, 0]]]]
+    pivots = [(0, 2)]
+    ref_path_list = [(0, 1, pivots, "vv")]
+    paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
+    assert paths == [r"\draw[blue,line width=0.4mm] (1-|6) -- (4-|6);"]
+    _assert_manhattan_path(paths[0])
+
+
 def test_ref_path_right_edge_helper_anchors_stay_on_existing_nodes():
     identity = [
         [1, 0, 0, 0],
