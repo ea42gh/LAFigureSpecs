@@ -160,8 +160,8 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     assert paths
     path = paths[0]
     # A single-pivot vertical cutoff is drawn on the left edge of the pivot
-    # entry, not on the previous block boundary outside a shifted matrix.
-    assert paths == [r"\draw[blue,line width=0.4mm] (1-|4) -- (3-|4);"]
+    # entry. The logical pivot column must not be shifted to the next rule.
+    assert paths == [r"\draw[blue,line width=0.4mm] (1-|3) -- (3-|3);"]
     _assert_manhattan_path(path)
 
 
