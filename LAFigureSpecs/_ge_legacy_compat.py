@@ -377,6 +377,7 @@ def _legacy_ref_path_list_to_rowechelon_paths(
 
         tlr = span.row_start - 1
         tlc = span.col_start - 1
+        single_pivot_vv = case == "vv" and len(pivots) == 1
 
         def coords(
             i: int,
@@ -387,19 +388,23 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             tlc: int = tlc,
             left_pad: float = left_pad,
             node_offsets: Tuple[float, float] = node_offsets,
+            single_pivot_vv: bool = single_pivot_vv,
+            left_delim_node: str = span.left_delim_node,
         ) -> str:
             if i <= 0:
                 row = tlr + 1
             else:
                 row_i = min(int(i) - 1, max(shape[0] - 1, 0))
                 row = row_i + tlr + 2
-            if j >= shape[1]:
+            if single_pivot_vv and j == 0:
+                p = f"({row}-|{left_delim_node})"
+            elif j >= shape[1]:
                 col = tlc + shape[1] + 1
+                p = f"({row}-|{col})"
             else:
                 col_j = min(max(int(j), 0), max(shape[1] - 1, 0))
                 col = col_j + tlc + 1
-
-            p = f"({row}-|{col})"
+                p = f"({row}-|{col})"
 
             if j == 0 and left_pad:
                 p = f"($ {p} + (-{left_pad:2},0) $)"

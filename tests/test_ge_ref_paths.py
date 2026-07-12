@@ -5,8 +5,9 @@ from LAFigureSpecs._ge_legacy_compat import _legacy_ref_path_list_to_rowechelon_
 
 def _path_anchor_keys(path):
     out = []
-    for row, col in re.findall(r"\((\d+)-\|(\d+)\)", path):
-        out.append(((int(row), "rule"), (int(col), "rule")))
+    for row, col in re.findall(r"\((\d+)-\|([A-Za-z0-9_-]+)\)", path):
+        col_key = int(col) if col.isdigit() else col
+        out.append(((int(row), "rule"), (col_key, "rule")))
     for row, col, anchor in re.findall(r"\((\d+)-(\d+)\.([a-z ]+)\)", path):
         parts = set(anchor.split())
         vertical = "north" if "north" in parts else "south" if "south" in parts else "center"
@@ -161,7 +162,7 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     path = paths[0]
     # A single-pivot vertical cutoff is drawn on the left edge of the pivot
     # entry. The logical pivot column must not be shifted to the next rule.
-    assert paths == [r"\draw[blue,line width=0.4mm] (1-|3) -- (3-|3);"]
+    assert paths == [r"\draw[blue,line width=0.4mm] (1-|A0x1-left) -- (3-|A0x1-left);"]
     _assert_manhattan_path(path)
 
 
