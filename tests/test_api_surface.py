@@ -31,7 +31,6 @@ def test_public_api_contains_canonical_render_names():
     assert "show_system" in LAFigureSpecs.__all__
     assert "show_backsubstitution" in LAFigureSpecs.__all__
     assert "show_solution" in LAFigureSpecs.__all__
-    assert "rhs_block" in LAFigureSpecs.__all__
     assert "solutions" in LAFigureSpecs.__all__
     assert "render_ge_svg" in LAFigureSpecs.__all__
     assert "render_qr_svg" in LAFigureSpecs.__all__
@@ -50,6 +49,10 @@ def test_public_api_does_not_export_legacy_names():
     assert not any("_tbl" in name for name in LAFigureSpecs.__all__)
     assert "gram_schmidt_qr" not in LAFigureSpecs.__all__
     assert not hasattr(LAFigureSpecs, "gram_schmidt_qr")
+    assert "rhs_block" not in LAFigureSpecs.__all__
+    assert not hasattr(LAFigureSpecs, "rhs_block")
+    assert "decorate_ge" not in LAFigureSpecs.__all__
+    assert not hasattr(LAFigureSpecs, "decorate_ge")
 
 
 def test_canonical_names_point_to_existing_top_level_helpers():

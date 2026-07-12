@@ -41,6 +41,26 @@ def test_qr_matrix_extraction_supports_tuple_and_dict_views():
     assert dict_from_grid["R"] == extracted["R"]
 
 
+def test_qr_documentation_example_keeps_second_w_column():
+    from LAFigureSpecs.qr import qr_spec_from_matrices
+    from matrixlayout.qr import render_qr_tex
+
+    A = sym.Matrix([[3, 1], [4, 2]])
+    mats = gram_schmidt_qr_matrices(A)
+    W = mats[0][3]
+
+    assert W.shape == (2, 2)
+    assert W[:, 0] == sym.Matrix([3, 4])
+    assert W[:, 1] == sym.Matrix([-8, 6])
+
+    tex = render_qr_tex(spec=qr_spec_from_matrices(mats))
+
+    assert r"\mathbf{w_1}" in tex
+    assert r"\mathbf{w_2}" in tex
+    assert "3 & 1 & 3 & -8" in tex
+    assert "4 & 2 & 4 & 6" in tex
+
+
 def test_naive_gram_schmidt_handles_empty_and_fractional_columns():
     import pytest
 

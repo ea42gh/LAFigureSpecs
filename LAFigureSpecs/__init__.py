@@ -57,7 +57,7 @@ from .backsub import (
     linear_system_tex,
     standard_solution_tex,
 )
-from .ge import ge_trace, trace_to_layer_matrices, decorate_ge
+from .ge import ge_trace, trace_to_layer_matrices
 from .ge_convenience import show_ge
 from .show_ge import (
     ShowGE,
@@ -65,7 +65,6 @@ from .show_ge import (
     lhs_matrix,
     rhs_matrix,
     rhs_column,
-    rhs_block,
     show_backsubstitution,
     show_layout,
     show_solution,
@@ -158,7 +157,6 @@ __all__ = [
     "standard_solution_tex",
     "ge_trace",
     "trace_to_layer_matrices",
-    "decorate_ge",
     "ge_spec",
     "ge_layout_spec",
     "ge_tex",
@@ -172,7 +170,6 @@ __all__ = [
     "show_system",
     "show_backsubstitution",
     "show_solution",
-    "rhs_block",
     "solutions",
     "ge_svg",
     "ge_stack_svg",

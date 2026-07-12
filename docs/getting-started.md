@@ -82,7 +82,6 @@ lf.show_solution(show, b_col=0)
 lhs = lf.lhs_matrix(show)
 rhs_mat = lf.rhs_matrix(show)
 rhs_col = lf.rhs_column(show, 0)
-rhs = lf.rhs_block(show)
 xp, xh = lf.solutions(show)
 ```
 

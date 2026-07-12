@@ -273,12 +273,6 @@ class ShowGE:
             return None
         return rhs[:, int(b_col)]
 
-    def rhs_block(self, *, step: Any = "final", b_col: Optional[int] = None):
-        """Return the RHS block from a GE stack (optionally a single column)."""
-        if b_col is None:
-            return self.rhs_matrix(step=step)
-        return self.rhs_column(int(b_col), step=step)
-
     def solve(self, *, gj: Optional[bool] = None) -> Dict[str, Any]:
         """Solve the system and return pivot/free/solution data."""
         if gj is not None and bool(gj) != bool(self.gj):
@@ -620,11 +614,6 @@ def show_solution(
 ):
     """Top-level wrapper for ``ShowGE.show_solution(...)``."""
     return show.show_solution(b_col=b_col, var_name=var_name, param_name=param_name, **render_opts)
-
-
-def rhs_block(show: ShowGE, *, step: Any = "final", b_col: Optional[int] = None):
-    """Top-level wrapper for ``ShowGE.rhs_block(...)``."""
-    return show.rhs_block(step=step, b_col=b_col)
 
 
 def lhs_matrix(show: ShowGE, *, step: Any = "final"):

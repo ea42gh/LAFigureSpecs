@@ -56,10 +56,6 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
             calls.append(("rhs_column", b_col, step))
             return "rhs-col-ok"
 
-        def rhs_block(self, *, step="final", b_col=None):
-            calls.append(("rhs_block", step, b_col))
-            return "rhs-ok"
-
         def solve(self, *, gj=None):
             calls.append(("solve", gj))
             return {"particular": "xp", "homogeneous": "xh"}
@@ -74,7 +70,6 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
     assert LAFigureSpecs.lhs_matrix(show, step=1) == "lhs-ok"
     assert LAFigureSpecs.rhs_matrix(show, step=2) == "rhs-mat-ok"
     assert LAFigureSpecs.rhs_column(show, 0, step=2) == "rhs-col-ok"
-    assert LAFigureSpecs.rhs_block(show, step=2, b_col=0) == "rhs-ok"
     assert LAFigureSpecs.solutions(show, gj=False) == ("xp", "xh")
 
     assert calls == [
@@ -86,7 +81,6 @@ def test_top_level_show_ge_wrappers_delegate_to_instance_methods(monkeypatch):
         ("lhs_matrix", 1),
         ("rhs_matrix", 2),
         ("rhs_column", 0, 2),
-        ("rhs_block", 2, 0),
         ("solve", False),
     ]
 
@@ -306,7 +300,7 @@ def test_show_ge_layout_forwards_canonical_stack_decorations(monkeypatch):
     assert "ref_path_list" not in captured
 
 
-def test_show_ge_rhs_block_accessor():
+def test_show_ge_rhs_accessors_return_matrix_and_column():
     import LAFigureSpecs
     import sympy as sym
 
@@ -315,10 +309,10 @@ def test_show_ge_rhs_block_accessor():
     show = LAFigureSpecs.ShowGE(A, b, gj=True)
     show.ref()
 
-    rhs = show.rhs_block()
+    rhs = show.rhs_matrix()
     assert rhs.shape == (2, 1)
 
-    col = show.rhs_block(b_col=0)
+    col = show.rhs_column(0)
     assert col.shape == (2, 1)
 
 

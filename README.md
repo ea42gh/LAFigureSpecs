@@ -23,7 +23,7 @@ Canonical cross-language names:
 - bundle helpers: `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
 - workflow/display helpers on `ShowGE` objects:
   `ref`, `show_layout`, `show_system`, `show_backsubstitution`,
-  `show_solution`, `lhs_matrix`, `rhs_matrix`, `rhs_column`, `rhs_block`,
+  `show_solution`, `lhs_matrix`, `rhs_matrix`, `rhs_column`,
   `solutions`
 
 The names above are the supported top-level surface for parity with
