@@ -179,7 +179,7 @@ def test_ge_stack_svg_accepts_structured_rowechelon_paths(monkeypatch):
     paths = captured["rowechelon_paths"]
     assert len(paths) == 1
     assert paths[0].startswith(r"\draw[red]")
-    assert paths[0] == r"\draw[red] (4-|4) -- (4-|5) -- (5-|5);"
+    assert paths[0] == r"\draw[red] (4-|3) -- (4-|4) -- (5-|4) -- (5-|5);"
 
 
 def test_ge_stack_svg_structured_rowechelon_paths_accept_node_offsets(monkeypatch):
@@ -208,9 +208,9 @@ def test_ge_stack_svg_structured_rowechelon_paths_accept_node_offsets(monkeypatc
     )
 
     path = captured["rowechelon_paths"][0]
+    assert "($ (2-|3) + (0.2,-0.05) $)" in path
     assert "($ (2-|4) + (0.2,-0.05) $)" in path
-    assert "($ (2-|5) + (0.2,-0.05) $)" in path
-    assert "($ (3-|5) + (0.2,-0.05) $)" in path
+    assert "($ (3-|4) + (0.2,-0.05) $)" in path
 
 
 def test_ge_stack_svg_accepts_grid_row_text_annotations(monkeypatch):
