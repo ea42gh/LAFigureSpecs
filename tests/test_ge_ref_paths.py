@@ -93,7 +93,7 @@ def test_ref_path_hh_traces_left_bottom_pivot_boundary():
     ref_path_list = [(0, 1, pivots, "hh", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (2-|4) -- (2-|5) -- (3-|5) -- (3-|8);"
+        r"\draw[red] ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -104,7 +104,7 @@ def test_ref_path_vh_traces_left_bottom_pivot_boundary():
     ref_path_list = [(0, 1, pivots, "vh", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-|4) -- (2-|4) -- (2-|5) -- (3-|5) -- (3-|8);"
+        r"\draw[red] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -115,7 +115,7 @@ def test_ref_path_vv_traces_left_pivot_boundary_to_bottom():
     ref_path_list = [(0, 1, pivots, "vv", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-|4) -- (2-|4) -- (2-|5) -- (4-|5);"
+        r"\draw[red] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (4-|5);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -124,10 +124,10 @@ def test_ref_paths_always_use_left_bottom_pivot_edges_for_all_cases():
     matrices = [[None, [[1, 2, 4, 1], [0, "k", 8, "h"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     expected = {
-        "hh": r"\draw[red] (2-|4) -- (2-|5) -- (3-|5) -- (3-|8);",
-        "vh": r"\draw[red] (1-|4) -- (2-|4) -- (2-|5) -- (3-|5) -- (3-|8);",
-        "vv": r"\draw[red] (1-|4) -- (2-|4) -- (2-|5) -- (4-|5);",
-        "hv": r"\draw[red] (2-|4) -- (2-|5) -- (4-|5);",
+        "hh": r"\draw[red] ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);",
+        "vh": r"\draw[red] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);",
+        "vv": r"\draw[red] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (4-|5);",
+        "hv": r"\draw[red] ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (4-|5);",
     }
     for case, path in expected.items():
         paths = _legacy_ref_path_list_to_rowechelon_paths(
@@ -138,6 +138,7 @@ def test_ref_paths_always_use_left_bottom_pivot_edges_for_all_cases():
         assert paths == [path]
         assert "(1-|5)" not in paths[0]
         assert "(2-|6)" not in paths[0]
+        assert "A0x1-left" in paths[0]
         _assert_manhattan_path(paths[0])
 
 
@@ -147,7 +148,7 @@ def test_ref_path_node_offsets_shift_old_staircase_nodes():
     ref_path_list = [(0, 1, pivots, "vh", "red", 0.1, 0.0, (0.2, -0.05))]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] ($ (1-|4) + (0.2,-0.05) $) -- ($ (2-|4) + (0.2,-0.05) $) -- ($ (2-|5) + (0.2,-0.05) $) -- ($ (3-|5) + (0.2,-0.05) $) -- ($ (3-|8) + (0.2,-0.05) $);"
+        r"\draw[red] ($ (1-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|5) + (0.2,-0.05) $) -- ($ (3-|5) + (0.2,-0.05) $) -- ($ (3-|8) + (0.2,-0.05) $);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -166,7 +167,7 @@ def test_ref_path_vh_sequence_matches_expected_turns():
     assert paths
     path = paths[0]
     # Key projected points along the path (row,col in 1-based NiceArray terms).
-    assert "(1-|4)" in path
+    assert "(1-|A0x1-left)" in path
     assert "(2-|8)" in path
     assert "(3-|9)" in path
     assert "|-" not in path
@@ -195,6 +196,18 @@ def test_ref_path_vv_single_pivot_nonfirst_column_uses_column_left_edge():
     ref_path_list = [(0, 1, pivots, "vv")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [r"\draw[blue,line width=0.4mm] (1-|6) -- (4-|6);"]
+    _assert_manhattan_path(paths[0])
+
+
+def test_ref_path_vv_single_matrix_first_column_uses_matrix_left_edge():
+    matrices = [[[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]]]
+    pivots = [(0, 0), (1, 1)]
+    ref_path_list = [(0, 0, pivots, "vv")]
+    paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
+    assert paths == [
+        r"\draw[blue,line width=0.4mm] ($ (1-|A0x0-left) + (0.1,0) $) -- ($ (2-|A0x0-left) + (0.1,0) $) -- (2-|2) -- (4-|2);"
+    ]
+    assert "(1-|1)" not in paths[0]
     _assert_manhattan_path(paths[0])
 
 
