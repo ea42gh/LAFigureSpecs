@@ -403,7 +403,11 @@ def _legacy_ref_path_list_to_rowechelon_paths(
                 p = f"({row}-|{col})"
             else:
                 col_j = min(max(int(j), 0), max(shape[1] - 1, 0))
-                col = col_j + tlc + 1
+                # Multi-pivot row-echelon outlines trace the lower/right cell
+                # boundaries of pivot positions. The single-pivot vv case is a
+                # vertical cutoff and intentionally uses the pivot column's
+                # left edge.
+                col = col_j + tlc + (1 if single_pivot_vv else 2)
                 p = f"({row}-|{col})"
 
             if j == 0 and left_pad:
@@ -434,7 +438,18 @@ def _legacy_ref_path_list_to_rowechelon_paths(
         else:
             ll.append((shape[0], cur[1]))
 
-        cmd = "\\draw[" + color + "] " + " -- ".join([coords(*p) for p in ll]) + ";"
+        compact: List[Tuple[int, int]] = []
+        for p in ll:
+            if not compact or compact[-1] != p:
+                compact.append(p)
+
+        rendered_points: List[str] = []
+        for p in compact:
+            rendered = coords(*p)
+            if not rendered_points or rendered_points[-1] != rendered:
+                rendered_points.append(rendered)
+
+        cmd = "\\draw[" + color + "] " + " -- ".join(rendered_points) + ";"
         out.append(cmd)
     return out
 

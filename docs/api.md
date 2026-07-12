@@ -101,6 +101,12 @@ entry points, for example:
 - `LAFigureSpecs.svd_svg(A, **opts)`: canonical rendered SVG helper for SVD layouts.
 - `LAFigureSpecs.svd_bundle(A, **opts)`: canonical SVD bundle helper.
 
+Matrix-block column spacing is controlled with millimeter kwargs:
+`mmLambda` for `\Lambda`, `mmSigma` for `\Sigma`, `mmS` for ordinary eigenvector
+matrix `S`, `mmQ` for `Q`, `mmV` for `V`, and `mmU` for `U`. When omitted,
+`mmSigma` defaults to `mmLambda`, while `mmQ`, `mmV`, and `mmU` default to
+`mmS`.
+
 Selected eig/SVD basis vectors and matrix blocks can factor out a common scalar
 for display with `factor_out`. Accepted forms are:
 
