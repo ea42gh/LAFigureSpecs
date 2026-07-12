@@ -386,10 +386,12 @@ def _legacy_ref_path_list_to_rowechelon_paths(
             shape: Tuple[int, int] = shape,
             tlr: int = tlr,
             tlc: int = tlc,
+            adj: float = float(_adj),
             left_pad: float = left_pad,
             node_offsets: Tuple[float, float] = node_offsets,
             single_pivot_vv: bool = single_pivot_vv,
             left_delim_node: str = span.left_delim_node,
+            path_case: str = str(case),
         ) -> str:
             if i <= 0:
                 row = tlr + 1
@@ -397,17 +399,13 @@ def _legacy_ref_path_list_to_rowechelon_paths(
                 row_i = min(int(i) - 1, max(shape[0] - 1, 0))
                 row = row_i + tlr + 2
             if single_pivot_vv and j == 0:
-                p = f"({row}-|{left_delim_node})"
+                p = f"($ ({row}-|{left_delim_node}) + ({adj:g},0) $)"
             elif j >= shape[1]:
                 col = tlc + shape[1] + 1
                 p = f"({row}-|{col})"
             else:
                 col_j = min(max(int(j), 0), max(shape[1] - 1, 0))
-                # Multi-pivot row-echelon outlines trace the lower/right cell
-                # boundaries of pivot positions. The single-pivot vv case is a
-                # vertical cutoff and intentionally uses the pivot column's
-                # left edge.
-                col = col_j + tlc + (1 if single_pivot_vv else 2)
+                col = col_j + tlc + (1 if path_case == "vv" else 2)
                 p = f"({row}-|{col})"
 
             if j == 0 and left_pad:

@@ -115,7 +115,7 @@ def test_ref_path_vv_traces_right_pivot_boundary_to_bottom():
     ref_path_list = [(0, 1, pivots, "vv", "red")]
     paths = _legacy_ref_path_list_to_rowechelon_paths(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
-        r"\draw[red] (1-|5) -- (2-|5) -- (2-|6) -- (4-|6);"
+        r"\draw[red] (1-|4) -- (2-|4) -- (2-|5) -- (4-|5);"
     ]
     _assert_manhattan_path(paths[0])
 
@@ -162,7 +162,9 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     path = paths[0]
     # A single-pivot vertical cutoff is drawn on the left edge of the pivot
     # entry. The logical pivot column must not be shifted to the next rule.
-    assert paths == [r"\draw[blue,line width=0.4mm] (1-|A0x1-left) -- (3-|A0x1-left);"]
+    assert paths == [
+        r"\draw[blue,line width=0.4mm] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (3-|A0x1-left) + (0.1,0) $);"
+    ]
     _assert_manhattan_path(path)
 
 

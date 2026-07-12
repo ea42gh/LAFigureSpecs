@@ -334,7 +334,7 @@ def test_ge_stack_svg_single_matrix_keeps_annotations_label_as_callout(monkeypat
     ]
     assert captured.get("annotations") is None
     assert captured["rowechelon_paths"] == [
-        r"\draw[blue,line width=0.4mm] (1-|2) -- (2-|2) -- (2-|3) -- (4-|3);"
+        r"\draw[blue,line width=0.4mm] (1-|1) -- (2-|1) -- (2-|2) -- (4-|2);"
     ]
 
 
