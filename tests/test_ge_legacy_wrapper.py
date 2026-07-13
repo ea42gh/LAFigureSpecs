@@ -182,6 +182,40 @@ def test_ge_stack_svg_accepts_structured_rowechelon_paths(monkeypatch):
     assert paths[0] == r"\draw[red] ($ (4-|A1x1-left) + (0.1,0) $) -- (4-|4) -- (5-|4) -- (5-|5);"
 
 
+def test_structured_rowechelon_paths_match_legacy_ref_path_list(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    A0 = sym.Matrix([[1, 2], [3, 4]])
+    E1 = sym.eye(2)
+    A1 = sym.Matrix([[1, 2], [0, 1]])
+    matrices = [[None, A0], [E1, A1]]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    ge_stack_svg(
+        matrices,
+        rowechelon_paths=[
+            {"grid": (1, 1), "pivots": [(0, 0), (1, 1)], "case": "hh", "color": "red"}
+        ],
+    )
+    structured_paths = list(captured["rowechelon_paths"])
+
+    captured.clear()
+    ge_stack_svg(
+        matrices,
+        ref_path_list=[(1, 1, [(0, 0), (1, 1)], "hh", "red")],
+    )
+    legacy_paths = list(captured["rowechelon_paths"])
+
+    assert structured_paths == legacy_paths
+
+
 def test_ge_stack_svg_structured_rowechelon_paths_accept_node_offsets(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge_stack_svg
     from matrixlayout import ge as ml_ge
@@ -407,6 +441,30 @@ def test_ge_legacy_wrapper_preserves_output_dir_artifacts(monkeypatch, tmp_path)
 
     assert ge_stack_svg(matrices, output_dir=preserve_dir, output_stem="demo") == "<svg/>"
     assert (preserve_dir / "demo.svg").read_text(encoding="utf-8") == "<svg/>"
+
+
+def test_ge_legacy_wrapper_expands_user_output_dir(monkeypatch, tmp_path):
+    from pathlib import Path
+
+    from LAFigureSpecs.convenience_ge import ge_stack_svg
+    from matrixlayout import ge as ml_ge
+
+    home = tmp_path / "home"
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.setenv("USERPROFILE", str(home))
+
+    matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
+
+    def fake_svg(**kwargs):
+        render_dir = Path(kwargs["output_dir"])
+        render_dir.mkdir(parents=True, exist_ok=True)
+        (render_dir / "demo.svg").write_text("<svg/>", encoding="utf-8")
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    assert ge_stack_svg(matrices, output_dir="~/work/figs", output_stem="demo") == "<svg/>"
+    assert (home / "work" / "figs" / "demo.svg").read_text(encoding="utf-8") == "<svg/>"
 
 
 def test_ge_legacy_wrapper_supports_variable_summary():

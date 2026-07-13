@@ -21,6 +21,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Sequence, 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify
 from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
+from .ge_paths import ref_path_list_to_rowechelon_paths, rowechelon_paths_from_specs
 from . import _ge_legacy_compat as _ge_compat
 
 
@@ -347,7 +348,7 @@ def _build_ge_bundle(
 
     ref_path_list = decor.get("ref_path_list") or []
     rowechelon_paths = (
-        _ge_compat._legacy_ref_path_list_to_rowechelon_paths(
+        ref_path_list_to_rowechelon_paths(
             layers["matrices"],
             ref_path_list,
             legacy_submatrix_names=False,
@@ -782,28 +783,7 @@ def _normalize_stack_rowechelon_paths(
         if "tikz" in item:
             out.append(item)
             continue
-        grid = item.get("grid")
-        pivots = item.get("pivots", item.get("entries", []))
-        if not isinstance(grid, (list, tuple)) or len(grid) != 2:
-            continue
-        spec = [
-            int(grid[0]),
-            int(grid[1]),
-            list(pivots or []),
-            str(item.get("case", "hh")),
-            str(item.get("color", "blue,line width=0.4mm")),
-        ]
-        has_adj = "adj" in item
-        if has_adj:
-            spec.append(item.get("adj"))
-        needs_left_pad_slot = "left_pad" in item or "node_offsets" in item
-        if needs_left_pad_slot:
-            if not has_adj:
-                spec.append(0.1)
-            spec.append(item.get("left_pad", 0.0))
-        if "node_offsets" in item:
-            spec.append(item.get("node_offsets"))
-        out.extend(_ge_compat._legacy_ref_path_list_to_rowechelon_paths(matrices, [spec], legacy_submatrix_names=True))
+        out.extend(rowechelon_paths_from_specs(matrices, [item], legacy_submatrix_names=True))
     return out or None
 
 
