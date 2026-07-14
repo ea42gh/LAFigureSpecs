@@ -1216,19 +1216,19 @@ def ge_svg(
         if gj:
             raise TypeError("ge_svg stack rendering does not support gj=; use algorithmic ge_svg(A, rhs=...)")
         if show_pivots:
-            raise TypeError("ge_svg stack rendering does not support show_pivots=; pass pivot_locs= or use ge_stack_svg")
+            raise TypeError("ge_svg stack rendering does not support show_pivots=; pass pivot_locs= instead")
         if index_base != 1:
-            raise TypeError("ge_svg stack rendering does not support index_base=; use ge_stack_svg")
+            raise TypeError("ge_svg stack rendering does not support index_base=")
         if pivot_style:
-            raise TypeError("ge_svg stack rendering does not support pivot_style=; pass pivot_locs= or use ge_stack_svg")
+            raise TypeError("ge_svg stack rendering does not support pivot_style=; pass pivot_locs= instead")
         if row_stretch is not None:
             raise TypeError("ge_svg stack rendering does not support row_stretch=; use body_preamble=/document_preamble=")
         if nice_options:
-            raise TypeError("ge_svg stack rendering does not support nice_options=; use ge_stack_svg")
+            raise TypeError("ge_svg stack rendering does not support nice_options=")
         if outer_delims:
-            raise TypeError("ge_svg stack rendering does not support outer_delims=; use ge_stack_svg")
+            raise TypeError("ge_svg stack rendering does not support outer_delims=")
         if cell_align != "r":
-            raise TypeError("ge_svg stack rendering does not support cell_align=; use ge_stack_svg")
+            raise TypeError("ge_svg stack rendering does not support cell_align=")
 
         stack_render_opts: Dict[str, Any] = {}
         if toolchain_name is not None:

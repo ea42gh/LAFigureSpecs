@@ -66,12 +66,11 @@ For most users, prefer `ge_svg(...)` over direct `render_ge_svg(...)`.
 `ge_tex`, `ge_svg`, and `ge_bundle` accept the same algorithmic parameters as
 `ge_spec` plus renderer options (for SVG).
 
-`ge_stack_svg(...)` is the compatibility renderer for precomputed GE matrix
-grids. It remains available for notebooks and wrappers that already computed the
-row-reduction stack, but new algorithm-facing code should prefer `ge_svg(...)`
-or `ge_bundle(...)`.
+`ge_svg(...)` also accepts a precomputed GE matrix grid such as
+`[[None, A], [E, E*A]]`. Use that form for notebooks and wrappers that already
+computed the row-reduction stack.
 
-`ge_stack_svg(...)` parameters (subset shown):
+GE stack parameters accepted by `ge_svg(matrices, ...)` (subset shown):
 
 | Parameter | Type | Default | Notes |
 | --- | --- | --- | --- |
@@ -90,8 +89,6 @@ or `ge_bundle(...)`.
 | `array_names` | list/bool | None | Shorthand matrix labels converted to callouts. |
 | `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
 | `decorators` | list | None | Entry decorators. |
-| `specs` | list | None | Compatibility alias for callouts; old `angle`/`length` keys are normalized. |
-
 For stack renderers, `pivot_locs` may use structured selectors:
 `{"grid": (block_row, block_col), "entries": [(row, col)], "style": "draw=blue"}`.
 `rowechelon_paths` may also use structured selectors:
@@ -100,8 +97,8 @@ Right-side stack comments can be expressed as structured `text_annotations`:
 `{"grid_row": 0, "text": "\\qquad note", "color": "violet", "shift_mm": (50, 0)}`.
 Raw renderer snippets remain accepted for advanced uses.
 
-The old `pivot_list`, `bg_for_entries`, `ref_path_list`, `comment_list`, and
-`specs` inputs are intentionally isolated as compatibility inputs.
+The old `pivot_list`, `bg_for_entries`, `ref_path_list`, and `comment_list`
+inputs are intentionally isolated as compatibility inputs.
 Matrixlayout-facing specs should use canonical renderer fields such as
 `decorators`, `decorations`, `text_annotations`, `rowechelon_paths`, and
 `callouts`.

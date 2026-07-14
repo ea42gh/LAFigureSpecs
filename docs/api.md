@@ -27,7 +27,7 @@ Preferred cross-language top-level names:
   - Use `bundle_summary(bundle)` for a quick status-only view.
 - If you already have prepared matrices/specs and want low-level renderer control:
   - `render_ge_*`, `render_qr_*`, `render_eig_*` (re-exported matrixlayout functions)
-  - `ge_stack_svg`, `qr_stack_svg` for precomputed GE/QR matrix grids
+  - `ge_svg` for precomputed GE matrix grids, `qr_stack_svg` for precomputed QR matrix grids
 - If you already have LaTeX and just need SVG:
   - `latex_svg` for fragments
   - `latex_document_svg` for complete documents
@@ -59,7 +59,7 @@ Use these when you want a lightweight preflight before rendering:
 - `LAFigureSpecs.ge_bundle(A, **opts)`: canonical GE bundle helper.
 - `LAFigureSpecs.ge_tex(A, **opts)`: render GE TeX from the spec path.
 - `LAFigureSpecs.ge_svg(A, **opts)`: render GE SVG from the spec path.
-- `LAFigureSpecs.ge_stack_svg(matrices, **opts)`: canonical GE stack renderer.
+- `LAFigureSpecs.ge_svg(matrices, **opts)`: render a precomputed GE matrix stack when the first argument is a GE matrix grid.
 
 Example options:
 `ge_spec(A, show_pivots=True, pivoting="partial", gj=False)`
