@@ -1,4 +1,6 @@
 import sympy as sym
+import numpy as np
+import pytest
 
 
 def test_legacy_pivot_list_to_pivot_locs():
@@ -337,7 +339,19 @@ def test_ge_stack_svg_grid_row_text_annotations_ignore_below_variable_summary_ro
     ]
 
 
-def test_ge_stack_svg_single_matrix_keeps_annotations_label_as_callout(monkeypatch):
+def test_ge_stack_svg_rejects_annotations_label_callout_alias():
+    from LAFigureSpecs.convenience_ge import ge_svg
+
+    A = sym.Matrix([[1, 2, 3], [4, 5, 6]])
+
+    with pytest.raises(TypeError, match="annotations=.*label=.*callouts="):
+        ge_svg(
+            [[A]],
+            annotations=[{"grid": (0, 0), "label": r"$[A\mid b]$", "side": "right", "color": "blue"}],
+        )
+
+
+def test_ge_stack_svg_single_matrix_uses_callouts_for_matrix_labels(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge_svg
     from matrixlayout import ge as ml_ge
 
@@ -357,7 +371,7 @@ def test_ge_stack_svg_single_matrix_keeps_annotations_label_as_callout(monkeypat
         pivot_locs=[{"grid": (0, 0), "entries": [(0, 0)]}],
         rowechelon_paths=[{"grid": (0, 0), "pivots": [(0, 0), (1, 1)], "case": "vv"}],
         text_annotations=[{"grid_row": 0, "text": r"\qquad zero out entries underneath the pivot"}],
-        annotations=[{"grid": (0, 0), "label": r"$[A\mid b]$", "side": "right", "color": "blue"}],
+        callouts=[{"grid": (0, 0), "label": r"$[A\mid b]$", "side": "right", "color": "blue"}],
     )
 
     assert out == "<svg/>"
@@ -587,54 +601,23 @@ def test_ge_legacy_wrapper_forwards_explicit_callouts():
     assert captured["callouts"] == callouts
 
 
-def test_ge_legacy_wrapper_maps_specs_to_callouts():
+def test_ge_legacy_wrapper_rejects_removed_specs_alias():
     from LAFigureSpecs.convenience_ge import ge_stack_svg
-    from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
-    E1 = sym.eye(2)
-    A1 = sym.Matrix([[1, 2], [0, 1]])
-    matrices = [[None, A0], [E1, A1]]
-    specs = [
-        {
-            "grid": (1, 0),
-            "label": r"\tilde{E}^{-1}",
-            "side": "left",
-            "angle": -35,
-            "length": 6,
-            "label_shift_x_mm": 1,
-            "label_shift_y_mm": -2,
-            "math_mode": True,
-        }
-    ]
+    matrices = [[None, A0]]
 
-    captured = {}
-
-    def fake_svg(**kwargs):
-        captured.update(kwargs)
-        return "<svg/>"
-
-    ge_svg_orig = ml_ge.render_ge_svg
-    ml_ge.render_ge_svg = fake_svg
-    try:
-        out = ge_stack_svg(matrices, specs=specs)
-    finally:
-        ml_ge.render_ge_svg = ge_svg_orig
-
-    assert out == "<svg/>"
-    assert captured["callouts"] == [
-        {
-            "grid": (1, 0),
-            "label": r"\tilde{E}^{-1}",
-            "side": "left",
-            "angle_deg": -35,
-            "length_mm": 6,
-            "label_shift_mm": (1, -2),
-            "math_mode": True,
-        }
-    ]
-    assert "angle" not in captured["callouts"][0]
-    assert "length" not in captured["callouts"][0]
+    with pytest.raises(TypeError, match="specs=.*callouts="):
+        ge_stack_svg(
+            matrices,
+            specs=[
+                {
+                    "grid": (0, 0),
+                    "label": "A",
+                    "side": "right",
+                }
+            ],
+        )
 
 
 def test_ge_legacy_wrapper_keeps_name_specs_compatibility():
@@ -771,6 +754,30 @@ def test_ge_svg_with_stack_only_option_delegates_to_stack_renderer():
     assert captured["matrices"] == matrices
     assert captured["n_rhs"] == 0
     assert captured["formatter"] is str
+
+
+def test_ge_svg_detects_numpy_matrix_stack_without_n_rhs(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_svg
+    from matrixlayout import ge as ml_ge
+
+    A = np.array([[1, 2, 1], [2, 1, 1]])
+    B = np.array([[3, 1], [2, 2], [-2, -1]])
+    C = A @ B
+    matrices = [[None, B], [A, C]]
+    callouts = [{"grid": (1, 1), "label": r"$AB$", "side": "right", "color": "blue"}]
+    captured = {}
+
+    def fake_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
+
+    assert ge_svg(matrices, callouts=callouts) == "<svg/>"
+
+    assert captured["matrices"] == matrices
+    assert captured["callouts"] == callouts
+    assert captured["n_rhs"] == 0
 
 
 def test_ge_legacy_wrapper_uses_canonical_tex_hook_names(monkeypatch):

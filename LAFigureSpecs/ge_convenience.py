@@ -31,6 +31,34 @@ if TYPE_CHECKING:
 _UNSET = object()
 
 
+def _is_stack_matrix_cell(value: Any) -> bool:
+    """Return true for matrix-like objects used as cells in a GE stack."""
+
+    if value is None:
+        return True
+    if isinstance(value, (str, bytes)):
+        return False
+    shape = getattr(value, "shape", None)
+    if shape is not None:
+        try:
+            return len(tuple(shape)) == 2
+        except TypeError:
+            return False
+    if isinstance(value, (list, tuple)):
+        return bool(value) and isinstance(value[0], (list, tuple))
+    return False
+
+
+def _looks_like_ge_stack(value: Any) -> bool:
+    """Conservatively distinguish a GE matrix stack from a plain matrix."""
+
+    if not isinstance(value, (list, tuple)) or not value:
+        return False
+    if not all(isinstance(row, (list, tuple)) for row in value):
+        return False
+    return any(_is_stack_matrix_cell(cell) for row in value for cell in row)
+
+
 def _resolve_n_rhs(*, n_rhs: Any = _UNSET) -> Any:
     """Resolve the canonical ``n_rhs`` keyword default."""
 
@@ -602,7 +630,6 @@ def ge_stack_svg(
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
     array_name_indices: bool = True,
-    specs: Optional[Any] = None,
     start_index: Optional[int] = 1,
     func: Optional[Any] = None,
     fig_scale: Optional[Any] = None,
@@ -617,6 +644,9 @@ def ge_stack_svg(
     **render_opts: Any,
 ) -> str:
     """Render-only wrapper: render SVG from a precomputed GE matrix stack."""
+    if "specs" in render_opts:
+        raise TypeError("Removed GE matrix-label alias: specs=. Use callouts= instead.")
+    _reject_annotation_callout_alias(render_opts.get("annotations"))
     removed_tex_hooks = {"preamble", "extension"} & set(render_opts)
     if removed_tex_hooks:
         names = ", ".join(sorted(removed_tex_hooks))
@@ -653,29 +683,6 @@ def ge_stack_svg(
         block_valign=block_valign,
     )
     rowechelon_paths = _normalize_stack_rowechelon_paths(matrices, rowechelon_paths)
-
-    specs_callouts = _legacy_specs_to_callouts(specs)
-    if specs_callouts:
-        if callouts is None or callouts is False:
-            callouts = specs_callouts
-        elif callouts is True:
-            callouts = specs_callouts
-        elif isinstance(callouts, list):
-            callouts = list(callouts) + specs_callouts
-
-    annotations, annotation_callouts = _split_annotation_callouts(render_opts.get("annotations"))
-    if annotation_callouts:
-        if annotations is None:
-            render_opts.pop("annotations", None)
-        else:
-            render_opts["annotations"] = annotations
-
-        if callouts is None or callouts is False:
-            callouts = annotation_callouts
-        elif callouts is True:
-            callouts = annotation_callouts
-        elif isinstance(callouts, list):
-            callouts = list(callouts) + annotation_callouts
 
     render_inputs = _legacy_ge_stack_render_inputs(
         matrices,
@@ -787,50 +794,15 @@ def _normalize_stack_rowechelon_paths(
     return out or None
 
 
-def _legacy_specs_to_callouts(specs: Optional[Any]) -> List[Dict[str, Any]]:
-    """Normalize old ``specs=`` matrix-label callouts for ``ge_stack_svg``."""
-
-    if not specs:
-        return []
-    items = specs if isinstance(specs, (list, tuple)) else [specs]
-    callouts: List[Dict[str, Any]] = []
-    for item in items:
-        try:
-            spec = dict(item)
-        except Exception:
-            continue
-        angle = spec.pop("angle", None)
-        if angle is not None and "angle_deg" not in spec:
-            spec["angle_deg"] = angle
-        length = spec.pop("length", None)
-        if length is not None and "length_mm" not in spec:
-            spec["length_mm"] = length
-        shift_x = spec.pop("label_shift_x_mm", None)
-        shift_y = spec.pop("label_shift_y_mm", None)
-        if (shift_x is not None or shift_y is not None) and "label_shift_mm" not in spec:
-            spec["label_shift_mm"] = (0.0 if shift_x is None else shift_x, 0.0 if shift_y is None else shift_y)
-        callouts.append(spec)
-    return callouts
-
-
-def _split_annotation_callouts(annotations: Optional[Any]) -> Tuple[Optional[Any], List[Dict[str, Any]]]:
-    """Accept notebook-era ``annotations=[{label=...}]`` as GE callouts."""
+def _reject_annotation_callout_alias(annotations: Optional[Any]) -> None:
+    """Reject old matrix-label callouts passed through ``annotations=``."""
 
     if not annotations:
-        return annotations, []
-
+        return
     items = annotations if isinstance(annotations, (list, tuple)) else [annotations]
-    remaining: List[Any] = []
-    callouts: List[Dict[str, Any]] = []
     for item in items:
         if isinstance(item, dict) and "label" in item and "labels" not in item:
-            callouts.append(dict(item))
-        else:
-            remaining.append(item)
-
-    if not callouts:
-        return annotations, []
-    return (remaining or None), callouts
+            raise TypeError("Removed GE matrix-label alias: annotations=[{label=...}]. Use callouts= instead.")
 
 
 def _legacy_ge_stack_render_inputs(
@@ -1236,7 +1208,7 @@ def ge_svg(
 ) -> str:
     """Compute + render: build GE data from reference inputs and return SVG."""
 
-    if n_rhs is not _UNSET or stack_opts:
+    if _looks_like_ge_stack(A) or n_rhs is not _UNSET or stack_opts:
         if rhs is not None:
             raise TypeError("ge_svg stack rendering does not accept rhs=; pass rhs only for algorithmic GE")
         if pivoting != "none":
