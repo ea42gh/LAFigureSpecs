@@ -607,7 +607,7 @@ def ge_layout_spec(
     return GEGridSpec.from_dict(spec, allow_extra=True)
 
 
-def ge_stack_svg(
+def _ge_stack_svg(
     matrices: Sequence[Sequence[Any]],
     *,
     n_rhs: Any = _UNSET,
@@ -749,7 +749,7 @@ def _normalize_stack_pivot_locs(
     block_align: Optional[Any],
     block_valign: Optional[Any],
 ) -> Optional[List[Any]]:
-    """Normalize grid/entry pivot selectors accepted by ``ge_stack_svg``."""
+    """Normalize grid/entry pivot selectors accepted by ``ge_svg``."""
 
     if not pivot_locs:
         return None
@@ -778,7 +778,7 @@ def _normalize_stack_rowechelon_paths(
     matrices: Sequence[Sequence[Any]],
     rowechelon_paths: Optional[Sequence[Any]],
 ) -> Optional[List[Any]]:
-    """Normalize structured row-echelon path selectors accepted by ``ge_stack_svg``."""
+    """Normalize structured row-echelon path selectors accepted by ``ge_svg``."""
 
     if not rowechelon_paths:
         return None
@@ -998,7 +998,7 @@ def _legacy_ge_stack_render_inputs(
 
 def show_ge(*args: Any, **kwargs: Any) -> Any:
     """Render GE and return a displayable SVG object when possible."""
-    svg = ge_stack_svg(*args, **kwargs)
+    svg = _ge_stack_svg(*args, **kwargs)
     try:
         from IPython.display import SVG
 
@@ -1247,7 +1247,7 @@ def ge_svg(
             stack_render_opts["document_preamble"] = document_preamble
         stack_render_opts.update(stack_opts)
 
-        return ge_stack_svg(
+        return _ge_stack_svg(
             A,
             n_rhs=n_rhs,
             pivot_text_color=pivot_text_color,

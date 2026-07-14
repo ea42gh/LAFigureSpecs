@@ -230,7 +230,7 @@ def test_show_ge_normal_eq_uses_callouts(monkeypatch):
         captured.update(kwargs)
         return "<svg/>"
 
-    monkeypatch.setattr("LAFigureSpecs.ge_convenience.ge_stack_svg", fake_ge)
+    monkeypatch.setattr("LAFigureSpecs.ge_convenience._ge_stack_svg", fake_ge)
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])
@@ -259,7 +259,7 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
     def fail_ge_svg(*args, **kwargs):
         raise RuntimeError("ge_svg should not be called when full stack is available")
 
-    monkeypatch.setattr("LAFigureSpecs.ge_convenience.ge_stack_svg", fake_ge)
+    monkeypatch.setattr("LAFigureSpecs.ge_convenience._ge_stack_svg", fake_ge)
     monkeypatch.setattr("LAFigureSpecs.show_ge.ge_svg", fail_ge_svg)
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -284,7 +284,7 @@ def test_show_ge_layout_forwards_canonical_stack_decorations(monkeypatch):
         captured.update(kwargs)
         return "<svg/>"
 
-    monkeypatch.setattr("LAFigureSpecs.ge_convenience.ge_stack_svg", fake_ge)
+    monkeypatch.setattr("LAFigureSpecs.ge_convenience._ge_stack_svg", fake_ge)
 
     A = sym.Matrix([[1, 2], [3, 4]])
     b = sym.Matrix([[5], [6]])

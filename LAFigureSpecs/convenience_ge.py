@@ -10,7 +10,6 @@ from .ge_convenience import (
     ge_bundle,
     ge_layout_spec,
     ge_spec,
-    ge_stack_svg,
     ge_svg,
     ge_tex,
 )
@@ -19,7 +18,6 @@ __all__ = [
     "ge_bundle",
     "ge_layout_spec",
     "ge_spec",
-    "ge_stack_svg",
     "ge_svg",
     "ge_tex",
 ]

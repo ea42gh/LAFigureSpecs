@@ -42,7 +42,7 @@ def test_legacy_ge_disables_format_nrhs_when_using_decorations(monkeypatch):
         [None, [[1, 2], [3, 4]]],
         [[[1, 0], [0, 1]], [[5, 6], [7, 8]]],
     ]
-    ge_conv.ge_stack_svg(
+    ge_conv.ge_svg(
         matrices,
         n_rhs=1,
         variable_summary=[True, False],
@@ -67,7 +67,7 @@ def test_legacy_ge_supports_nrhs_list(monkeypatch):
     matrices = [
         [None, [[1, 2, 3, 4, 5, 6, 7, 8]]],
     ]
-    ge_conv.ge_stack_svg(
+    ge_conv.ge_svg(
         matrices,
         n_rhs=[2, 3, 1],
         variable_summary=[True, False, False, False, False],

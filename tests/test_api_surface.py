@@ -41,6 +41,7 @@ def test_public_api_contains_canonical_render_names():
 
 def test_public_api_does_not_export_legacy_names():
     import LAFigureSpecs
+    import LAFigureSpecs.convenience_ge as convenience_ge
 
     assert "svg" not in LAFigureSpecs.__all__
     assert "ge" not in LAFigureSpecs.__all__
@@ -54,6 +55,8 @@ def test_public_api_does_not_export_legacy_names():
     assert not hasattr(LAFigureSpecs, "decorate_ge")
     assert "ge_stack_svg" not in LAFigureSpecs.__all__
     assert not hasattr(LAFigureSpecs, "ge_stack_svg")
+    assert "ge_stack_svg" not in convenience_ge.__all__
+    assert not hasattr(convenience_ge, "ge_stack_svg")
 
 
 def test_canonical_names_point_to_existing_top_level_helpers():
