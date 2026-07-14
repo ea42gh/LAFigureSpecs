@@ -374,16 +374,23 @@ def _build_ge_bundle(
     bg_list = decor.get("bg_list") or []
     codebefore: List[str] = _ge_compat._legacy_bg_list_to_codebefore(layers["matrices"], bg_list) if bg_list else []
 
-    ref_path_list = decor.get("ref_path_list") or []
+    rowechelon_path_specs = list(decor.get("rowechelon_paths") or [])
     rowechelon_paths = (
-        ref_path_list_to_rowechelon_paths(
+        rowechelon_paths_from_specs(
+            layers["matrices"],
+            rowechelon_path_specs,
+            legacy_submatrix_names=False,
+        )
+        if rowechelon_path_specs
+        else []
+    )
+    ref_path_list = decor.get("ref_path_list") or []
+    if not rowechelon_paths and ref_path_list:
+        rowechelon_paths = ref_path_list_to_rowechelon_paths(
             layers["matrices"],
             ref_path_list,
             legacy_submatrix_names=False,
         )
-        if ref_path_list
-        else decor.get("rowechelon_paths") or []
-    )
 
     pivot_decorators: List[Dict[str, Any]] = []
     if pivots_enabled and decor.get("pivot_list"):
