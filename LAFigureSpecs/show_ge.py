@@ -12,6 +12,7 @@ from ._ge_legacy_compat import (
     _legacy_ref_paths_to_rowechelon_paths,
     _name_specs_to_callouts,
 )
+from .ge_paths import rowechelon_paths_from_specs
 from ._sympy_utils import to_sympy_col, to_sympy_matrix
 
 
@@ -74,9 +75,19 @@ def _decorated_stack_render_kwargs(
     bg_specs = decor.get("bg_list") or []
     codebefore = _legacy_bg_for_entries_to_codebefore(matrices, bg_specs) if bg_specs else []
 
+    rowechelon_specs = list(decor.get("rowechelon_paths") or [])
+    rowechelon_paths = (
+        rowechelon_paths_from_specs(
+            matrices,
+            rowechelon_specs,
+            legacy_submatrix_names=True,
+        )
+        if rowechelon_specs
+        else []
+    )
     ref_paths = decor.get("ref_path_list") or decor.get("path_list") or []
-    rowechelon_paths = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_paths) if ref_paths else []
-    rowechelon_paths.extend(list(decor.get("rowechelon_paths") or []))
+    if not rowechelon_paths and ref_paths:
+        rowechelon_paths = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_paths)
 
     return {
         "pivot_locs": pivot_locs,
