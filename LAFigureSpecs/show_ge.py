@@ -60,7 +60,7 @@ def _decorated_stack_render_kwargs(
     show_pivots: Optional[bool],
     pivot_text_color: str,
 ) -> Dict[str, Any]:
-    """Convert ``decorate_ge`` compatibility output to canonical stack kwargs."""
+    """Build canonical stack-render kwargs from ``decorate_ge`` output."""
 
     pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
     pivot_locs = None
