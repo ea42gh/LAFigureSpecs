@@ -691,7 +691,7 @@ def _ge_stack_svg(
     )
     rowechelon_paths = _normalize_stack_rowechelon_paths(matrices, rowechelon_paths)
 
-    render_inputs = _legacy_ge_stack_render_inputs(
+    render_inputs = _ge_stack_render_inputs(
         matrices,
         n_rhs=n_rhs,
         pivot_list=pivot_list,
@@ -812,7 +812,7 @@ def _reject_annotation_callout_alias(annotations: Optional[Any]) -> None:
             raise TypeError("Removed GE matrix-label alias: annotations=[{label=...}]. Use callouts= instead.")
 
 
-def _legacy_ge_stack_render_inputs(
+def _ge_stack_render_inputs(
     matrices: Sequence[Sequence[Any]],
     *,
     n_rhs: Any,
@@ -840,7 +840,12 @@ def _legacy_ge_stack_render_inputs(
     block_align: Optional[Any],
     block_valign: Optional[Any],
 ) -> Dict[str, Any]:
-    """Translate legacy GE wrapper inputs into canonical matrixlayout kwargs."""
+    """Assemble canonical matrixlayout kwargs for a GE matrix stack.
+
+    Canonical stack inputs are forwarded directly. Legacy inputs are translated
+    here as compatibility fallbacks so the renderer call site only sees the
+    current matrixlayout field names.
+    """
 
     pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
     legacy_pivot_locs = (
