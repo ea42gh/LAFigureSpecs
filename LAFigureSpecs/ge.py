@@ -562,12 +562,10 @@ def decorate_ge(
         - ``variable_types``: list of booleans indicating pivot columns for each
           coefficient column (RHS columns excluded).
 
-        Additional compatibility keys mirror the Julia ``decorate_ge`` helper:
-        ``pivot_list``, ``bg_list``, ``path_list`` (aka ``ref_path_list``),
-        and ``variable_summary``. The high-level spec builders convert those
-        compatibility values into matrixlayout-facing fields such as
-        ``decorators``, ``codebefore``, and ``rowechelon_paths`` once the full
-        rendered grid is known.
+        Canonical renderer-facing keys include ``decorations`` and
+        ``rowechelon_paths``. Additional compatibility keys mirror the Julia
+        ``decorate_ge`` helper: ``pivot_list``, ``bg_list``, ``path_list`` (aka
+        ``ref_path_list``), and ``variable_summary``.
     """
 
     # Number of coefficient columns. Prefer the recorded shape metadata.
@@ -719,6 +717,53 @@ def decorate_ge(
 
     variable_summary: List[bool] = list(variable_types)
 
+    def _append_bg_spec(spec: Any, out: List[Dict[str, Any]]) -> None:
+        if not isinstance(spec, (list, tuple)):
+            return
+        if len(spec) < 4:
+            for item in spec:
+                _append_bg_spec(item, out)
+            return
+        grid = (int(spec[0]), int(spec[1]))
+        locs = spec[2]
+        background = spec[3]
+        padding_pt = spec[4] if len(spec) >= 5 else 0
+        for loc in locs or []:
+            if isinstance(loc, tuple) and len(loc) == 2 and all(isinstance(x, int) for x in loc):
+                out.append(
+                    {
+                        "grid": grid,
+                        "entries": [loc],
+                        "background": background,
+                        "padding_pt": padding_pt,
+                    }
+                )
+            else:
+                (r1, c1), (r2, c2) = loc
+                out.append(
+                    {
+                        "grid": grid,
+                        "rows": (int(r1), int(r2)),
+                        "cols": (int(c1), int(c2)),
+                        "background": background,
+                        "padding_pt": padding_pt,
+                    }
+                )
+
+    decorations: List[Dict[str, Any]] = []
+    for spec in bg_list:
+        _append_bg_spec(spec, decorations)
+
+    def _path_spec_to_rowechelon(spec: Sequence[Any]) -> Dict[str, Any]:
+        return {
+            "grid": (int(spec[0]), int(spec[1])),
+            "pivots": list(spec[2]),
+            "case": str(spec[3]) if len(spec) > 3 else "hh",
+            "color": str(spec[4]) if len(spec) > 4 else path_color,
+        }
+
+    rowechelon_paths = [_path_spec_to_rowechelon(spec) for spec in (path_list or ref_path_list)]
+
     return {
         "pivot_locs": pivot_locs,
         "variable_types": variable_types,
@@ -727,12 +772,13 @@ def decorate_ge(
         "path_list": path_list,
         "ref_path_list": path_list or ref_path_list,
         "variable_summary": variable_summary,
+        "decorations": decorations,
+        "rowechelon_paths": rowechelon_paths,
         # Retain trace metadata for downstream consumers.
         "pivot_positions": list(trace.pivot_positions),
         "pivot_cols": list(trace.pivot_cols),
         "free_cols": list(trace.free_cols),
-        # Canonical renderer fields that do not require grid-span conversion.
+        # Other canonical renderer fields that do not require grid-span conversion.
         "text_annotations": [],
-        "rowechelon_paths": [],
         "callouts": [],
     }

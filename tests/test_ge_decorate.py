@@ -18,7 +18,7 @@ def test_decorate_ge_canonical_pivots_and_variable_types():
         ("(2-2)(2-2)", ""),
     ]
     assert decor["text_annotations"] == []
-    assert decor["rowechelon_paths"] == []
+    assert decor["rowechelon_paths"]
     assert decor["callouts"] == []
 
 
@@ -33,7 +33,17 @@ def test_decorate_ge_retains_julia_compatibility_lists():
 
     assert decor["pivot_list"][-1][1] == [(0, 0), (1, 1)]
     assert decor["bg_list"]
+    assert decor["decorations"]
     assert decor["ref_path_list"] == decor["path_list"]
+    assert decor["rowechelon_paths"] == [
+        {
+            "grid": (spec[0], spec[1]),
+            "pivots": spec[2],
+            "case": spec[3],
+            "color": spec[4],
+        }
+        for spec in decor["ref_path_list"]
+    ]
 
 
 def test_decorate_ge_excludes_rhs_from_variable_types():
