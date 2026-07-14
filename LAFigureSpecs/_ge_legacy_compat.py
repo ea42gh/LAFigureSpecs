@@ -645,8 +645,7 @@ def _array_name_callouts(
     if array_names is None:
         return []
     if isinstance(array_names, dict) and "name_specs" in array_names:
-        name_specs = array_names.get("name_specs") or []
-        return _name_specs_to_callouts(matrices, name_specs, color="blue")
+        raise TypeError("array_names={'name_specs': ...} is removed; use top-level callouts instead.")
     explicit_names = array_names is not True
     try:
         lhs, rhs = array_names
