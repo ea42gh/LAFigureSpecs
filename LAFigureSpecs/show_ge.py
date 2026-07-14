@@ -72,8 +72,9 @@ def _decorated_stack_render_kwargs(
             pivot_style=pivot_style,
         )
 
+    decorations = list(decor.get("decorations") or [])
     bg_specs = decor.get("bg_list") or []
-    codebefore = _legacy_bg_for_entries_to_codebefore(matrices, bg_specs) if bg_specs else []
+    codebefore = _legacy_bg_for_entries_to_codebefore(matrices, bg_specs) if bg_specs and not decorations else []
 
     rowechelon_specs = list(decor.get("rowechelon_paths") or [])
     rowechelon_paths = (
@@ -93,6 +94,7 @@ def _decorated_stack_render_kwargs(
         "pivot_locs": pivot_locs,
         "codebefore": codebefore,
         "rowechelon_paths": rowechelon_paths,
+        "decorations": decorations or None,
     }
 
 

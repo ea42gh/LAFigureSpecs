@@ -292,7 +292,7 @@ def test_show_ge_layout_forwards_canonical_stack_decorations(monkeypatch):
     show.ref()
     show.show_layout()
 
-    assert captured.get("codebefore")
+    assert captured.get("decorations")
     assert captured.get("pivot_locs")
     assert captured.get("rowechelon_paths")
     assert "bg_for_entries" not in captured
