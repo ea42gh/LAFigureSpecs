@@ -195,9 +195,12 @@ For `tikz-cd`, prefer `latex_document_svg(...)` with a PDF-based SVG converter
 such as `toolchain_name="pdftex_pdftocairo"` instead of the fragment path on a
 DVI-based toolchain.
 
-Passing `preamble=...` selects the explicit-preamble path and bypasses
-`tex_packages`, `tikz_libraries`, and the default package list. Include every
-needed package in the preamble when using that mode.
+For `latex_svg(...)` only, passing `preamble=...` selects the
+explicit-preamble path and bypasses `tex_packages`, `tikz_libraries`, and the
+default package list. Include every needed package in the preamble when using
+that mode. This is not the matrix renderer hook; GE/QR/eigen/SVD helpers use
+`document_preamble` for true LaTeX preamble insertion and `body_preamble` for
+document-body setup.
 
 Because fragments are scaled with `\scalebox{...}{...}`, environments that use
 alignment markers may need package-specific escaping. In `tikz-cd`, prefer
