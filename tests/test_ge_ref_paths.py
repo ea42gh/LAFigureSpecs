@@ -1,7 +1,11 @@
 import re
 
 from LAFigureSpecs._ge_legacy_compat import _legacy_ref_path_list_to_rowechelon_paths
-from LAFigureSpecs.ge_paths import ref_path_list_to_rowechelon_paths, rowechelon_paths_from_specs
+from LAFigureSpecs.ge_paths import (
+    ref_path_list_to_rowechelon_paths,
+    rowechelon_paths_from_legacy_tuples,
+    rowechelon_paths_from_specs,
+)
 
 
 def _path_anchor_keys(path):
@@ -41,11 +45,20 @@ def test_canonical_ref_path_helper_matches_legacy_wrapper():
         (0, 1, [(0, 0), (1, 1)], "vv", "red"),
         (0, 1, [(0, 0), (1, 1)], "hv", "red"),
     ]
-    assert ref_path_list_to_rowechelon_paths(
+    assert rowechelon_paths_from_legacy_tuples(
         matrices,
         ref_path_list,
         legacy_submatrix_names=True,
     ) == _legacy_ref_path_list_to_rowechelon_paths(
+        matrices,
+        ref_path_list,
+        legacy_submatrix_names=True,
+    )
+    assert ref_path_list_to_rowechelon_paths(
+        matrices,
+        ref_path_list,
+        legacy_submatrix_names=True,
+    ) == rowechelon_paths_from_legacy_tuples(
         matrices,
         ref_path_list,
         legacy_submatrix_names=True,
@@ -68,7 +81,7 @@ def test_canonical_structured_spec_matches_legacy_tuple_spec():
         matrices,
         structured,
         legacy_submatrix_names=True,
-    ) == ref_path_list_to_rowechelon_paths(
+    ) == rowechelon_paths_from_legacy_tuples(
         matrices,
         legacy,
         legacy_submatrix_names=True,

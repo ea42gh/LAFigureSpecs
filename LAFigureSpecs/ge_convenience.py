@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Sequence, 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify
 from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
-from .ge_paths import ref_path_list_to_rowechelon_paths, rowechelon_paths_from_specs
+from .ge_paths import rowechelon_paths_from_legacy_tuples, rowechelon_paths_from_specs
 from . import _ge_legacy_compat as _ge_compat
 
 
@@ -386,7 +386,7 @@ def _build_ge_bundle(
     )
     ref_path_list = decor.get("ref_path_list") or []
     if not rowechelon_paths and ref_path_list:
-        rowechelon_paths = ref_path_list_to_rowechelon_paths(
+        rowechelon_paths = rowechelon_paths_from_legacy_tuples(
             layers["matrices"],
             ref_path_list,
             legacy_submatrix_names=False,

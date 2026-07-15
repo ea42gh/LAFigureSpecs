@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .formatting import make_decorator
-from .ge_paths import ref_path_list_to_rowechelon_paths
+from .ge_paths import rowechelon_paths_from_legacy_tuples
 
 
 def _matrix_shape(mat: Any) -> Tuple[int, int]:
@@ -335,7 +335,7 @@ def _legacy_ref_path_list_to_rowechelon_paths(
     *,
     legacy_submatrix_names: bool = True,
 ) -> List[str]:
-    return ref_path_list_to_rowechelon_paths(
+    return rowechelon_paths_from_legacy_tuples(
         matrices,
         ref_path_list,
         legacy_submatrix_names=legacy_submatrix_names,
