@@ -173,10 +173,6 @@ class ShowGE:
         self._solution_cache.clear()
         return self
 
-    def show_ref(self, *, gj: Optional[bool] = None, pivoting: Optional[str] = None):
-        """Alias for ref (Julia-style naming)."""
-        return self.ref(gj=gj, pivoting=pivoting)
-
     def _get_trace(self):
         if self._trace is None:
             self.ref()

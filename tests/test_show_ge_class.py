@@ -166,17 +166,6 @@ def test_show_ge_ref_updates_trace_and_layers():
     assert mats and mats[-1][1] is not None
 
 
-def test_show_ge_show_ref_alias():
-    import LAFigureSpecs
-    import sympy as sym
-
-    A = sym.Matrix([[1, 0], [0, 1]])
-    b = sym.Matrix([[1], [0]])
-    show = LAFigureSpecs.ShowGE(A, b)
-    show.show_ref(gj=True, pivoting=None)
-    assert show.trace() is not None
-
-
 def test_show_ge_normal_eq_layers_include_at_and_ata():
     import LAFigureSpecs
     import sympy as sym
