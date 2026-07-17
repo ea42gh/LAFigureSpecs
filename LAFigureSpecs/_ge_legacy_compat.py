@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 from .formatting import make_decorator
-from .ge_paths import rowechelon_paths_from_legacy_tuples
+from .ge_paths import _rowechelon_paths_from_legacy_tuples
 
 
 def _matrix_shape(mat: Any) -> Tuple[int, int]:
@@ -619,7 +619,7 @@ def _legacy_ref_paths_to_rowechelon_paths(
     if not ref_path_list:
         return []
     specs = ref_path_list if isinstance(ref_path_list, list) else [ref_path_list]
-    return rowechelon_paths_from_legacy_tuples(matrices, specs, legacy_submatrix_names=True)
+    return _rowechelon_paths_from_legacy_tuples(matrices, specs, legacy_submatrix_names=True)
 
 
 def _array_name_callouts(
@@ -693,7 +693,7 @@ class _LegacyFuncAdapter:
     ) -> None:
         specs = [(gM, gN, pivots, case, color, adj)]
         self.rowechelon_paths.extend(
-            rowechelon_paths_from_legacy_tuples(self._matrices, specs, legacy_submatrix_names=True)
+            _rowechelon_paths_from_legacy_tuples(self._matrices, specs, legacy_submatrix_names=True)
         )
 
     def nm_text(self, txt_list: Any, color: str = "violet") -> None:

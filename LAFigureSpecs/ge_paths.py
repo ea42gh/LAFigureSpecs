@@ -10,9 +10,11 @@ boundaries that still accept old ``ref_path_list`` tuple inputs.
 from __future__ import annotations
 
 from matrixlayout.ge_paths import (
-    rowechelon_paths_from_legacy_tuples,
+    _rowechelon_paths_from_legacy_tuples,
     rowechelon_paths_from_specs,
 )
+
+rowechelon_paths_from_legacy_tuples = _rowechelon_paths_from_legacy_tuples
 
 __all__ = [
     "rowechelon_paths_from_legacy_tuples",
