@@ -1,6 +1,5 @@
 import re
 
-from LAFigureSpecs._ge_legacy_compat import _legacy_ref_path_list_to_rowechelon_paths
 from LAFigureSpecs.ge_paths import (
     rowechelon_paths_from_legacy_tuples,
     rowechelon_paths_from_specs,
@@ -35,24 +34,6 @@ def _assert_no_cell_anchor_path(path):
     assert ".east" not in path
     assert ".west" not in path
 
-
-def test_canonical_ref_path_helper_matches_legacy_wrapper():
-    matrices = [[None, [[1, 2, 4, 1], [0, "k", 8, "h"], [0, 0, 0, 0]]]]
-    ref_path_list = [
-        (0, 1, [(0, 0), (1, 1)], "hh", "red"),
-        (0, 1, [(0, 0), (1, 1)], "vh", "red"),
-        (0, 1, [(0, 0), (1, 1)], "vv", "red"),
-        (0, 1, [(0, 0), (1, 1)], "hv", "red"),
-    ]
-    assert rowechelon_paths_from_legacy_tuples(
-        matrices,
-        ref_path_list,
-        legacy_submatrix_names=True,
-    ) == _legacy_ref_path_list_to_rowechelon_paths(
-        matrices,
-        ref_path_list,
-        legacy_submatrix_names=True,
-    )
 
 
 def test_canonical_structured_spec_matches_legacy_tuple_spec():

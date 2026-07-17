@@ -329,18 +329,6 @@ def _name_specs_to_callouts(
     return out
 
 
-def _legacy_ref_path_list_to_rowechelon_paths(
-    matrices: Sequence[Sequence[Any]],
-    ref_path_list: Sequence[Any],
-    *,
-    legacy_submatrix_names: bool = True,
-) -> List[str]:
-    return rowechelon_paths_from_legacy_tuples(
-        matrices,
-        ref_path_list,
-        legacy_submatrix_names=legacy_submatrix_names,
-    )
-
 
 def _legacy_pivot_list_to_pivot_locs(
     matrices: Sequence[Sequence[Any]],
@@ -631,7 +619,7 @@ def _legacy_ref_paths_to_rowechelon_paths(
     if not ref_path_list:
         return []
     specs = ref_path_list if isinstance(ref_path_list, list) else [ref_path_list]
-    return _legacy_ref_path_list_to_rowechelon_paths(matrices, specs, legacy_submatrix_names=True)
+    return rowechelon_paths_from_legacy_tuples(matrices, specs, legacy_submatrix_names=True)
 
 
 def _array_name_callouts(
@@ -705,7 +693,7 @@ class _LegacyFuncAdapter:
     ) -> None:
         specs = [(gM, gN, pivots, case, color, adj)]
         self.rowechelon_paths.extend(
-            _legacy_ref_path_list_to_rowechelon_paths(self._matrices, specs, legacy_submatrix_names=True)
+            rowechelon_paths_from_legacy_tuples(self._matrices, specs, legacy_submatrix_names=True)
         )
 
     def nm_text(self, txt_list: Any, color: str = "violet") -> None:
