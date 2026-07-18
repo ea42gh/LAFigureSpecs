@@ -1,7 +1,7 @@
 import re
 
 from LAFigureSpecs.ge_paths import (
-    rowechelon_paths_from_legacy_tuples,
+    _rowechelon_paths_from_legacy_tuples,
     rowechelon_paths_from_specs,
 )
 
@@ -35,7 +35,6 @@ def _assert_no_cell_anchor_path(path):
     assert ".west" not in path
 
 
-
 def test_canonical_structured_spec_matches_legacy_tuple_spec():
     matrices = [[None, [[1, 2, 4, 1], [0, "k", 8, "h"], [0, 0, 0, 0]]]]
     structured = [
@@ -52,7 +51,7 @@ def test_canonical_structured_spec_matches_legacy_tuple_spec():
         matrices,
         structured,
         legacy_submatrix_names=True,
-    ) == rowechelon_paths_from_legacy_tuples(
+    ) == _rowechelon_paths_from_legacy_tuples(
         matrices,
         legacy,
         legacy_submatrix_names=True,
@@ -62,7 +61,7 @@ def test_canonical_structured_spec_matches_legacy_tuple_spec():
 def test_legacy_ref_paths_use_nicematrix_rule_coordinates():
     matrices = [[None, [[1, 2], [3, 4]]]]
     ref_path_list = [(0, 1, [(0, 0), (1, 1)], "hh")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     assert all("-|" in p for p in paths)
     assert all(not p.startswith(r"\tikz") for p in paths)
@@ -76,7 +75,7 @@ def test_ref_paths_interior_pivot_anchors_for_all_cases():
     pivots = [(0, 0), (1, 1), (2, 2)]
     for case in ("vv", "vh", "hv", "hh"):
         ref_path_list = [(0, 1, pivots, case)]
-        paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+        paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
         assert paths
         path = paths[0]
         assert "|-" not in path
@@ -89,12 +88,10 @@ def test_ref_paths_interior_pivot_anchors_for_all_cases():
 
 
 def test_ref_path_vh_uses_right_boundary_for_nonzero_columns():
-    matrices = [[None, [[1, 2, 3, 4, 5, 6],
-                        [7, 8, 9, 10, 11, 12],
-                        [13, 14, 15, 16, 17, 18]]]]
+    matrices = [[None, [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18]]]]
     pivots = [(0, 0), (1, 4), (2, 5)]
     ref_path_list = [(0, 1, pivots, "vh")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
     assert "|-" not in path
@@ -106,7 +103,7 @@ def test_ref_path_uses_row_col_projection_operator_order():
     matrices = [[None, [[1, 2, 3], [4, 5, 6]]]]
     pivots = [(0, 1), (1, 2)]
     ref_path_list = [(0, 1, pivots, "hh")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
     assert "|-" not in path
@@ -118,10 +115,8 @@ def test_ref_path_hh_traces_left_bottom_pivot_boundary():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     ref_path_list = [(0, 1, pivots, "hh", "red")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
-    assert paths == [
-        r"\draw[red] ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);"
-    ]
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    assert paths == [r"\draw[red] ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);"]
     _assert_manhattan_path(paths[0])
 
 
@@ -129,7 +124,7 @@ def test_ref_path_vh_traces_left_bottom_pivot_boundary():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     ref_path_list = [(0, 1, pivots, "vh", "red")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
         r"\draw[red] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);"
     ]
@@ -140,7 +135,7 @@ def test_ref_path_vv_traces_left_pivot_boundary_to_bottom():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     ref_path_list = [(0, 1, pivots, "vv", "red")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
         r"\draw[red] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (4-|5);"
     ]
@@ -157,7 +152,7 @@ def test_ref_paths_always_use_left_bottom_pivot_edges_for_all_cases():
         "hv": r"\draw[red] ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (4-|5);",
     }
     for case, path in expected.items():
-        paths = rowechelon_paths_from_legacy_tuples(
+        paths = _rowechelon_paths_from_legacy_tuples(
             matrices,
             [(0, 1, pivots, case, "red")],
             legacy_submatrix_names=True,
@@ -173,7 +168,7 @@ def test_ref_path_node_offsets_shift_old_staircase_nodes():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     ref_path_list = [(0, 1, pivots, "vh", "red", 0.1, 0.0, (0.2, -0.05))]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
         r"\draw[red] ($ (1-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|5) + (0.2,-0.05) $) -- ($ (3-|5) + (0.2,-0.05) $) -- ($ (3-|8) + (0.2,-0.05) $);"
     ]
@@ -185,12 +180,10 @@ def test_ref_path_vh_sequence_matches_expected_turns():
     # Expect: start at the top-left boundary of (0,0), go down, then
     # horizontal at pivot columns, and end at the matrix edge of the final
     # pivot row. Validate key boundary points appear.
-    matrices = [[None, [[1, 2, 3, 4, 5, 6],
-                        [7, 8, 9, 10, 11, 12],
-                        [13, 14, 15, 16, 17, 18]]]]
+    matrices = [[None, [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18]]]]
     pivots = [(0, 0), (1, 4), (2, 5)]
     ref_path_list = [(0, 1, pivots, "vh")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
     # Key projected points along the path (row,col in 1-based NiceArray terms).
@@ -206,14 +199,12 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     matrices = [[None, [[1, 2], [3, 4]]], [[[1, 0], [0, 1]], [[1, 2], [3, 4]]]]
     pivots = [(0, 0)]
     ref_path_list = [(0, 1, pivots, "vv")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths
     path = paths[0]
     # A single-pivot vertical cutoff is drawn on the left edge of the pivot
     # entry. The logical pivot column must not be shifted to the next rule.
-    assert paths == [
-        r"\draw[blue,line width=0.4mm] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (3-|A0x1-left) + (0.1,0) $);"
-    ]
+    assert paths == [r"\draw[blue,line width=0.4mm] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (3-|A0x1-left) + (0.1,0) $);"]
     _assert_manhattan_path(path)
 
 
@@ -221,7 +212,7 @@ def test_ref_path_vv_single_pivot_nonfirst_column_uses_column_left_edge():
     matrices = [[None, [[1, 2, 4, 1], [0, "k", 8, "h"], [0, 0, 0, 0]]]]
     pivots = [(0, 2)]
     ref_path_list = [(0, 1, pivots, "vv")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [r"\draw[blue,line width=0.4mm] (1-|6) -- (4-|6);"]
     _assert_manhattan_path(paths[0])
 
@@ -230,7 +221,7 @@ def test_ref_path_vv_single_matrix_first_column_uses_matrix_left_edge():
     matrices = [[[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]]]
     pivots = [(0, 0), (1, 1)]
     ref_path_list = [(0, 0, pivots, "vv")]
-    paths = rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
+    paths = _rowechelon_paths_from_legacy_tuples(matrices, ref_path_list, legacy_submatrix_names=True)
     assert paths == [
         r"\draw[blue,line width=0.4mm] ($ (1-|A0x0-left) + (0.1,0) $) -- ($ (2-|A0x0-left) + (0.1,0) $) -- (2-|2) -- (4-|2);"
     ]
@@ -257,7 +248,7 @@ def test_ref_path_matrix_edge_helper_anchors_stay_on_existing_nodes():
         [identity, augmented],
         [identity, augmented],
     ]
-    paths = rowechelon_paths_from_legacy_tuples(
+    paths = _rowechelon_paths_from_legacy_tuples(
         matrices,
         [(3, 1, [(0, 0), (1, 1), (2, 5)], "hh")],
         legacy_submatrix_names=True,

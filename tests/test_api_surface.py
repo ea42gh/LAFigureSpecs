@@ -59,6 +59,14 @@ def test_public_api_does_not_export_legacy_names():
     assert not hasattr(convenience_ge, "ge_stack_svg")
 
 
+def test_ge_paths_exports_only_canonical_helper():
+    import LAFigureSpecs.ge_paths as ge_paths
+
+    assert "rowechelon_paths_from_specs" in ge_paths.__all__
+    assert "rowechelon_paths_from_legacy_tuples" not in ge_paths.__all__
+    assert not hasattr(ge_paths, "rowechelon_paths_from_legacy_tuples")
+
+
 def test_canonical_names_point_to_existing_top_level_helpers():
     import LAFigureSpecs
 
