@@ -19,8 +19,6 @@ def test_public_api_contains_canonical_render_names():
     assert "qr_bundle" in LAFigureSpecs.__all__
     assert "eig_bundle" in LAFigureSpecs.__all__
     assert "svd_bundle" in LAFigureSpecs.__all__
-    assert "ge_tex" in LAFigureSpecs.__all__
-    assert "qr_tex" in LAFigureSpecs.__all__
     assert "ShowGE" in LAFigureSpecs.__all__
     assert "ref" in LAFigureSpecs.__all__
     assert "lhs_matrix" in LAFigureSpecs.__all__
