@@ -3,15 +3,13 @@ import numpy as np
 import pytest
 
 
-def test_ge_svg_supports_func_hook(monkeypatch):
+def test_ge_svg_rejects_removed_func_hook():
     from LAFigureSpecs.convenience_ge import ge_svg
-    from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    monkeypatch.setattr(ml_ge, "render_ge_svg", lambda **kwargs: "<svg/>")
 
-    assert ge_svg([[None, A]], func=lambda m: m) == "<svg/>"
-
+    with pytest.raises(TypeError, match="func=.*decorators"):
+        ge_svg([[None, A]], func=lambda m: m)
 
 def test_ge_svg_supports_backgrounds_and_comments():
     from LAFigureSpecs.convenience_ge import ge_svg
@@ -719,3 +717,5 @@ def test_ge_svg_rejects_removed_tex_hook_aliases(monkeypatch):
         assert "document_preamble" in msg
     else:
         raise AssertionError("expected removed GE TeX hook aliases to be rejected")
+
+

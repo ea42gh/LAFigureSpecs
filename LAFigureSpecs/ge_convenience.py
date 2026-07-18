@@ -638,7 +638,6 @@ def _ge_stack_svg(
     array_names: Optional[Any] = None,
     array_name_indices: bool = True,
     start_index: Optional[int] = 1,
-    func: Optional[Any] = None,
     fig_scale: Optional[Any] = None,
     outer_hspace_mm: int = 9,
     keep_file: Optional[str] = None,
@@ -651,6 +650,11 @@ def _ge_stack_svg(
     **render_opts: Any,
 ) -> str:
     """Render-only wrapper: render SVG from a precomputed GE matrix stack."""
+    if "func" in render_opts:
+        raise TypeError(
+            "Removed GE mutation hook: func=. Use decorators=, decorations=, callouts=, "
+            "text_annotations=, or rowechelon_paths= instead."
+        )
     if "specs" in render_opts:
         raise TypeError("Removed GE matrix-label alias: specs=. Use callouts= instead.")
     _reject_annotation_callout_alias(render_opts.get("annotations"))
@@ -713,7 +717,6 @@ def _ge_stack_svg(
         array_names=array_names,
         array_name_indices=array_name_indices,
         start_index=start_index,
-        func=func,
         decorations=decorations,
         block_align=block_align,
         block_valign=block_valign,
@@ -835,7 +838,6 @@ def _ge_stack_render_inputs(
     array_names: Optional[Any],
     array_name_indices: bool,
     start_index: Optional[int],
-    func: Optional[Any],
     decorations: Optional[Sequence[Any]],
     block_align: Optional[Any],
     block_valign: Optional[Any],
@@ -976,23 +978,6 @@ def _ge_stack_render_inputs(
         render_callouts = list(callouts) + generated_callouts
     else:
         render_callouts = callouts
-
-    if func is not None:
-        def _mark_medium_nodes() -> None:
-            nonlocal needs_medium_nodes
-            needs_medium_nodes = True
-
-        func(
-            _ge_compat._LegacyFuncAdapter(
-                matrices=matrices,
-                codebefore=render_codebefore,
-                text_annotations=render_text_annotations,
-                rowechelon_paths=render_rowechelon_paths,
-                comment_shift_x_mm=comment_shift_x_mm,
-                comment_shift_y_mm=comment_shift_y_mm,
-                mark_medium_nodes=_mark_medium_nodes,
-            )
-        )
 
     return {
         "pivot_locs": render_pivot_locs,
@@ -1324,3 +1309,5 @@ def ge_svg(
         render_opts=render_opts,
     )
     return render_ge_svg(**spec, **opts)
+
+
