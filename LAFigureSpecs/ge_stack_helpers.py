@@ -1,7 +1,7 @@
-"""Legacy GE layout compatibility helpers.
+"""GE stack layout helpers for Julia-friendly wrapper inputs.
 
-These helpers preserve old GE callback and decoration
-behavior while the public wrappers migrate toward typed matrixlayout specs.
+These helpers translate high-level stack selectors, labels, and artifact
+preservation options into canonical matrixlayout renderer inputs.
 """
 
 from __future__ import annotations
@@ -327,7 +327,7 @@ def _name_specs_to_callouts(
 
 
 
-def _legacy_pivot_list_to_pivot_locs(
+def _pivot_selectors_to_pivot_locs(
     matrices: Sequence[Sequence[Any]],
     pivot_list: Sequence[Any],
     *,
@@ -387,7 +387,7 @@ def _resolve_output_targets(
     return str(render_dir), output_dir, resolved_output_stem
 
 
-def _legacy_find_artifact_source_base(
+def _find_artifact_source_base(
     output_dir: Any,
     output_stem: str,
     artifact_exts: Sequence[str],
@@ -420,7 +420,7 @@ def _preserve_output_artifacts(
     from pathlib import Path
 
     artifact_exts = (".svg", ".tex", ".pdf", ".dvi", ".xdv", ".log", ".aux", ".fls", ".fdb_latexmk", ".stdout.txt", ".stderr.txt")
-    source_base = _legacy_find_artifact_source_base(render_dir, output_stem, artifact_exts)
+    source_base = _find_artifact_source_base(render_dir, output_stem, artifact_exts)
 
     if output_dir:
         import shutil

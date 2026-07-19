@@ -22,7 +22,7 @@ from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify, make_decorator
 from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
 from .ge_paths import rowechelon_paths_from_specs
-from . import _ge_legacy_compat as _ge_compat
+from . import ge_stack_helpers as _ge_helpers
 
 
 if TYPE_CHECKING:
@@ -73,7 +73,7 @@ def _variable_summary_label_rows(
     variable_colors: Sequence[str],
     rhs_status: Optional[Sequence[Any]] = None,
 ) -> List[Dict[str, Any]]:
-    _, block_widths, row_starts, _ = _ge_compat._grid_offsets(matrices, index_base=1)
+    _, block_widths, row_starts, _ = _ge_helpers._grid_offsets(matrices, index_base=1)
     if not (block_widths and row_starts):
         return []
     n_block_rows = len(matrices or [])
@@ -129,7 +129,7 @@ def _normalize_stack_text_annotations(
     if not text_annotations:
         return []
 
-    _, block_widths, row_starts, col_starts = _ge_compat._grid_offsets(matrices, index_base=1)
+    _, block_widths, row_starts, col_starts = _ge_helpers._grid_offsets(matrices, index_base=1)
 
     def _labels_row_count(labels: Any) -> int:
         if labels is None:
@@ -345,15 +345,15 @@ def _build_ge_bundle(
             lhs, rhs_list = "E", ["A"]
         rhs_list = [str(x) for x in rhs_list]
         if not explicit_names:
-            rhs_list = _ge_compat._coerce_rhs_labels(rhs_list, tr.n_rhs)
-        name_specs = _ge_compat._array_name_specs(
+            rhs_list = _ge_helpers._coerce_rhs_labels(rhs_list, tr.n_rhs)
+        name_specs = _ge_helpers._array_name_specs(
             len(layers["matrices"]),
             str(lhs),
             rhs_list,
             start_index=index_base,
             array_name_indices=array_name_indices,
         )
-        extra_callouts = _ge_compat._name_specs_to_callouts(
+        extra_callouts = _ge_helpers._name_specs_to_callouts(
             layers["matrices"],
             name_specs,
             color="blue",
@@ -420,7 +420,7 @@ def _build_ge_bundle(
         for br in range(n_block_rows):
             row = layers["matrices"][br] if br < n_block_rows else []
             mat = row[last_col] if 0 <= last_col < len(row) else None
-            _, w = _ge_compat._matrix_shape(mat)
+            _, w = _ge_helpers._matrix_shape(mat)
             split = w - nrhs
             if w <= 0 or split <= 0 or split >= w:
                 continue
@@ -673,7 +673,7 @@ def _ge_stack_svg(
     ):
         matrices = [[None, matrices]]
 
-    render_dir, preserve_output_dir, output_stem = _ge_compat._resolve_output_targets(
+    render_dir, preserve_output_dir, output_stem = _ge_helpers._resolve_output_targets(
         keep_file=keep_file,
         output_dir=output_dir,
         output_stem=output_stem,
@@ -734,7 +734,7 @@ def _ge_stack_svg(
         **render_inputs,
         **render_opts,
     )
-    _ge_compat._preserve_output_artifacts(
+    _ge_helpers._preserve_output_artifacts(
         keep_file=keep_file,
         render_dir=render_dir,
         output_dir=preserve_output_dir,
@@ -764,7 +764,7 @@ def _normalize_stack_pivot_locs(
         entries = item.get("entries") or []
         style = str(item.get("style", default_style))
         out.extend(
-            _ge_compat._legacy_pivot_list_to_pivot_locs(
+            _ge_helpers._pivot_selectors_to_pivot_locs(
                 matrices,
                 [(grid, entries)],
                 index_base=1,
@@ -883,7 +883,7 @@ def _ge_stack_render_inputs(
         for br in range(n_block_rows):
             row = matrices[br] if br < n_block_rows else []
             mat = row[last_col] if 0 <= last_col < len(row) else None
-            _, w = _ge_compat._matrix_shape(mat)
+            _, w = _ge_helpers._matrix_shape(mat)
             if w <= 0:
                 continue
             if nrhs_splits is not None:
@@ -913,7 +913,7 @@ def _ge_stack_render_inputs(
     if rowechelon_paths:
         render_rowechelon_paths.extend(list(rowechelon_paths))
 
-    generated_callouts = _ge_compat._array_name_callouts(
+    generated_callouts = _ge_helpers._array_name_callouts(
         matrices,
         array_names=array_names,
         n_rhs=n_rhs,

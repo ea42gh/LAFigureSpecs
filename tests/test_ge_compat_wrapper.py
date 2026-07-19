@@ -1,8 +1,8 @@
 import pytest
 
 
-def test_legacy_pivot_list_to_pivot_locs():
-    from LAFigureSpecs._ge_legacy_compat import _legacy_pivot_list_to_pivot_locs
+def test_pivot_selectors_to_pivot_locs():
+    from LAFigureSpecs.ge_stack_helpers import _pivot_selectors_to_pivot_locs
     import sympy as sym
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -14,7 +14,7 @@ def test_legacy_pivot_list_to_pivot_locs():
         ((1, 1), [(0, 0), (1, 1)]),
     ]
 
-    pivot_locs = _legacy_pivot_list_to_pivot_locs(matrices, pivot_list, index_base=1, pivot_style="draw=red")
+    pivot_locs = _pivot_selectors_to_pivot_locs(matrices, pivot_list, index_base=1, pivot_style="draw=red")
     assert pivot_locs == [
         ("(3-3)(3-3)", "draw=red"),
         ("(4-4)(4-4)", "draw=red"),

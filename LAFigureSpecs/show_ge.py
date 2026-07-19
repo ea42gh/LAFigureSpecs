@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 from .ge import Pivoting, ge_trace, trace_to_layer_matrices
 from .backsub import backsubstitution_tex, linear_system_tex, standard_solution_tex
 from .ge_convenience import ge_svg
-from ._ge_legacy_compat import _name_specs_to_callouts
+from .ge_stack_helpers import _name_specs_to_callouts
 from .ge_paths import rowechelon_paths_from_specs
 from ._sympy_utils import to_sympy_col, to_sympy_matrix
 
