@@ -6,12 +6,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 from .ge import Pivoting, ge_trace, trace_to_layer_matrices
 from .backsub import backsubstitution_tex, linear_system_tex, standard_solution_tex
 from .ge_convenience import ge_svg
-from ._ge_legacy_compat import (
-    _legacy_bg_for_entries_to_codebefore,
-    _legacy_pivot_list_to_pivot_locs,
-    _legacy_ref_paths_to_rowechelon_paths,
-    _name_specs_to_callouts,
-)
+from ._ge_legacy_compat import _name_specs_to_callouts
 from .ge_paths import rowechelon_paths_from_specs
 from ._sympy_utils import to_sympy_col, to_sympy_matrix
 
@@ -62,20 +57,15 @@ def _decorated_stack_render_kwargs(
 ) -> Dict[str, Any]:
     """Build canonical stack-render kwargs from ``decorate_ge`` output."""
 
-    pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
     pivot_locs = None
-    if show_pivots and decor.get("pivot_list"):
-        pivot_locs = _legacy_pivot_list_to_pivot_locs(
-            matrices,
-            decor.get("pivot_list") or [],
-            index_base=1,
-            pivot_style=pivot_style,
-        )
+    if show_pivots and decor.get("pivot_selectors"):
+        pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
+        pivot_locs = [
+            {"grid": tuple(spec["grid"]), "entries": list(spec["entries"]), "style": pivot_style}
+            for spec in decor.get("pivot_selectors") or []
+        ]
 
     decorations = list(decor.get("decorations") or [])
-    bg_specs = decor.get("bg_list") or []
-    codebefore = _legacy_bg_for_entries_to_codebefore(matrices, bg_specs) if bg_specs and not decorations else []
-
     rowechelon_specs = list(decor.get("rowechelon_paths") or [])
     rowechelon_paths = (
         rowechelon_paths_from_specs(
@@ -86,13 +76,10 @@ def _decorated_stack_render_kwargs(
         if rowechelon_specs
         else []
     )
-    ref_paths = decor.get("ref_path_list") or decor.get("path_list") or []
-    if not rowechelon_paths and ref_paths:
-        rowechelon_paths = _legacy_ref_paths_to_rowechelon_paths(matrices, ref_paths)
 
     return {
         "pivot_locs": pivot_locs,
-        "codebefore": codebefore,
+        "codebefore": [],
         "rowechelon_paths": rowechelon_paths,
         "decorations": decorations or None,
     }
@@ -380,9 +367,9 @@ class ShowGE:
             decor = decorate_ge(trace, index_base=self.index_base)
             var_summary = self.variable_summary
             if var_summary is None:
-                var_summary = decor.get("basic_var")
+                var_summary = decor.get("variable_types")
             elif isinstance(var_summary, bool):
-                var_summary = decor.get("basic_var") if var_summary else None
+                var_summary = decor.get("variable_types") if var_summary else None
             callouts = self.callouts
             if callouts is None and not isinstance(array_names, dict):
                 try:
@@ -431,9 +418,9 @@ class ShowGE:
                 decor = decorate_ge(trace, index_base=self.index_base)
                 var_summary = self.variable_summary
                 if var_summary is None:
-                    var_summary = decor.get("basic_var")
+                    var_summary = decor.get("variable_types")
                 elif isinstance(var_summary, bool):
-                    var_summary = decor.get("basic_var") if var_summary else None
+                    var_summary = decor.get("variable_types") if var_summary else None
                 svg = _ge_stack_svg(
                     mats,
                     n_rhs=layers.get("n_rhs") or 0,

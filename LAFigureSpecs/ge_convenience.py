@@ -19,9 +19,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Sequence, Tuple, cast
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
-from .formatting import latexify
+from .formatting import latexify, make_decorator
 from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
-from .ge_paths import _rowechelon_paths_from_legacy_tuples, rowechelon_paths_from_specs
+from .ge_paths import rowechelon_paths_from_specs
 from . import _ge_legacy_compat as _ge_compat
 
 
@@ -371,8 +371,7 @@ def _build_ge_bundle(
     elif isinstance(callouts, list) and extra_callouts:
         callouts = list(callouts) + extra_callouts
 
-    bg_list = decor.get("bg_list") or []
-    codebefore: List[str] = _ge_compat._legacy_bg_list_to_codebefore(layers["matrices"], bg_list) if bg_list else []
+    codebefore: List[str] = []
 
     rowechelon_path_specs = list(decor.get("rowechelon_paths") or [])
     rowechelon_paths = (
@@ -384,20 +383,14 @@ def _build_ge_bundle(
         if rowechelon_path_specs
         else []
     )
-    ref_path_list = decor.get("ref_path_list") or []
-    if not rowechelon_paths and ref_path_list:
-        rowechelon_paths = _rowechelon_paths_from_legacy_tuples(
-            layers["matrices"],
-            ref_path_list,
-            legacy_submatrix_names=False,
-        )
 
     pivot_decorators: List[Dict[str, Any]] = []
-    if pivots_enabled and decor.get("pivot_list"):
-        pivot_decorators = _ge_compat._pivot_list_to_decorators(
-            decor.get("pivot_list") or [],
-            pivot_text_color=pivot_text_color,
-        )
+    if pivots_enabled and decor.get("pivot_selectors"):
+        dec = make_decorator(boxed=True, bf=True, text_color=pivot_text_color)
+        pivot_decorators = [
+            {"grid": tuple(spec["grid"]), "entries": list(spec["entries"]), "decorator": dec}
+            for spec in decor.get("pivot_selectors") or []
+        ]
 
     if pivot_decorators:
         if decorators is None:
@@ -409,7 +402,7 @@ def _build_ge_bundle(
     label_rows: Optional[List[Dict[str, Any]]] = None
     eff_variable_summary = variable_summary
     if eff_variable_summary is None:
-        eff_variable_summary = decor.get("variable_types") or decor.get("variable_summary")
+        eff_variable_summary = decor.get("variable_types")
     if eff_variable_summary:
         label_rows = _variable_summary_label_rows(
             layers["matrices"],
@@ -418,7 +411,7 @@ def _build_ge_bundle(
             rhs_status=rhs_status,
         )
 
-    decorations: List[Dict[str, Any]] = []
+    decorations: List[Dict[str, Any]] = list(decor.get("decorations") or [])
     nrhs = int(tr.n_rhs or 0)
     if nrhs > 0:
         n_block_rows = len(layers["matrices"] or [])

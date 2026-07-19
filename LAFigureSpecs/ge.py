@@ -562,10 +562,8 @@ def decorate_ge(
         - ``variable_types``: list of booleans indicating pivot columns for each
           coefficient column (RHS columns excluded).
 
-        Canonical renderer-facing keys include ``decorations`` and
-        ``rowechelon_paths``. Additional compatibility keys mirror the Julia
-        ``decorate_ge`` helper: ``pivot_list``, ``bg_list``, ``path_list`` (aka
-        ``ref_path_list``), and ``variable_summary``.
+        Canonical renderer-facing keys include ``pivot_selectors``,
+        ``decorations``, and ``rowechelon_paths``.
     """
 
     # Number of coefficient columns. Prefer the recorded shape metadata.
@@ -715,8 +713,6 @@ def decorate_ge(
     bg_list = [bg_dict[k] for k in sorted(bg_dict.keys())]
     path_list = [path_dict[k] for k in sorted(path_dict.keys())]
 
-    variable_summary: List[bool] = list(variable_types)
-
     def _append_bg_spec(spec: Any, out: List[Dict[str, Any]]) -> None:
         if not isinstance(spec, (list, tuple)):
             return
@@ -762,16 +758,13 @@ def decorate_ge(
             "color": str(spec[4]) if len(spec) > 4 else path_color,
         }
 
+    pivot_selectors = [{"grid": tuple(spec[0]), "entries": list(spec[1])} for spec in pivot_list]
     rowechelon_paths = [_path_spec_to_rowechelon(spec) for spec in (path_list or ref_path_list)]
 
     return {
         "pivot_locs": pivot_locs,
         "variable_types": variable_types,
-        "pivot_list": pivot_list,
-        "bg_list": bg_list,
-        "path_list": path_list,
-        "ref_path_list": path_list or ref_path_list,
-        "variable_summary": variable_summary,
+        "pivot_selectors": pivot_selectors,
         "decorations": decorations,
         "rowechelon_paths": rowechelon_paths,
         # Retain trace metadata for downstream consumers.

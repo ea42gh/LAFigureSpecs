@@ -12,7 +12,6 @@ def test_decorate_ge_canonical_pivots_and_variable_types():
     decor = ge_mod.decorate_ge(tr, index_base=1)
 
     assert decor["variable_types"] == [True, True]
-    assert decor["variable_summary"] == [True, True]
     assert decor["pivot_locs"] == [
         ("(1-1)(1-1)", ""),
         ("(2-2)(2-2)", ""),
@@ -22,7 +21,7 @@ def test_decorate_ge_canonical_pivots_and_variable_types():
     assert decor["callouts"] == []
 
 
-def test_decorate_ge_retains_julia_compatibility_lists():
+def test_decorate_ge_returns_canonical_render_specs_only():
     import importlib
     ge_mod = importlib.import_module("LAFigureSpecs.ge")
 
@@ -31,19 +30,11 @@ def test_decorate_ge_retains_julia_compatibility_lists():
 
     decor = ge_mod.decorate_ge(tr, index_base=1)
 
-    assert decor["pivot_list"][-1][1] == [(0, 0), (1, 1)]
-    assert decor["bg_list"]
+    assert decor["pivot_selectors"][-1] == {"grid": (2, 1), "entries": [(0, 0), (1, 1)]}
     assert decor["decorations"]
-    assert decor["ref_path_list"] == decor["path_list"]
-    assert decor["rowechelon_paths"] == [
-        {
-            "grid": (spec[0], spec[1]),
-            "pivots": spec[2],
-            "case": spec[3],
-            "color": spec[4],
-        }
-        for spec in decor["ref_path_list"]
-    ]
+    assert decor["rowechelon_paths"]
+    for removed in ("pivot_list", "bg_list", "path_list", "ref_path_list", "variable_summary"):
+        assert removed not in decor
 
 
 def test_decorate_ge_excludes_rhs_from_variable_types():

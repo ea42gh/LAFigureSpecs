@@ -28,7 +28,8 @@ def test_ge_spec_and_tex_smoke():
     assert not any("E_{" in label for label in labels)
 
     spec = LAFigureSpecs.ge_spec(A, show_pivots=True)
-    assert spec.get("codebefore")
+    assert spec.get("decorators")
+    assert spec.get("decorations")
     assert spec.get("rowechelon_paths")
 
 
