@@ -11,33 +11,22 @@ def test_ge_svg_rejects_removed_func_hook():
     with pytest.raises(TypeError, match="func=.*decorators"):
         ge_svg([[None, A]], func=lambda m: m)
 
-def test_ge_svg_supports_backgrounds_and_comments():
+@pytest.mark.parametrize(
+    ("old_keyword", "value"),
+    [
+        ("pivot_list", [((0, 1), [(0, 0)])]),
+        ("bg_for_entries", [(0, 1, [(0, 0)], "red!15", 0)]),
+        ("ref_path_list", [(0, 1, [(0, 0)], "vv")]),
+        ("comment_list", ["note"]),
+    ],
+)
+def test_ge_svg_rejects_removed_stack_keywords(old_keyword, value):
     from LAFigureSpecs.convenience_ge import ge_svg
-    from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
-    matrices = [[None, A]]
 
-    captured = {}
-
-    def fake_svg(**kwargs):
-        captured.update(kwargs)
-        return "<svg/>"
-
-    ge_svg_orig = ml_ge.render_ge_svg
-    ml_ge.render_ge_svg = fake_svg
-    try:
-        out = ge_svg(
-            matrices,
-            bg_for_entries=[(0, 1, [(0, 0)], "red!15", 0)],
-            comment_list=["note"],
-        )
-    finally:
-        ml_ge.render_ge_svg = ge_svg_orig
-
-    assert out == "<svg/>"
-    assert captured["codebefore"]
-    assert captured["text_annotations"]
+    with pytest.raises(TypeError, match=old_keyword):
+        ge_svg([[None, A]], **{old_keyword: value})
 
 
 def test_ge_svg_forwards_structured_decorations(monkeypatch):

@@ -81,10 +81,6 @@ GE stack parameters accepted by `ge_svg(matrices, ...)` (subset shown):
 | `text_annotations` | list | None | Canonical text annotation specs. |
 | `label_rows` | list | None | Canonical label-row specs. |
 | `rowechelon_paths` | list | None | Canonical row-echelon path specs or raw snippets. |
-| `pivot_list` | list | None | Compatibility pivot specs converted to renderer decorators. |
-| `bg_for_entries` | list | None | Compatibility background highlights converted to renderer code. |
-| `ref_path_list` | list | None | Compatibility row‑echelon paths converted to renderer paths. |
-| `comment_list` | list | None | Compatibility right-side comments converted to text annotations. |
 | `callouts` | list | None | Explicit matrix arrow labels. |
 | `array_names` | list/bool | None | Shorthand matrix labels converted to callouts. |
 | `array_name_indices` | bool | True | Add step indices to shorthand `array_names` labels. |
@@ -101,11 +97,10 @@ lines, for example:
 Right-side stack comments can be expressed as structured `text_annotations`:
 `{"grid_row": 0, "text": "\\qquad note", "color": "violet", "shift_mm": (50, 0)}`.
 
-The old `pivot_list`, `bg_for_entries`, `ref_path_list`, and `comment_list`
-inputs are compatibility-only fallbacks.
-New matrixlayout-facing specs should use canonical renderer fields such as
-`decorators`, `decorations`, `text_annotations`, `rowechelon_paths`, and
-`callouts`.
+The old public stack keywords `pivot_list`, `bg_for_entries`, `ref_path_list`,
+and `comment_list` have been removed from `ge_svg(...)`. Use canonical renderer
+fields such as `pivot_locs`, `decorations`, `text_annotations`,
+`rowechelon_paths`, and `callouts`.
 
 Bundle return contract (`ge_bundle`):
 

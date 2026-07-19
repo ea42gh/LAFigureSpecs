@@ -619,12 +619,8 @@ def _ge_stack_svg(
     *,
     n_rhs: Any = _UNSET,
     formatter: Any = latexify,
-    pivot_list: Optional[Sequence[Any]] = None,
-    bg_for_entries: Optional[Any] = None,
     variable_colors: Sequence[str] = ("red", "black"),
     pivot_text_color: str = "red",
-    ref_path_list: Optional[Any] = None,
-    comment_list: Optional[Any] = None,
     comment_shift_x_mm: float = 50.0,
     comment_shift_y_mm: float = 0.0,
     variable_summary: Optional[Any] = None,
@@ -657,6 +653,13 @@ def _ge_stack_svg(
         )
     if "specs" in render_opts:
         raise TypeError("Removed GE matrix-label alias: specs=. Use callouts= instead.")
+    removed_stack_keywords = {"pivot_list", "bg_for_entries", "ref_path_list", "comment_list"} & set(render_opts)
+    if removed_stack_keywords:
+        names = ", ".join(sorted(removed_stack_keywords))
+        raise TypeError(
+            f"Removed GE stack keyword(s): {names}. "
+            "Use pivot_locs=, decorations=, rowechelon_paths=, or text_annotations= instead."
+        )
     _reject_annotation_callout_alias(render_opts.get("annotations"))
     removed_tex_hooks = {"preamble", "extension"} & set(render_opts)
     if removed_tex_hooks:
@@ -698,12 +701,8 @@ def _ge_stack_svg(
     render_inputs = _ge_stack_render_inputs(
         matrices,
         n_rhs=n_rhs,
-        pivot_list=pivot_list,
-        bg_for_entries=bg_for_entries,
         variable_colors=variable_colors,
         pivot_text_color=pivot_text_color,
-        ref_path_list=ref_path_list,
-        comment_list=comment_list,
         comment_shift_x_mm=comment_shift_x_mm,
         comment_shift_y_mm=comment_shift_y_mm,
         variable_summary=variable_summary,
@@ -819,12 +818,8 @@ def _ge_stack_render_inputs(
     matrices: Sequence[Sequence[Any]],
     *,
     n_rhs: Any,
-    pivot_list: Optional[Sequence[Any]],
-    bg_for_entries: Optional[Any],
     variable_colors: Sequence[str],
     pivot_text_color: str,
-    ref_path_list: Optional[Any],
-    comment_list: Optional[Any],
     comment_shift_x_mm: float,
     comment_shift_y_mm: float,
     variable_summary: Optional[Any],
@@ -844,42 +839,12 @@ def _ge_stack_render_inputs(
 ) -> Dict[str, Any]:
     """Assemble canonical matrixlayout kwargs for a GE matrix stack.
 
-    Canonical stack inputs are forwarded directly. Legacy inputs are translated
-    here as compatibility fallbacks so the renderer call site only sees the
-    current matrixlayout field names.
+    Canonical stack inputs are forwarded directly so the renderer call site only
+    sees current matrixlayout field names.
     """
 
-    pivot_style = f"draw={pivot_text_color}, inner sep=2pt, outer sep=0pt" if pivot_text_color else ""
-    legacy_pivot_locs = (
-        _ge_compat._legacy_pivot_list_to_pivot_locs(
-            matrices,
-            pivot_list,
-            index_base=1,
-            pivot_style=pivot_style,
-            block_align=block_align,
-            block_valign=block_valign,
-        )
-        if pivot_list
-        else None
-    )
-    render_pivot_locs: Optional[List[Any]] = None
-    if pivot_locs or legacy_pivot_locs:
-        render_pivot_locs = []
-        if pivot_locs:
-            render_pivot_locs.extend(list(pivot_locs))
-        if legacy_pivot_locs:
-            render_pivot_locs.extend(list(legacy_pivot_locs))
-
-    legacy_codebefore = _ge_compat._legacy_bg_for_entries_to_codebefore(
-        matrices,
-        bg_for_entries,
-        block_align=block_align,
-        block_valign=block_valign,
-    )
-    render_codebefore: List[str] = []
-    if codebefore:
-        render_codebefore.extend(list(codebefore))
-    render_codebefore.extend(legacy_codebefore)
+    render_pivot_locs: Optional[List[Any]] = list(pivot_locs) if pivot_locs else None
+    render_codebefore: List[str] = list(codebefore) if codebefore else []
     needs_medium_nodes = bool(render_codebefore)
 
     render_label_rows: Optional[List[Any]] = list(label_rows) if label_rows else None
@@ -895,13 +860,6 @@ def _ge_stack_render_inputs(
         else:
             render_label_rows.extend(summary_label_rows)
 
-    legacy_text_annotations = _ge_compat._legacy_comment_list_to_text_annotations(
-        matrices,
-        comment_list,
-        comment_shift_x_mm=comment_shift_x_mm,
-        comment_shift_y_mm=comment_shift_y_mm,
-        color="violet",
-    )
     render_text_annotations: List[Any] = []
     if text_annotations:
         render_text_annotations.extend(
@@ -913,7 +871,6 @@ def _ge_stack_render_inputs(
                 label_rows=render_label_rows,
             )
         )
-    render_text_annotations.extend(legacy_text_annotations)
 
     generated_decorations: List[Dict[str, Any]] = []
     nrhs_total: int
@@ -959,11 +916,9 @@ def _ge_stack_render_inputs(
         render_decorations.extend(list(decorations))
     render_decorations.extend(generated_decorations)
 
-    legacy_rowechelon_paths: List[str] = _ge_compat._legacy_ref_paths_to_rowechelon_paths(matrices, ref_path_list)
     render_rowechelon_paths: List[str] = []
     if rowechelon_paths:
         render_rowechelon_paths.extend(list(rowechelon_paths))
-    render_rowechelon_paths.extend(legacy_rowechelon_paths)
 
     generated_callouts = _ge_compat._array_name_callouts(
         matrices,
