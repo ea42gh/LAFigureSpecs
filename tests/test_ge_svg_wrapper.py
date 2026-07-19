@@ -708,3 +708,45 @@ def test_ge_svg_rejects_removed_tex_hook_aliases(monkeypatch):
         raise AssertionError("expected removed GE TeX hook aliases to be rejected")
 
 
+
+
+def test_ge_svg_generates_n_rhs_separator_decorations(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_svg
+    from matrixlayout import ge as ml_ge
+
+    captured = {}
+
+    def fake_render_ge_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_render_ge_svg)
+
+    matrices = [
+        [None, [[1, 2], [3, 4]]],
+        [[[1, 0], [0, 1]], [[5, 6], [7, 8]]],
+    ]
+    assert ge_svg(matrices, n_rhs=1, variable_summary=[True, False]) == "<svg/>"
+
+    assert captured.get("format_nrhs") is False
+    assert captured.get("decorations") == [{"grid": (0, 1), "vlines": 1}, {"grid": (1, 1), "vlines": 1}]
+
+
+def test_ge_svg_generates_n_rhs_list_separator_decorations(monkeypatch):
+    from LAFigureSpecs.convenience_ge import ge_svg
+    from matrixlayout import ge as ml_ge
+
+    captured = {}
+
+    def fake_render_ge_svg(**kwargs):
+        captured.update(kwargs)
+        return "<svg/>"
+
+    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_render_ge_svg)
+
+    matrices = [
+        [None, [[1, 2, 3, 4, 5, 6, 7, 8]]],
+    ]
+    assert ge_svg(matrices, n_rhs=[2, 3, 1], variable_summary=[True, False, False, False, False]) == "<svg/>"
+
+    assert captured.get("decorations") == [{"grid": (0, 1), "vlines": [2, 4, 7]}]

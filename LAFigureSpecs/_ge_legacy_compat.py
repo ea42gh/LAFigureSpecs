@@ -6,13 +6,10 @@ behavior while the public wrappers migrate toward typed matrixlayout specs.
 
 from __future__ import annotations
 
-import shutil
 import tempfile
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
-from .formatting import make_decorator
-from .ge_paths import _rowechelon_paths_from_legacy_tuples
 
 
 def _matrix_shape(mat: Any) -> Tuple[int, int]:
@@ -368,108 +365,6 @@ def _legacy_pivot_list_to_pivot_locs(
     return out
 
 
-def _pivot_list_to_decorators(
-    pivot_list: Sequence[Any],
-    *,
-    pivot_text_color: str = "red",
-) -> List[Dict[str, Any]]:
-    decorators: List[Dict[str, Any]] = []
-    dec = make_decorator(boxed=True, bf=True, text_color=pivot_text_color)
-    for spec in pivot_list:
-        if not spec or len(spec) < 2:
-            continue
-        grid, pivots = spec[0], spec[1]
-        if not isinstance(grid, (list, tuple)) or len(grid) != 2:
-            continue
-        gM, gN = int(grid[0]), int(grid[1])
-        if not isinstance(pivots, (list, tuple)):
-            continue
-        decorators.append({"grid": (gM, gN), "entries": list(pivots), "decorator": dec})
-    return decorators
-
-
-def _legacy_bg_list_to_codebefore(
-    matrices: Sequence[Sequence[Any]],
-    bg_list: Sequence[Any],
-    *,
-    block_align: Optional[str] = None,
-    block_valign: Optional[str] = None,
-) -> List[str]:
-    codebefore: List[str] = []
-
-    def _rule_coord(row: int, col: int) -> str:
-        return f"({row}-|{col})"
-
-    def _medium_coord(row: int, col: int) -> str:
-        return f"({row}-{col}-medium)"
-
-    def _emit_spec(spec: Sequence[Any]) -> None:
-        if not spec or len(spec) < 4:
-            return
-        gM, gN = int(spec[0]), int(spec[1])
-        entries = spec[2]
-        color = spec[3]
-        pt = spec[4] if len(spec) > 4 else 0
-        if not isinstance(entries, (list, tuple)):
-            entries = [entries]
-        for entry in entries:
-            cmd_1 = rf"\tikz \node [fill={color}, inner sep = {pt}pt, fit = "
-            if isinstance(entry, (list, tuple)) and len(entry) == 2 and all(isinstance(x, (list, tuple)) for x in entry):
-                (i0, j0), (i1, j1) = entry
-                c0 = _grid_cell_coord(
-                    matrices,
-                    gM=gM,
-                    gN=gN,
-                    i=int(i0),
-                    j=int(j0),
-                    index_base=1,
-                    block_align=block_align,
-                    block_valign=block_valign,
-                )
-                c1 = _grid_cell_coord(
-                    matrices,
-                    gM=gM,
-                    gN=gN,
-                    i=int(i1),
-                    j=int(j1),
-                    index_base=1,
-                    block_align=block_align,
-                    block_valign=block_valign,
-                )
-                r0, c0_idx = (int(part) for part in c0.strip("()").split("-"))
-                r1, c1_idx = (int(part) for part in c1.strip("()").split("-"))
-                if r0 == r1 and c0_idx == c1_idx:
-                    cmd_2 = _medium_coord(r0, c0_idx)
-                elif c0_idx == c1_idx:
-                    cmd_2 = f"{_medium_coord(r0, c0_idx)} {_medium_coord(r1, c1_idx)}"
-                else:
-                    cmd_2 = f"{_rule_coord(r0, c0_idx)} {_rule_coord(r1 + 1, c1_idx + 1)}"
-            else:
-                i0, j0 = entry
-                c0 = _grid_cell_coord(
-                    matrices,
-                    gM=gM,
-                    gN=gN,
-                    i=int(i0),
-                    j=int(j0),
-                    index_base=1,
-                    block_align=block_align,
-                    block_valign=block_valign,
-                )
-                r0, c0_idx = (int(part) for part in c0.strip("()").split("-"))
-                cmd_2 = _medium_coord(r0, c0_idx)
-            codebefore.append(cmd_1 + cmd_2 + " ] {} ;")
-
-    for spec in bg_list:
-        if isinstance(spec, list) and spec and all(isinstance(elem, list) for elem in spec):
-            for s in spec:
-                _emit_spec(s)
-        else:
-            _emit_spec(spec)
-    return codebefore
-
-
-
 def _resolve_output_targets(
     *,
     keep_file: Optional[str],
@@ -528,6 +423,8 @@ def _preserve_output_artifacts(
     source_base = _legacy_find_artifact_source_base(render_dir, output_stem, artifact_exts)
 
     if output_dir:
+        import shutil
+
         output_target_dir = Path(str(output_dir)).expanduser()
         output_target_dir.mkdir(parents=True, exist_ok=True)
         for ext in artifact_exts:
@@ -550,76 +447,6 @@ def _preserve_output_artifacts(
         src = source_base.with_suffix(ext)
         if src.exists():
             shutil.copy2(src, target_base.with_suffix(ext))
-
-
-def _normalize_legacy_bg_specs(bg_for_entries: Any) -> List[Any]:
-    if bg_for_entries is None:
-        return []
-    specs = bg_for_entries
-    if isinstance(specs, list) and specs and all(isinstance(elem, list) for elem in specs):
-        if len(specs) == 5 and not any(isinstance(e, list) for e in specs[0:2]):
-            return [specs]
-        return specs
-    if isinstance(specs, list):
-        return specs
-    return [specs]
-
-
-def _legacy_bg_for_entries_to_codebefore(
-    matrices: Sequence[Sequence[Any]],
-    bg_for_entries: Any,
-    *,
-    block_align: Optional[str] = None,
-    block_valign: Optional[str] = None,
-) -> List[str]:
-    specs = _normalize_legacy_bg_specs(bg_for_entries)
-    if not specs:
-        return []
-    return _legacy_bg_list_to_codebefore(
-        matrices,
-        specs,
-        block_align=block_align,
-        block_valign=block_valign,
-    )
-
-
-def _legacy_comment_list_to_text_annotations(
-    matrices: Sequence[Sequence[Any]],
-    comment_list: Optional[Any],
-    *,
-    comment_shift_x_mm: float,
-    comment_shift_y_mm: float,
-    color: str,
-) -> List[Tuple[str, str, str]]:
-    if not comment_list:
-        return []
-    _, block_widths, row_starts, col_starts = _grid_offsets(matrices, index_base=1)
-    if not (block_widths and col_starts):
-        return []
-    last_col_start = col_starts[-1]
-    last_col_width = block_widths[-1]
-    comment_col = last_col_start + max(last_col_width - 1, 0)
-    out: List[Tuple[str, str, str]] = []
-    for g, txt in enumerate(comment_list):
-        if g >= len(row_starts):
-            break
-        row = row_starts[g]
-        coord = f"({row}-{comment_col}.east)"
-        style = f"right,align=left,text={color}, xshift={comment_shift_x_mm}mm"
-        if comment_shift_y_mm:
-            style += f", yshift={comment_shift_y_mm}mm"
-        out.append((coord, r"\qquad " + str(txt), style))
-    return out
-
-
-def _legacy_ref_paths_to_rowechelon_paths(
-    matrices: Sequence[Sequence[Any]],
-    ref_path_list: Optional[Any],
-) -> List[str]:
-    if not ref_path_list:
-        return []
-    specs = ref_path_list if isinstance(ref_path_list, list) else [ref_path_list]
-    return _rowechelon_paths_from_legacy_tuples(matrices, specs, legacy_submatrix_names=True)
 
 
 def _array_name_callouts(
