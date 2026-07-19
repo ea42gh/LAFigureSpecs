@@ -8,10 +8,7 @@ Tuple-based ``ref_path_list`` conversion is internal compatibility behavior.
 
 from __future__ import annotations
 
-from matrixlayout.ge_paths import (
-    _rowechelon_paths_from_legacy_tuples as _rowechelon_paths_from_legacy_tuples,
-    rowechelon_paths_from_specs,
-)
+from matrixlayout.ge_paths import rowechelon_paths_from_specs
 
 __all__ = [
     "rowechelon_paths_from_specs",
