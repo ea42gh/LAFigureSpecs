@@ -3,27 +3,28 @@ import re
 from LAFigureSpecs.ge_paths import rowechelon_paths_from_specs
 
 
-def _path_specs(items):
-    specs = []
-    for item in items:
-        spec = {
-            "grid": (item[0], item[1]),
-            "pivots": item[2],
-            "case": item[3] if len(item) > 3 else "hh",
-            "color": item[4] if len(item) > 4 else "blue,line width=0.4mm",
-        }
-        if len(item) > 5:
-            spec["adj"] = item[5]
-        if len(item) > 6:
-            spec["left_pad"] = item[6]
-        if len(item) > 7:
-            spec["node_offsets"] = item[7]
-        specs.append(spec)
-    return specs
+def _path_spec(
+    grid,
+    pivots,
+    case="hh",
+    color="blue,line width=0.4mm",
+    *,
+    adj=None,
+    left_pad=None,
+    node_offsets=None,
+):
+    spec = {"grid": grid, "pivots": pivots, "case": case, "color": color}
+    if adj is not None:
+        spec["adj"] = adj
+    if left_pad is not None:
+        spec["left_pad"] = left_pad
+    if node_offsets is not None:
+        spec["node_offsets"] = node_offsets
+    return spec
 
 
-def _paths(matrices, items):
-    return rowechelon_paths_from_specs(matrices, _path_specs(items), legacy_submatrix_names=True)
+def _paths(matrices, specs):
+    return rowechelon_paths_from_specs(matrices, specs, legacy_submatrix_names=True)
 
 
 def _path_anchor_keys(path):
@@ -76,8 +77,8 @@ def test_canonical_structured_specs_use_nicematrix_rule_coordinates():
 
 def test_canonical_ref_paths_use_nicematrix_rule_coordinates():
     matrices = [[None, [[1, 2], [3, 4]]]]
-    ref_path_list = [(0, 1, [(0, 0), (1, 1)], "hh")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), [(0, 0), (1, 1)], "hh")]
+    paths = _paths(matrices, path_specs)
     assert paths
     assert all("-|" in p for p in paths)
     assert all(not p.startswith(r"\tikz") for p in paths)
@@ -90,8 +91,8 @@ def test_ref_paths_interior_pivot_anchors_for_all_cases():
     matrices = [[None, [[1, 2, 3], [4, 5, 6], [7, 8, 9]]]]
     pivots = [(0, 0), (1, 1), (2, 2)]
     for case in ("vv", "vh", "hv", "hh"):
-        ref_path_list = [(0, 1, pivots, case)]
-        paths = _paths(matrices, ref_path_list)
+        path_specs = [_path_spec((0, 1), pivots, case)]
+        paths = _paths(matrices, path_specs)
         assert paths
         path = paths[0]
         assert "|-" not in path
@@ -106,8 +107,8 @@ def test_ref_paths_interior_pivot_anchors_for_all_cases():
 def test_ref_path_vh_uses_right_boundary_for_nonzero_columns():
     matrices = [[None, [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18]]]]
     pivots = [(0, 0), (1, 4), (2, 5)]
-    ref_path_list = [(0, 1, pivots, "vh")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "vh")]
+    paths = _paths(matrices, path_specs)
     assert paths
     path = paths[0]
     assert "|-" not in path
@@ -118,8 +119,8 @@ def test_ref_path_vh_uses_right_boundary_for_nonzero_columns():
 def test_ref_path_uses_row_col_projection_operator_order():
     matrices = [[None, [[1, 2, 3], [4, 5, 6]]]]
     pivots = [(0, 1), (1, 2)]
-    ref_path_list = [(0, 1, pivots, "hh")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "hh")]
+    paths = _paths(matrices, path_specs)
     assert paths
     path = paths[0]
     assert "|-" not in path
@@ -130,8 +131,8 @@ def test_ref_path_uses_row_col_projection_operator_order():
 def test_ref_path_hh_traces_left_bottom_pivot_boundary():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
-    ref_path_list = [(0, 1, pivots, "hh", "red")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "hh", "red")]
+    paths = _paths(matrices, path_specs)
     assert paths == [r"\draw[red] ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);"]
     _assert_manhattan_path(paths[0])
 
@@ -139,8 +140,8 @@ def test_ref_path_hh_traces_left_bottom_pivot_boundary():
 def test_ref_path_vh_traces_left_bottom_pivot_boundary():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
-    ref_path_list = [(0, 1, pivots, "vh", "red")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "vh", "red")]
+    paths = _paths(matrices, path_specs)
     assert paths == [
         r"\draw[red] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (3-|5) -- (3-|8);"
     ]
@@ -150,8 +151,8 @@ def test_ref_path_vh_traces_left_bottom_pivot_boundary():
 def test_ref_path_vv_traces_left_pivot_boundary_to_bottom():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
-    ref_path_list = [(0, 1, pivots, "vv", "red")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "vv", "red")]
+    paths = _paths(matrices, path_specs)
     assert paths == [
         r"\draw[red] ($ (1-|A0x1-left) + (0.1,0) $) -- ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (4-|5);"
     ]
@@ -168,7 +169,7 @@ def test_ref_paths_always_use_left_bottom_pivot_edges_for_all_cases():
         "hv": r"\draw[red] ($ (2-|A0x1-left) + (0.1,0) $) -- (2-|5) -- (4-|5);",
     }
     for case, path in expected.items():
-        paths = _paths(matrices, [(0, 1, pivots, case, "red")])
+        paths = _paths(matrices, [_path_spec((0, 1), pivots, case, "red")])
         assert paths == [path]
         assert "(1-|5)" not in paths[0]
         assert "(2-|6)" not in paths[0]
@@ -179,8 +180,8 @@ def test_ref_paths_always_use_left_bottom_pivot_edges_for_all_cases():
 def test_ref_path_node_offsets_shift_staircase_nodes():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
-    ref_path_list = [(0, 1, pivots, "vh", "red", 0.1, 0.0, (0.2, -0.05))]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "vh", "red", adj=0.1, left_pad=0.0, node_offsets=(0.2, -0.05))]
+    paths = _paths(matrices, path_specs)
     assert paths == [
         r"\draw[red] ($ (1-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|5) + (0.2,-0.05) $) -- ($ (3-|5) + (0.2,-0.05) $) -- ($ (3-|8) + (0.2,-0.05) $);"
     ]
@@ -194,8 +195,8 @@ def test_ref_path_vh_sequence_matches_expected_turns():
     # pivot row. Validate key boundary points appear.
     matrices = [[None, [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18]]]]
     pivots = [(0, 0), (1, 4), (2, 5)]
-    ref_path_list = [(0, 1, pivots, "vh")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "vh")]
+    paths = _paths(matrices, path_specs)
     assert paths
     path = paths[0]
     # Key projected points along the path (row,col in 1-based NiceArray terms).
@@ -210,8 +211,8 @@ def test_ref_path_vh_sequence_matches_expected_turns():
 def test_ref_path_vv_single_pivot_top_left_corner():
     matrices = [[None, [[1, 2], [3, 4]]], [[[1, 0], [0, 1]], [[1, 2], [3, 4]]]]
     pivots = [(0, 0)]
-    ref_path_list = [(0, 1, pivots, "vv")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "vv")]
+    paths = _paths(matrices, path_specs)
     assert paths
     path = paths[0]
     # A single-pivot vertical cutoff is drawn on the left edge of the pivot
@@ -223,8 +224,8 @@ def test_ref_path_vv_single_pivot_top_left_corner():
 def test_ref_path_vv_single_pivot_nonfirst_column_uses_column_left_edge():
     matrices = [[None, [[1, 2, 4, 1], [0, "k", 8, "h"], [0, 0, 0, 0]]]]
     pivots = [(0, 2)]
-    ref_path_list = [(0, 1, pivots, "vv")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 1), pivots, "vv")]
+    paths = _paths(matrices, path_specs)
     assert paths == [r"\draw[blue,line width=0.4mm] (1-|6) -- (4-|6);"]
     _assert_manhattan_path(paths[0])
 
@@ -232,8 +233,8 @@ def test_ref_path_vv_single_pivot_nonfirst_column_uses_column_left_edge():
 def test_ref_path_vv_single_matrix_first_column_uses_matrix_left_edge():
     matrices = [[[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]]]
     pivots = [(0, 0), (1, 1)]
-    ref_path_list = [(0, 0, pivots, "vv")]
-    paths = _paths(matrices, ref_path_list)
+    path_specs = [_path_spec((0, 0), pivots, "vv")]
+    paths = _paths(matrices, path_specs)
     assert paths == [
         r"\draw[blue,line width=0.4mm] ($ (1-|A0x0-left) + (0.1,0) $) -- ($ (2-|A0x0-left) + (0.1,0) $) -- (2-|2) -- (4-|2);"
     ]
@@ -260,7 +261,7 @@ def test_ref_path_matrix_edge_helper_anchors_stay_on_existing_nodes():
         [identity, augmented],
         [identity, augmented],
     ]
-    paths = _paths(matrices, [(3, 1, [(0, 0), (1, 1), (2, 5)], "hh")])
+    paths = _paths(matrices, [_path_spec((3, 1), [(0, 0), (1, 1), (2, 5)], "hh")])
 
     assert paths
     path = paths[0]
