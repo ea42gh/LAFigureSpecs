@@ -10,11 +10,11 @@ def test_pivot_selectors_to_pivot_locs():
     A1 = sym.Matrix([[1, 2], [0, 1]])
     matrices = [[None, A0], [E1, A1]]
 
-    pivot_list = [
+    pivot_selectors = [
         ((1, 1), [(0, 0), (1, 1)]),
     ]
 
-    pivot_locs = _pivot_selectors_to_pivot_locs(matrices, pivot_list, index_base=1, pivot_style="draw=red")
+    pivot_locs = _pivot_selectors_to_pivot_locs(matrices, pivot_selectors, index_base=1, pivot_style="draw=red")
     assert pivot_locs == [
         ("(3-3)(3-3)", "draw=red"),
         ("(4-4)(4-4)", "draw=red"),

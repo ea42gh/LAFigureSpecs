@@ -329,7 +329,7 @@ def _name_specs_to_callouts(
 
 def _pivot_selectors_to_pivot_locs(
     matrices: Sequence[Sequence[Any]],
-    pivot_list: Sequence[Any],
+    pivot_selectors: Sequence[Any],
     *,
     index_base: int = 1,
     pivot_style: str = "",
@@ -339,7 +339,7 @@ def _pivot_selectors_to_pivot_locs(
     _, _, row_starts, col_starts = _grid_offsets(matrices, index_base=index_base)
 
     out: List[Tuple[str, str]] = []
-    for spec in pivot_list:
+    for spec in pivot_selectors:
         if not spec or len(spec) < 2:
             continue
         grid, pivots = spec[0], spec[1]
