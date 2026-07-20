@@ -587,12 +587,12 @@ def decorate_ge(
         for (r, c) in trace.pivot_positions
     ]
 
-    ref_path_list: List[Tuple[int, int, List[Tuple[int, int]], str]] = []
+    fallback_path_specs: List[Tuple[int, int, List[Tuple[int, int]], str]] = []
     if trace.pivot_positions:
         ref_path_row, ref_path_col = int(ref_path_grid[0]), int(ref_path_grid[1])
         if ref_path_row < 0:
             ref_path_row = len(trace.steps)
-        ref_path_list.append(
+        fallback_path_specs.append(
             (
                 ref_path_row,
                 ref_path_col,
@@ -709,9 +709,9 @@ def decorate_ge(
                 path_dict[(level, 1)] = [level, 1, pl, "vh", path_color]
             update = True
 
-    pivot_list = [pivot_dict[k] for k in sorted(pivot_dict.keys())]
-    bg_list = [bg_dict[k] for k in sorted(bg_dict.keys())]
-    path_list = [path_dict[k] for k in sorted(path_dict.keys())]
+    pivot_specs = [pivot_dict[k] for k in sorted(pivot_dict.keys())]
+    background_specs = [bg_dict[k] for k in sorted(bg_dict.keys())]
+    path_specs = [path_dict[k] for k in sorted(path_dict.keys())]
 
     def _append_bg_spec(spec: Any, out: List[Dict[str, Any]]) -> None:
         if not isinstance(spec, (list, tuple)):
@@ -747,7 +747,7 @@ def decorate_ge(
                 )
 
     decorations: List[Dict[str, Any]] = []
-    for spec in bg_list:
+    for spec in background_specs:
         _append_bg_spec(spec, decorations)
 
     def _path_spec_to_rowechelon(spec: Sequence[Any]) -> Dict[str, Any]:
@@ -758,8 +758,8 @@ def decorate_ge(
             "color": str(spec[4]) if len(spec) > 4 else path_color,
         }
 
-    pivot_selectors = [{"grid": tuple(spec[0]), "entries": list(spec[1])} for spec in pivot_list]
-    rowechelon_paths = [_path_spec_to_rowechelon(spec) for spec in (path_list or ref_path_list)]
+    pivot_selectors = [{"grid": tuple(spec[0]), "entries": list(spec[1])} for spec in pivot_specs]
+    rowechelon_paths = [_path_spec_to_rowechelon(spec) for spec in (path_specs or fallback_path_specs)]
 
     return {
         "pivot_locs": pivot_locs,
