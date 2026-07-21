@@ -24,7 +24,7 @@ def _path_spec(
 
 
 def _paths(matrices, specs):
-    return rowechelon_paths_from_specs(matrices, specs, legacy_submatrix_names=True)
+    return rowechelon_paths_from_specs(matrices, specs, submatrix_name_style="grid")
 
 
 def _path_anchor_keys(path):
@@ -67,7 +67,7 @@ def test_canonical_structured_specs_use_nicematrix_rule_coordinates():
             "node_offsets": (0.2, -0.05),
         }
     ]
-    paths = rowechelon_paths_from_specs(matrices, structured, legacy_submatrix_names=True)
+    paths = rowechelon_paths_from_specs(matrices, structured, submatrix_name_style="grid")
     assert paths == [
         r"\draw[red] ($ (1-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|5) + (0.2,-0.05) $) -- ($ (3-|5) + (0.2,-0.05) $) -- ($ (3-|8) + (0.2,-0.05) $);"
     ]
