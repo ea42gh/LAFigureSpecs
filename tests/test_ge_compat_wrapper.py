@@ -36,3 +36,17 @@ def test_ge_svg_rejects_removed_ref_path_list_keyword():
             ref_path_list=[(1, 1, [(0, 0), (1, 1)], "hh")],
             output_dir="tmp",
         )
+
+
+def test_ge_svg_rejects_tuple_rowechelon_path_entries():
+    from LAFigureSpecs.convenience_ge import ge_svg
+    import sympy as sym
+
+    matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
+
+    with pytest.raises(TypeError, match="rowechelon_paths.*ref_path_list"):
+        ge_svg(
+            matrices,
+            rowechelon_paths=[(0, 1, [(0, 0), (1, 1)], "hh")],
+            output_dir="tmp",
+        )

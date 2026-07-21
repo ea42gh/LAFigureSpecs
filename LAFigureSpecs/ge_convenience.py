@@ -786,12 +786,17 @@ def _normalize_stack_rowechelon_paths(
         return None
     out: List[Any] = []
     for item in rowechelon_paths:
+        if isinstance(item, str):
+            out.append(item)
+            continue
+        if isinstance(item, dict) and "tikz" in item:
+            out.append(item)
+            continue
         if not isinstance(item, dict) or "grid" not in item:
-            out.append(item)
-            continue
-        if "tikz" in item:
-            out.append(item)
-            continue
+            raise TypeError(
+                "rowechelon_paths entries must be raw TikZ strings or dict specs with grid= and pivots=. "
+                "Use rowechelon_paths=[{...}] instead of old ref_path_list tuple entries."
+            )
         out.extend(rowechelon_paths_from_specs(matrices, [item], legacy_submatrix_names=True))
     return out or None
 
