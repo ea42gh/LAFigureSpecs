@@ -29,6 +29,28 @@ if TYPE_CHECKING:
     from matrixlayout.specs import GELayoutSpec
 
 _UNSET = object()
+_REMOVED_GE_STACK_KEYWORDS = frozenset({"pivot_list", "bg_for_entries", "ref_path_list", "comment_list"})
+_REMOVED_GE_TEX_HOOKS = frozenset({"preamble", "extension"})
+
+
+def _reject_removed_ge_stack_keywords(render_opts: Dict[str, Any]) -> None:
+    removed_stack_keywords = _REMOVED_GE_STACK_KEYWORDS & set(render_opts)
+    if removed_stack_keywords:
+        names = ", ".join(sorted(removed_stack_keywords))
+        raise TypeError(
+            f"Removed GE stack keyword(s): {names}. "
+            "Use pivot_locs=, decorations=, rowechelon_paths=, or text_annotations= instead."
+        )
+
+
+def _reject_removed_ge_tex_hooks(render_opts: Dict[str, Any]) -> None:
+    removed_tex_hooks = _REMOVED_GE_TEX_HOOKS & set(render_opts)
+    if removed_tex_hooks:
+        names = ", ".join(sorted(removed_tex_hooks))
+        raise TypeError(
+            f"Removed GE TeX hook alias(es): {names}. "
+            "Use body_preamble= for document-body setup and document_preamble= for true LaTeX preamble insertion."
+        )
 
 
 def _is_stack_matrix_cell(value: Any) -> bool:
@@ -646,21 +668,9 @@ def _ge_stack_svg(
         )
     if "specs" in render_opts:
         raise TypeError("Removed GE matrix-label alias: specs=. Use callouts= instead.")
-    removed_stack_keywords = {"pivot_list", "bg_for_entries", "ref_path_list", "comment_list"} & set(render_opts)
-    if removed_stack_keywords:
-        names = ", ".join(sorted(removed_stack_keywords))
-        raise TypeError(
-            f"Removed GE stack keyword(s): {names}. "
-            "Use pivot_locs=, decorations=, rowechelon_paths=, or text_annotations= instead."
-        )
+    _reject_removed_ge_stack_keywords(render_opts)
     _reject_annotation_callout_alias(render_opts.get("annotations"))
-    removed_tex_hooks = {"preamble", "extension"} & set(render_opts)
-    if removed_tex_hooks:
-        names = ", ".join(sorted(removed_tex_hooks))
-        raise TypeError(
-            f"Removed GE TeX hook alias(es): {names}. "
-            "Use body_preamble= for document-body setup and document_preamble= for true LaTeX preamble insertion."
-        )
+    _reject_removed_ge_tex_hooks(render_opts)
     n_rhs = _resolve_n_rhs(n_rhs=n_rhs)
     body_preamble = render_opts.pop("body_preamble", None)
     document_preamble = render_opts.pop("document_preamble", None)
