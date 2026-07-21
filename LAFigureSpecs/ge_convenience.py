@@ -722,7 +722,7 @@ def _ge_stack_svg(
         formatter=formatter,
         outer_hspace_mm=outer_hspace_mm,
         submatrix_name_style="grid",
-        legacy_format=True,
+        stack_separator_column=True,
         fig_scale=fig_scale,
         body_preamble=body_preamble or "",
         document_preamble=document_preamble or "",
