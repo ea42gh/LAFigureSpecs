@@ -71,7 +71,7 @@ def _decorated_stack_render_kwargs(
         rowechelon_paths_from_specs(
             matrices,
             rowechelon_specs,
-            legacy_submatrix_names=True,
+            submatrix_name_style="grid",
         )
         if rowechelon_specs
         else []
@@ -382,7 +382,7 @@ class ShowGE:
                     layers.get("matrices") or [],
                     name_specs,
                     color="blue",
-                    legacy_submatrix_names=True,
+                    submatrix_name_style="grid",
                 )
             svg = _ge_stack_svg(
                 layers.get("matrices"),

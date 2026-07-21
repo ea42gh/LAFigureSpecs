@@ -281,11 +281,11 @@ def _name_specs_to_callouts(
     name_specs: Sequence[Tuple[Tuple[int, int], str, str]],
     *,
     color: str = "blue",
-    legacy_submatrix_names: bool = True,
+    submatrix_name_style: str = "grid",
 ) -> List[Dict[str, Any]]:
     from matrixlayout.ge import grid_submatrix_spans
 
-    spans = grid_submatrix_spans(matrices, legacy_submatrix_names=legacy_submatrix_names)
+    spans = grid_submatrix_spans(matrices, submatrix_name_style=submatrix_name_style)
     name_map = {(s.block_row, s.block_col): s.name for s in spans}
 
     def _strip_math(s: str) -> Tuple[str, bool]:

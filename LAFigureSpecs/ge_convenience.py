@@ -357,7 +357,7 @@ def _build_ge_bundle(
             layers["matrices"],
             name_specs,
             color="blue",
-            legacy_submatrix_names=False,
+            submatrix_name_style="semantic",
         )
 
     if callouts is None or callouts is True:
@@ -378,7 +378,7 @@ def _build_ge_bundle(
         rowechelon_paths_from_specs(
             layers["matrices"],
             rowechelon_path_specs,
-            legacy_submatrix_names=False,
+            submatrix_name_style="semantic",
         )
         if rowechelon_path_specs
         else []
@@ -797,7 +797,7 @@ def _normalize_stack_rowechelon_paths(
                 "rowechelon_paths entries must be raw TikZ strings or dict specs with grid= and pivots=. "
                 "Use rowechelon_paths=[{...}] instead of old ref_path_list tuple entries."
             )
-        out.extend(rowechelon_paths_from_specs(matrices, [item], legacy_submatrix_names=True))
+        out.extend(rowechelon_paths_from_specs(matrices, [item], submatrix_name_style="grid"))
     return out or None
 
 
