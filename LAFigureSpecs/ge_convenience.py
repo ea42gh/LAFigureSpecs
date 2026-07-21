@@ -805,14 +805,14 @@ def _normalize_stack_rowechelon_paths(
         if not isinstance(item, dict) or "grid" not in item:
             raise TypeError(
                 "rowechelon_paths entries must be raw TikZ strings or dict specs with grid= and pivots=. "
-                "Use rowechelon_paths=[{...}] instead of old ref_path_list tuple entries."
+                "Use rowechelon_paths=[{...}] instead of removed ref_path_list tuple entries."
             )
         out.extend(rowechelon_paths_from_specs(matrices, [item], submatrix_name_style="grid"))
     return out or None
 
 
 def _reject_annotation_callout_alias(annotations: Optional[Any]) -> None:
-    """Reject old matrix-label callouts passed through ``annotations=``."""
+    """Reject removed matrix-label callouts passed through ``annotations=``."""
 
     if not annotations:
         return
