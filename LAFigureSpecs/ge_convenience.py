@@ -666,7 +666,7 @@ def _ge_stack_svg(
     document_preamble = render_opts.pop("document_preamble", None)
 
     # Allow a single matrix input by wrapping into a 1x2 grid: [None, A].
-    # This preserves legacy expectations that the data matrix lives in col=1.
+    # This keeps stack annotations and generated names targeting the data block at grid column 1.
     if matrices is not None and not (
         isinstance(matrices, (list, tuple))
         and (not matrices or isinstance(matrices[0], (list, tuple)))

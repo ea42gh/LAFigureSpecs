@@ -21,7 +21,7 @@ def test_ge_bundle_includes_submatrix_spans_metadata():
     assert spans, "expected at least one SubMatrix span"
 
     names = {s.get("name") for s in spans}
-    # In the legacy 2-column GE-grid layout, the initial layer includes A0.
+    # In the stack-oriented 2-column GE grid, the initial layer includes A0.
     assert "A0" in names
 
     # Convenience fields for notebook authors.

@@ -237,10 +237,10 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
     import LAFigureSpecs
     import sympy as sym
 
-    captured = {"legacy": 0}
+    captured = {"stack_calls": 0}
 
     def fake_ge(mats, **kwargs):
-        captured["legacy"] += 1
+        captured["stack_calls"] += 1
         captured["mats_len"] = len(mats)
         captured.update(kwargs)
         return "<svg/>"
@@ -258,7 +258,7 @@ def test_show_ge_layout_uses_full_stack(monkeypatch):
     show.ref()
     show.show_layout()
 
-    assert captured["legacy"] == 1
+    assert captured["stack_calls"] == 1
     assert captured["mats_len"] > 1
     assert captured["callouts"] == callouts
 
