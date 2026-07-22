@@ -368,16 +368,16 @@ def _build_ge_bundle(
         rhs_list = [str(x) for x in rhs_list]
         if not explicit_names:
             rhs_list = _ge_helpers._coerce_rhs_labels(rhs_list, tr.n_rhs)
-        name_specs = _ge_helpers._array_name_specs(
+        callout_specs = _ge_helpers._array_callout_specs(
             len(layers["matrices"]),
             str(lhs),
             rhs_list,
             start_index=index_base,
             array_name_indices=array_name_indices,
         )
-        extra_callouts = _ge_helpers._name_specs_to_callouts(
+        extra_callouts = _ge_helpers._callout_specs_to_callouts(
             layers["matrices"],
-            name_specs,
+            callout_specs,
             color="blue",
             submatrix_name_style="semantic",
         )

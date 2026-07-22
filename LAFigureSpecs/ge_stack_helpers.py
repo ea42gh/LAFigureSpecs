@@ -196,7 +196,7 @@ def _grid_cell_coord(
     return f"({rr}-{cc})"
 
 
-def _array_name_specs(
+def _array_callout_specs(
     n_rows: int,
     lhs: str,
     rhs: Sequence[str],
@@ -276,9 +276,9 @@ def _coerce_rhs_labels(rhs_list: Sequence[str], n_rhs: Any) -> List[str]:
     return labels
 
 
-def _name_specs_to_callouts(
+def _callout_specs_to_callouts(
     matrices: Sequence[Sequence[Any]],
-    name_specs: Sequence[Tuple[Tuple[int, int], str, str]],
+    callout_specs: Sequence[Tuple[Tuple[int, int], str, str]],
     *,
     color: str = "blue",
     submatrix_name_style: str = "grid",
@@ -304,7 +304,7 @@ def _name_specs_to_callouts(
     }
 
     out: List[Dict[str, Any]] = []
-    for (gM, gN), pos, txt in name_specs:
+    for (gM, gN), pos, txt in callout_specs:
         name = name_map.get((gM, gN))
         if not name:
             continue
@@ -471,12 +471,12 @@ def _array_name_callouts(
     if not explicit_names:
         rhs_list = _coerce_rhs_labels(rhs_list, n_rhs)
     n_rows = len(matrices or [])
-    name_specs = _array_name_specs(
+    callout_specs = _array_callout_specs(
         n_rows,
         str(lhs),
         rhs_list,
         start_index=start_index,
         array_name_indices=array_name_indices,
     )
-    return _name_specs_to_callouts(matrices, name_specs, color="blue")
+    return _callout_specs_to_callouts(matrices, callout_specs, color="blue")
 

@@ -6,7 +6,7 @@ from typing import Any, Dict, List, Optional, Sequence, Tuple, cast
 from .ge import Pivoting, ge_trace, trace_to_layer_matrices
 from .backsub import backsubstitution_tex, linear_system_tex, standard_solution_tex
 from .ge_convenience import ge_svg
-from .ge_stack_helpers import _name_specs_to_callouts
+from .ge_stack_helpers import _callout_specs_to_callouts
 from .ge_paths import rowechelon_paths_from_specs
 from ._sympy_utils import to_sympy_col, to_sympy_matrix
 
@@ -27,7 +27,7 @@ def _format_rhs_label(labels: Sequence[str]) -> str:
     return labels[0]
 
 
-def _normal_eq_name_specs(n_rows: int, rhs_labels: Sequence[str]) -> List[Tuple[Tuple[int, int], str, str]]:
+def _normal_eq_callout_specs(n_rows: int, rhs_labels: Sequence[str]) -> List[Tuple[Tuple[int, int], str, str]]:
     specs: List[Tuple[Tuple[int, int], str, str]] = []
     if n_rows <= 0:
         return specs
@@ -377,10 +377,10 @@ class ShowGE:
                     rhs_labels = [str(x) for x in rhs]
                 except Exception:
                     rhs_labels = ["A"]
-                name_specs = _normal_eq_name_specs(len(layers.get("matrices") or []), rhs_labels)
-                callouts = _name_specs_to_callouts(
+                callout_specs = _normal_eq_callout_specs(len(layers.get("matrices") or []), rhs_labels)
+                callouts = _callout_specs_to_callouts(
                     layers.get("matrices") or [],
-                    name_specs,
+                    callout_specs,
                     color="blue",
                     submatrix_name_style="grid",
                 )
