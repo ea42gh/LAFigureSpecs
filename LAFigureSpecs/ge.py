@@ -587,18 +587,18 @@ def decorate_ge(
         for (r, c) in trace.pivot_positions
     ]
 
-    fallback_path_specs: List[Tuple[int, int, List[Tuple[int, int]], str]] = []
+    fallback_path_specs: List[Dict[str, Any]] = []
     if trace.pivot_positions:
         rowechelon_path_row, rowechelon_path_col = int(rowechelon_path_grid[0]), int(rowechelon_path_grid[1])
         if rowechelon_path_row < 0:
             rowechelon_path_row = len(trace.steps)
         fallback_path_specs.append(
-            (
-                rowechelon_path_row,
-                rowechelon_path_col,
-                list(trace.pivot_positions),
-                str(rowechelon_path_case),
-            )
+            {
+                "grid": (rowechelon_path_row, rowechelon_path_col),
+                "pivots": list(trace.pivot_positions),
+                "case": str(rowechelon_path_case),
+                "color": path_color,
+            }
         )
 
     # Julia-style decorations for interop.
@@ -606,9 +606,22 @@ def decorate_ge(
     def _plist(cols_1b: List[int]) -> List[Tuple[int, int]]:
         return [(row, cols_1b[row] - 1) for row in range(len(cols_1b))]
 
+    def _rowechelon_path_spec(
+        grid: Tuple[int, int],
+        pivots: Sequence[Tuple[int, int]],
+        case: str,
+        color: str = path_color,
+    ) -> Dict[str, Any]:
+        return {
+            "grid": grid,
+            "pivots": list(pivots),
+            "case": str(case),
+            "color": color,
+        }
+
     pivot_dict: Dict[Tuple[int, int], Any] = {}
     bg_dict: Dict[Tuple[int, int], Any] = {}
-    path_dict: Dict[Tuple[int, int], Any] = {}
+    path_dict: Dict[Tuple[int, int], Dict[str, Any]] = {}
 
     current_cols: List[int] = []
     update = True
@@ -640,7 +653,7 @@ def decorate_ge(
                 pl = _plist(current_cols)
                 pivot_dict[(level, 1)] = [(level, 1), pl]
                 bg_dict[(level, 1)] = [level, 1, pl, pivot_color]
-                path_dict[(level, 1)] = [level, 1, pl, "vv", path_color]
+                path_dict[(level, 1)] = _rowechelon_path_spec((level, 1), pl, "vv")
             update = True
         elif ev.op == "FoundPivot":
             try:
@@ -665,7 +678,7 @@ def decorate_ge(
                 bg_dict[(level, 1)] = new_bg
             yes = ev.data.get("yes", True)
             pl = _plist(current_cols)
-            path_dict[(level, 1)] = [level, 1, pl, "vh" if yes is False else "vv", path_color]
+            path_dict[(level, 1)] = _rowechelon_path_spec((level, 1), pl, "vh" if yes is False else "vv")
         elif ev.op == "DoElimination":
             try:
                 c = int(ev.data["pivot_row"])
@@ -673,9 +686,9 @@ def decorate_ge(
                 continue
             pivot_dict[(level, 0)] = [(level, 0), [(c, c)]]
             if ev.data.get("gj"):
-                path_dict[(level, 0)] = [level, 0, [(0, c)], "vv", path_color]
+                path_dict[(level, 0)] = _rowechelon_path_spec((level, 0), [(0, c)], "vv")
             else:
-                path_dict[(level, 0)] = [level, 0, [(c, c)], "vv", path_color]
+                path_dict[(level, 0)] = _rowechelon_path_spec((level, 0), [(c, c)], "vv")
             if ev.data.get("gj"):
                 bg_dict[(level, 0)] = [level, 0, [(c, c), [(0, c), (M - 1, c)]], pivot_color, 1]
             else:
@@ -695,7 +708,7 @@ def decorate_ge(
                 if update:
                     pivot_dict[(level, 1)] = [(level, 1), pl]
                     bg_dict[(level, 1)] = [level, 1, pl, pivot_color]
-                path_dict[(level, 1)] = [level, 1, pl, "vh", path_color]
+                path_dict[(level, 1)] = _rowechelon_path_spec((level, 1), pl, "vh")
             update = True
         elif ev.op == "DoScaling":
             pl = [(c, c) for c in range(M)]
@@ -706,7 +719,7 @@ def decorate_ge(
                 pl = _plist(current_cols)
                 pivot_dict[(level, 1)] = [(level, 1), pl]
                 bg_dict[(level, 1)] = [level, 1, pl, pivot_color]
-                path_dict[(level, 1)] = [level, 1, pl, "vh", path_color]
+                path_dict[(level, 1)] = _rowechelon_path_spec((level, 1), pl, "vh")
             update = True
 
     pivot_specs = [pivot_dict[k] for k in sorted(pivot_dict.keys())]
@@ -750,16 +763,9 @@ def decorate_ge(
     for spec in background_specs:
         _append_bg_spec(spec, decorations)
 
-    def _path_spec_to_rowechelon(spec: Sequence[Any]) -> Dict[str, Any]:
-        return {
-            "grid": (int(spec[0]), int(spec[1])),
-            "pivots": list(spec[2]),
-            "case": str(spec[3]) if len(spec) > 3 else "hh",
-            "color": str(spec[4]) if len(spec) > 4 else path_color,
-        }
 
     pivot_selectors = [{"grid": tuple(spec[0]), "entries": list(spec[1])} for spec in pivot_specs]
-    rowechelon_paths = [_path_spec_to_rowechelon(spec) for spec in (path_specs or fallback_path_specs)]
+    rowechelon_paths = list(path_specs or fallback_path_specs)
 
     return {
         "pivot_locs": pivot_locs,
