@@ -54,12 +54,12 @@ def test_decorate_ge_excludes_rhs_from_variable_types():
     assert decor["variable_types"] == [True, True]
 
 
-def test_decorate_ge_signature_uses_grid_naming():
+def test_decorate_ge_signature_uses_rowechelon_path_grid_naming():
     import importlib
     ge_mod = importlib.import_module("LAFigureSpecs.ge")
 
     params = inspect.signature(ge_mod.decorate_ge).parameters
 
-    assert "ref_path_grid" in params
-    assert "ref_path_block_col" not in params
+    assert "rowechelon_path_grid" in params
+    assert "rowechelon_path_block_col" not in params
     assert "pivot_block_col" not in params
