@@ -17,7 +17,7 @@ figure should follow the actual linear algebra computation.
 Canonical cross-language names:
 
 - render helpers: `ge_svg`, `qr_svg`, `eig_svg`, `svd_svg`, `qr_figure`
-- precomputed stack renderers: `ge_svg` for GE matrix grids, `qr_stack_svg` for QR grids
+- precomputed stack renderers: `ge_svg` for GE matrix grids, `qr_svg` for QR grids
 - spec helpers: `ge_spec`, `qr_spec`, `eig_spec`, `svd_spec`
 - TeX helpers: `ge_tex`, `qr_tex`, `eig_tex`, `svd_tex`
 - bundle helpers: `ge_bundle`, `qr_bundle`, `eig_bundle`, `svd_bundle`
@@ -40,7 +40,7 @@ The names above are the supported top-level surface for parity with
 | GE | `ge_svg([[...], ...])` | Rendered SVG for a precomputed row-reduction stack. |
 | GE | `ge_bundle(...)` | `spec`, `tex`, optional `svg`, and render status in one object. |
 | QR | `qr_figure(...)` | Computes and renders a Gram-Schmidt/QR layout as SVG. |
-| QR | `qr_stack_svg(...)` | Renders a precomputed QR matrix stack as SVG. |
+| QR | `qr_svg(...)` | Renders a precomputed QR matrix stack as SVG. |
 | QR | `qr_spec(...)` | Reusable spec dictionary for a QR layout. |
 | QR | `qr_tex(...)` | TeX source for a QR layout. |
 | QR | `qr_svg(...)` | Rendered SVG for a QR layout. |

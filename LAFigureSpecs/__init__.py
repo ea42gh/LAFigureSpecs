@@ -48,7 +48,6 @@ from .qr import (
 from .convenience_qr import (
     qr_bundle,
     qr_figure,
-    qr_stack_svg,
     qr_svg,
     qr_tex,
 )
@@ -147,7 +146,6 @@ __all__ = [
     "qr_spec",
     "qr_layout_spec",
     "qr_tex",
-    "qr_stack_svg",
     "qr_svg",
     "qr_figure",
     "qr_bundle",

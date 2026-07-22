@@ -9,6 +9,32 @@ from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render
 from .qr import gram_schmidt_qr_matrices, qr_spec, qr_spec_from_matrices
 
 _UNSET = object()
+
+
+def _is_qr_stack_matrix_cell(value: Any) -> bool:
+    if value is None:
+        return True
+    if isinstance(value, (str, bytes)):
+        return False
+    shape = getattr(value, "shape", None)
+    if shape is not None:
+        try:
+            return len(tuple(shape)) == 2
+        except TypeError:
+            return False
+    if isinstance(value, (list, tuple)):
+        return True
+    return False
+
+
+def _looks_like_qr_stack(value: Any) -> bool:
+    if not isinstance(value, (list, tuple)) or not value:
+        return False
+    if not all(isinstance(row, (list, tuple)) for row in value):
+        return False
+    return any(_is_qr_stack_matrix_cell(cell) for row in value for cell in row)
+
+
 _QR_SPEC_KEYS = {
     "callouts",
     "array_names",
@@ -109,7 +135,8 @@ def qr_tex(
 ) -> str:
     """Compute + render: build a QR spec from ``A`` and return TeX."""
 
-    spec = qr_spec(
+    spec_builder = qr_spec_from_matrices if _looks_like_qr_stack(A) else qr_spec
+    spec = spec_builder(
         A,
         callouts=callouts,
         array_names=array_names,
@@ -152,7 +179,8 @@ def qr_svg(
 ) -> str:
     """Compute + render: build a QR spec from ``A`` and return SVG."""
 
-    spec = qr_spec(
+    spec_builder = qr_spec_from_matrices if _looks_like_qr_stack(A) else qr_spec
+    spec = spec_builder(
         A,
         callouts=callouts,
         array_names=array_names,
@@ -228,67 +256,6 @@ def qr_bundle(
         svg = None
         render_error = str(e)
     return make_bundle(spec=spec, tex=tex, svg=svg, data={}, render_error=render_error)
-
-
-def qr_stack_svg(
-    matrices: Any,
-    *,
-    formatter: Any = latexify,
-    callouts: Optional[Any] = None,
-    array_names: Any = True,
-    fig_scale: Optional[Any] = None,
-    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt}" + "\n",
-    document_preamble: str = "",
-    nice_options: Optional[str] = "vlines-in-sub-matrix = I",
-    label_color: str = "blue",
-    label_text_color: str = "red",
-    known_zero_color: str = "brown",
-    decorators: Optional[Any] = None,
-    strict: Optional[bool] = None,
-    toolchain_name: Optional[Any] = None,
-    crop: Any = _UNSET,
-    padding: Any = _UNSET,
-    frame: Any = None,
-    exact_bbox: Optional[bool] = None,
-    output_dir: Optional[Any] = None,
-    render_opts: Optional[Dict[str, Any]] = None,
-) -> str:
-    """Render-only wrapper: render SVG from a precomputed QR matrix stack."""
-
-    spec = qr_spec_from_matrices(
-        matrices,
-        callouts=callouts,
-        array_names=array_names,
-        fig_scale=fig_scale,
-        body_preamble=body_preamble,
-        document_preamble=document_preamble,
-        nice_options=nice_options,
-        label_color=label_color,
-        label_text_color=label_text_color,
-        known_zero_color=known_zero_color,
-        decorators=decorators,
-        strict=strict,
-    )
-    crop, padding = resolve_crop_padding(
-        crop_is_unset=crop is _UNSET,
-        crop=crop,
-        padding_is_unset=padding is _UNSET,
-        padding=padding,
-        render_opts=render_opts,
-    )
-
-    return _render_qr_svg_from_spec(
-        spec,
-        formatter=formatter,
-        strict=strict,
-        toolchain_name=toolchain_name,
-        crop=crop,
-        padding=padding,
-        frame=frame,
-        exact_bbox=exact_bbox,
-        output_dir=output_dir,
-        render_opts=render_opts,
-    )
 
 
 def qr_figure(

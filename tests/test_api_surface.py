@@ -3,7 +3,6 @@ def test_public_api_contains_canonical_render_names():
 
     assert "ge_svg" in LAFigureSpecs.__all__
     assert "qr_svg" in LAFigureSpecs.__all__
-    assert "qr_stack_svg" in LAFigureSpecs.__all__
     assert "eig_svg" in LAFigureSpecs.__all__
     assert "svd_svg" in LAFigureSpecs.__all__
     assert "ge_spec" in LAFigureSpecs.__all__
@@ -52,7 +51,9 @@ def test_public_api_does_not_export_legacy_names():
     assert "decorate_ge" not in LAFigureSpecs.__all__
     assert not hasattr(LAFigureSpecs, "decorate_ge")
     assert "ge_stack_svg" not in LAFigureSpecs.__all__
+    assert "qr_stack_svg" not in LAFigureSpecs.__all__
     assert not hasattr(LAFigureSpecs, "ge_stack_svg")
+    assert not hasattr(LAFigureSpecs, "qr_stack_svg")
     assert "ge_stack_svg" not in convenience_ge.__all__
     assert not hasattr(convenience_ge, "ge_stack_svg")
 
@@ -71,10 +72,9 @@ def test_canonical_names_point_to_existing_top_level_helpers():
     from LAFigureSpecs.ge_convenience import ge_svg
 
     assert LAFigureSpecs.ge_svg is ge_svg
-    from LAFigureSpecs.convenience_qr import qr_figure, qr_svg, qr_stack_svg
+    from LAFigureSpecs.convenience_qr import qr_figure, qr_svg
 
     assert LAFigureSpecs.qr_svg is qr_svg
-    assert LAFigureSpecs.qr_stack_svg is qr_stack_svg
     assert LAFigureSpecs.qr_figure is qr_figure
 
 

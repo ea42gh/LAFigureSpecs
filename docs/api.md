@@ -27,7 +27,7 @@ Preferred cross-language top-level names:
   - Use `bundle_summary(bundle)` for a quick status-only view.
 - If you already have prepared matrices/specs and want low-level renderer control:
   - `render_ge_*`, `render_qr_*`, `render_eig_*` (re-exported matrixlayout functions)
-  - `ge_svg` for precomputed GE matrix grids, `qr_stack_svg` for precomputed QR matrix grids
+  - `ge_svg` and `qr_svg` for precomputed matrix grids
 - If you already have LaTeX and just need SVG:
   - `latex_svg` for fragments
   - `latex_document_svg` for complete documents
@@ -76,7 +76,7 @@ Example options:
 - `LAFigureSpecs.qr_tex(A, **opts)`: render QR TeX from the spec path.
 - `LAFigureSpecs.qr_svg(A, **opts)`: render QR SVG from the spec path.
 - `LAFigureSpecs.qr_bundle(A, **opts)`: canonical QR bundle helper.
-- `LAFigureSpecs.qr_stack_svg(matrices, **opts)`: canonical QR SVG renderer for a precomputed matrix stack.
+- `LAFigureSpecs.qr_svg(matrices, **opts)`: render a precomputed QR matrix stack when the first argument is a QR matrix grid.
 - `LAFigureSpecs.qr_figure(A, **opts)`: canonical compute+render Gram-Schmidt QR helper.
 
 Example options:
