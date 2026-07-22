@@ -75,7 +75,7 @@ def test_canonical_structured_specs_use_nicematrix_rule_coordinates():
     _assert_manhattan_path(paths[0])
 
 
-def test_canonical_ref_paths_use_nicematrix_rule_coordinates():
+def test_canonical_rowechelon_paths_use_nicematrix_rule_coordinates():
     matrices = [[None, [[1, 2], [3, 4]]]]
     path_specs = [_path_spec((0, 1), [(0, 0), (1, 1)], "hh")]
     paths = _paths(matrices, path_specs)
@@ -87,7 +87,7 @@ def test_canonical_ref_paths_use_nicematrix_rule_coordinates():
         _assert_manhattan_path(path)
 
 
-def test_ref_paths_interior_pivot_anchors_for_all_cases():
+def test_rowechelon_paths_interior_pivot_anchors_for_all_cases():
     matrices = [[None, [[1, 2, 3], [4, 5, 6], [7, 8, 9]]]]
     pivots = [(0, 0), (1, 1), (2, 2)]
     for case in ("vv", "vh", "hv", "hh"):
@@ -104,7 +104,7 @@ def test_ref_paths_interior_pivot_anchors_for_all_cases():
         _assert_manhattan_path(path)
 
 
-def test_ref_path_vh_uses_right_boundary_for_nonzero_columns():
+def test_rowechelon_path_vh_uses_right_boundary_for_nonzero_columns():
     matrices = [[None, [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18]]]]
     pivots = [(0, 0), (1, 4), (2, 5)]
     path_specs = [_path_spec((0, 1), pivots, "vh")]
@@ -116,7 +116,7 @@ def test_ref_path_vh_uses_right_boundary_for_nonzero_columns():
     _assert_manhattan_path(path)
 
 
-def test_ref_path_uses_row_col_projection_operator_order():
+def test_rowechelon_path_uses_row_col_projection_operator_order():
     matrices = [[None, [[1, 2, 3], [4, 5, 6]]]]
     pivots = [(0, 1), (1, 2)]
     path_specs = [_path_spec((0, 1), pivots, "hh")]
@@ -128,7 +128,7 @@ def test_ref_path_uses_row_col_projection_operator_order():
     _assert_manhattan_path(path)
 
 
-def test_ref_path_hh_traces_left_bottom_pivot_boundary():
+def test_rowechelon_path_hh_traces_left_bottom_pivot_boundary():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     path_specs = [_path_spec((0, 1), pivots, "hh", "red")]
@@ -137,7 +137,7 @@ def test_ref_path_hh_traces_left_bottom_pivot_boundary():
     _assert_manhattan_path(paths[0])
 
 
-def test_ref_path_vh_traces_left_bottom_pivot_boundary():
+def test_rowechelon_path_vh_traces_left_bottom_pivot_boundary():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     path_specs = [_path_spec((0, 1), pivots, "vh", "red")]
@@ -148,7 +148,7 @@ def test_ref_path_vh_traces_left_bottom_pivot_boundary():
     _assert_manhattan_path(paths[0])
 
 
-def test_ref_path_vv_traces_left_pivot_boundary_to_bottom():
+def test_rowechelon_path_vv_traces_left_pivot_boundary_to_bottom():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     path_specs = [_path_spec((0, 1), pivots, "vv", "red")]
@@ -159,7 +159,7 @@ def test_ref_path_vv_traces_left_pivot_boundary_to_bottom():
     _assert_manhattan_path(paths[0])
 
 
-def test_ref_paths_always_use_left_bottom_pivot_edges_for_all_cases():
+def test_rowechelon_paths_always_use_left_bottom_pivot_edges_for_all_cases():
     matrices = [[None, [[1, 2, 4, 1], [0, "k", 8, "h"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     expected = {
@@ -177,7 +177,7 @@ def test_ref_paths_always_use_left_bottom_pivot_edges_for_all_cases():
         _assert_manhattan_path(paths[0])
 
 
-def test_ref_path_node_offsets_shift_staircase_nodes():
+def test_rowechelon_path_node_offsets_shift_staircase_nodes():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
     path_specs = [_path_spec((0, 1), pivots, "vh", "red", adj=0.1, left_pad=0.0, node_offsets=(0.2, -0.05))]
@@ -188,7 +188,7 @@ def test_ref_path_node_offsets_shift_staircase_nodes():
     _assert_manhattan_path(paths[0])
 
 
-def test_ref_path_vh_sequence_matches_expected_turns():
+def test_rowechelon_path_vh_sequence_matches_expected_turns():
     # 3x6 matrix with pivots at (0,0), (1,4), (2,5) in 0-based coords.
     # Expect: start at the top-left boundary of (0,0), go down, then
     # horizontal at pivot columns, and end at the matrix edge of the final
@@ -208,7 +208,7 @@ def test_ref_path_vh_sequence_matches_expected_turns():
     _assert_manhattan_path(path)
 
 
-def test_ref_path_vv_single_pivot_top_left_corner():
+def test_rowechelon_path_vv_single_pivot_top_left_corner():
     matrices = [[None, [[1, 2], [3, 4]]], [[[1, 0], [0, 1]], [[1, 2], [3, 4]]]]
     pivots = [(0, 0)]
     path_specs = [_path_spec((0, 1), pivots, "vv")]
@@ -221,7 +221,7 @@ def test_ref_path_vv_single_pivot_top_left_corner():
     _assert_manhattan_path(path)
 
 
-def test_ref_path_vv_single_pivot_nonfirst_column_uses_column_left_edge():
+def test_rowechelon_path_vv_single_pivot_nonfirst_column_uses_column_left_edge():
     matrices = [[None, [[1, 2, 4, 1], [0, "k", 8, "h"], [0, 0, 0, 0]]]]
     pivots = [(0, 2)]
     path_specs = [_path_spec((0, 1), pivots, "vv")]
@@ -230,7 +230,7 @@ def test_ref_path_vv_single_pivot_nonfirst_column_uses_column_left_edge():
     _assert_manhattan_path(paths[0])
 
 
-def test_ref_path_vv_single_matrix_first_column_uses_matrix_left_edge():
+def test_rowechelon_path_vv_single_matrix_first_column_uses_matrix_left_edge():
     matrices = [[[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]]]
     pivots = [(0, 0), (1, 1)]
     path_specs = [_path_spec((0, 0), pivots, "vv")]
@@ -242,7 +242,7 @@ def test_ref_path_vv_single_matrix_first_column_uses_matrix_left_edge():
     _assert_manhattan_path(paths[0])
 
 
-def test_ref_path_matrix_edge_helper_anchors_stay_on_existing_nodes():
+def test_rowechelon_path_matrix_edge_helper_anchors_stay_on_existing_nodes():
     identity = [
         [1, 0, 0, 0],
         [0, 1, 0, 0],

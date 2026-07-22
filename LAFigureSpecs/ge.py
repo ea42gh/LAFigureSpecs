@@ -549,7 +549,7 @@ def decorate_ge(
         decoration is rendered (e.g. ``"thick, draw=red"``).
     rowechelon_path_grid:
         ``(block_row, block_col)`` grid position for the defensive fallback
-        reference path when the event stream does not produce explicit paths.
+        row-echelon path when the event stream does not produce explicit paths.
         A negative row selects the final GE layer.
 
     Returns
