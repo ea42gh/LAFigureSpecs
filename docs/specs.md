@@ -97,7 +97,7 @@ lines, for example:
 Right-side stack comments can be expressed as structured `text_annotations`:
 `{"grid_row": 0, "text": "\\qquad note", "color": "violet", "shift_mm": (50, 0)}`.
 
-The old public stack keywords `pivot_list`, `bg_for_entries`, `ref_path_list`,
+The removed public stack keywords `pivot_list`, `bg_for_entries`, `ref_path_list`,
 and `comment_list` have been removed from `ge_svg(...)`. Use canonical renderer
 fields such as `pivot_locs`, `decorations`, `text_annotations`,
 `rowechelon_paths`, and `callouts`.
