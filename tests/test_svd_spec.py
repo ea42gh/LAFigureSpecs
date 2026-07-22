@@ -1,3 +1,4 @@
+import pytest
 import sympy as sym
 
 
@@ -122,3 +123,24 @@ def test_svd_spec_expands_square_terms_inside_radicals_for_display():
     for vec in _flatten_groups(spec["qvecs"]) + _flatten_groups(spec["uvecs"]):
         for entry in vec:
             assert not _has_unexpanded_square_term_inside_radical(entry)
+
+
+def test_svd_spec_from_right_singular_vectors_respects_eig_digits():
+    import LAFigureSpecs
+
+    A = sym.Matrix([[1.1, 0], [0, 2.2]])
+    G = A.T * A
+
+    got = LAFigureSpecs.svd_spec_from_right_singular_vectors(A, G.eigenvects(), eig_digits=1)
+
+    assert [float(x) for x in got["lambda"]] == pytest.approx([4.8, 1.2], abs=0.01)
+
+
+def test_svd_spec_from_right_singular_vectors_rejects_removed_sigma2_digits_alias():
+    import LAFigureSpecs
+
+    A = sym.Matrix([[1, 0], [0, 1]])
+    G = A.T * A
+
+    with pytest.raises(TypeError, match="sigma2_digits"):
+        LAFigureSpecs.svd_spec_from_right_singular_vectors(A, G.eigenvects(), sigma2_digits=1)

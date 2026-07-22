@@ -73,7 +73,7 @@ def svd_spec_from_right_singular_vectors(
     right_singular_spaces: RightSingularSpaces,
     *,
     Ascale: Optional[Any] = None,
-    sigma2_digits: Optional[int] = None,
+    eig_digits: Optional[int] = None,
     sigma_digits: Optional[int] = None,
     vec_digits: Optional[int] = None,
 ) -> Dict[str, Any]:
@@ -90,9 +90,9 @@ def svd_spec_from_right_singular_vectors(
         of ``V``) grouped by distinct ``sigma^2``.
     Ascale:
         Scaling behavior matches :func:`svd_spec`.
-    sigma2_digits, sigma_digits, vec_digits:
+    eig_digits, sigma_digits, vec_digits:
         Optional rounding controls.
-        ``sigma2_digits`` rounds the distinct ``sigma^2`` values.
+        ``eig_digits`` rounds the distinct ``sigma^2`` eigenvalues.
 
     Returns
     -------
@@ -123,7 +123,7 @@ def svd_spec_from_right_singular_vectors(
 
     for (sigma2, m, vecs) in triples:
         sigma2_scaled = sigma2 if Ascale is None else (sigma2 / (Ascale * Ascale))
-        sigma2_scaled = _maybe_round(sigma2_scaled, sigma2_digits)
+        sigma2_scaled = _maybe_round(sigma2_scaled, eig_digits)
         sigma = sym.sqrt(sigma2_scaled)
         sigma = _maybe_round(sigma, sigma_digits)
         sigma = _simplify_svd_expr(sigma)
@@ -196,7 +196,7 @@ def svd_spec(
         A,
         G.eigenvects(),
         Ascale=Ascale,
-        sigma2_digits=eig_digits,
+        eig_digits=eig_digits,
         sigma_digits=sigma_digits,
         vec_digits=vec_digits,
     )
