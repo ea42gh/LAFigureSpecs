@@ -629,7 +629,7 @@ def ge_layout_spec(
     return GEGridSpec.from_dict(spec, allow_extra=True)
 
 
-def _ge_stack_svg(
+def _render_ge_stack_svg(
     matrices: Sequence[Sequence[Any]],
     *,
     n_rhs: Any = _UNSET,
@@ -958,7 +958,7 @@ def _ge_stack_render_inputs(
 
 def show_ge(*args: Any, **kwargs: Any) -> Any:
     """Render GE and return a displayable SVG object when possible."""
-    svg = _ge_stack_svg(*args, **kwargs)
+    svg = _render_ge_stack_svg(*args, **kwargs)
     try:
         from IPython.display import SVG
 
@@ -1207,7 +1207,7 @@ def ge_svg(
             stack_render_opts["document_preamble"] = document_preamble
         stack_render_opts.update(stack_opts)
 
-        return _ge_stack_svg(
+        return _render_ge_stack_svg(
             A,
             n_rhs=n_rhs,
             pivot_text_color=pivot_text_color,

@@ -360,7 +360,7 @@ class ShowGE:
                     array_names = ["E", ["A", "B"]]
         if self.normal_eq:
             from .ge import decorate_ge
-            from .ge_convenience import _ge_stack_svg
+            from .ge_convenience import _render_ge_stack_svg
 
             trace = self._get_trace()
             layers = self._get_layers()
@@ -384,7 +384,7 @@ class ShowGE:
                     color="blue",
                     submatrix_name_style="grid",
                 )
-            svg = _ge_stack_svg(
+            svg = _render_ge_stack_svg(
                 layers.get("matrices"),
                 n_rhs=layers.get("n_rhs") or 0,
                 **_decorated_stack_render_kwargs(
@@ -412,7 +412,7 @@ class ShowGE:
             mats = layers.get("matrices") or []
             if len(mats) > 1:
                 from .ge import decorate_ge
-                from .ge_convenience import _ge_stack_svg
+                from .ge_convenience import _render_ge_stack_svg
 
                 trace = self._get_trace()
                 decor = decorate_ge(trace, index_base=self.index_base)
@@ -421,7 +421,7 @@ class ShowGE:
                     var_summary = decor.get("variable_types")
                 elif isinstance(var_summary, bool):
                     var_summary = decor.get("variable_types") if var_summary else None
-                svg = _ge_stack_svg(
+                svg = _render_ge_stack_svg(
                     mats,
                     n_rhs=layers.get("n_rhs") or 0,
                     **_decorated_stack_render_kwargs(
