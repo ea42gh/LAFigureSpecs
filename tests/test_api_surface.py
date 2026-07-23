@@ -122,3 +122,12 @@ def test_bundle_apis_reject_unknown_keywords():
         LAFigureSpecs.svd_bundle([[1, 0], [0, 1]], bogus=True)
     with pytest.raises(TypeError, match="unexpected keyword.*bogus"):
         LAFigureSpecs.qr_bundle([[1, 0], [0, 1]], bogus=True)
+
+
+
+def test_api_docs_describe_bundle_keyword_contract():
+    text = __import__('pathlib').Path('docs/api.md').read_text(encoding='utf-8')
+    normalized = ' '.join(text.split())
+
+    assert 'Bundle helpers accept the same documented compute/render options' in normalized
+    assert 'unknown keywords raise `TypeError` instead of being ignored' in normalized

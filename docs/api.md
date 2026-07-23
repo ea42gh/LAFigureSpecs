@@ -23,6 +23,9 @@ Preferred cross-language top-level names:
 - If you want compute + inspect intermediates + render:
   - `*_bundle` returns standardized bundle:
     `{"spec", "tex", "svg", "data", "render_error"}`
+  - Bundle helpers accept the same documented compute/render options as their
+    matching spec and render helpers; unknown keywords raise `TypeError` instead
+    of being ignored.
   - Access GE intermediates via `bundle["data"]["..."]` (not top-level keys).
   - Use `bundle_summary(bundle)` for a quick status-only view.
 - If you already have prepared matrices/specs and want low-level renderer control:
