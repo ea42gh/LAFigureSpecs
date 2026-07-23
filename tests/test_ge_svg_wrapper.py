@@ -4,7 +4,7 @@ import pytest
 
 
 def test_ge_svg_rejects_removed_func_hook():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
 
     A = sym.Matrix([[1, 2], [3, 4]])
 
@@ -21,7 +21,7 @@ def test_ge_svg_rejects_removed_func_hook():
     ],
 )
 def test_ge_svg_rejects_removed_stack_keywords(old_keyword, value):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
 
     A = sym.Matrix([[1, 2], [3, 4]])
 
@@ -30,7 +30,7 @@ def test_ge_svg_rejects_removed_stack_keywords(old_keyword, value):
 
 
 def test_ge_svg_forwards_structured_decorations(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -60,7 +60,7 @@ def test_ge_svg_forwards_structured_decorations(monkeypatch):
 
 
 def test_ge_svg_accepts_canonical_renderer_fields(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -100,7 +100,7 @@ def test_ge_svg_accepts_canonical_renderer_fields(monkeypatch):
 
 
 def test_ge_svg_grid_pivot_locs_accept_custom_style(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -123,7 +123,7 @@ def test_ge_svg_grid_pivot_locs_accept_custom_style(monkeypatch):
 
 
 def test_ge_svg_accepts_structured_rowechelon_paths(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -151,7 +151,7 @@ def test_ge_svg_accepts_structured_rowechelon_paths(monkeypatch):
 
 
 def test_ge_svg_structured_rowechelon_paths_accept_path_offsets(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [0, 1]])]]
@@ -183,7 +183,7 @@ def test_ge_svg_structured_rowechelon_paths_accept_path_offsets(monkeypatch):
 
 @pytest.mark.parametrize("removed", ["node_offsets", "adj", "left_pad"])
 def test_ge_svg_structured_rowechelon_paths_reject_removed_offset_keywords(removed):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
 
     matrices = [[None, sym.Matrix([[1, 2], [0, 1]])]]
     with pytest.raises(ValueError, match=rf"{removed}.*path_offsets"):
@@ -201,7 +201,7 @@ def test_ge_svg_structured_rowechelon_paths_reject_removed_offset_keywords(remov
 
 
 def test_ge_svg_accepts_grid_row_text_annotations(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -234,7 +234,7 @@ def test_ge_svg_accepts_grid_row_text_annotations(monkeypatch):
 
 
 def test_ge_svg_grid_row_text_annotations_ignore_below_variable_summary_rows(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]])
@@ -291,7 +291,7 @@ def test_ge_svg_grid_row_text_annotations_ignore_below_variable_summary_rows(mon
 
 
 def test_ge_svg_rejects_annotations_label_callout_alias():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
 
     A = sym.Matrix([[1, 2, 3], [4, 5, 6]])
 
@@ -303,7 +303,7 @@ def test_ge_svg_rejects_annotations_label_callout_alias():
 
 
 def test_ge_svg_single_matrix_uses_callouts_for_matrix_labels(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2, 3, 4, 5], [6, 7, 8, 9, 10], [11, 12, 13, 14, 15]])
@@ -336,7 +336,7 @@ def test_ge_svg_single_matrix_uses_callouts_for_matrix_labels(monkeypatch):
 
 
 def test_ge_svg_preserves_raw_text_annotations(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -358,7 +358,7 @@ def test_ge_svg_preserves_raw_text_annotations(monkeypatch):
 def test_ge_svg_preserves_output_dir_artifacts(monkeypatch, tmp_path):
     from pathlib import Path
 
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
@@ -379,7 +379,7 @@ def test_ge_svg_preserves_output_dir_artifacts(monkeypatch, tmp_path):
 def test_ge_svg_expands_user_output_dir(monkeypatch, tmp_path):
     from pathlib import Path
 
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     home = tmp_path / "home"
@@ -401,7 +401,7 @@ def test_ge_svg_expands_user_output_dir(monkeypatch, tmp_path):
 
 
 def test_ge_svg_supports_variable_summary():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A = sym.Matrix([[1, 2], [3, 4]])
@@ -428,7 +428,7 @@ def test_ge_svg_supports_variable_summary():
 
 
 def test_ge_svg_supports_array_names():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -459,7 +459,7 @@ def test_ge_svg_supports_array_names():
 
 
 def test_ge_svg_can_suppress_array_name_indices():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -494,7 +494,7 @@ def test_ge_svg_can_suppress_array_name_indices():
 
 
 def test_ge_svg_forwards_explicit_callouts():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -521,7 +521,7 @@ def test_ge_svg_forwards_explicit_callouts():
 
 
 def test_ge_svg_rejects_removed_specs_alias():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
     matrices = [[None, A0]]
@@ -540,7 +540,7 @@ def test_ge_svg_rejects_removed_specs_alias():
 
 
 def test_ge_svg_rejects_removed_name_specs_alias():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
     E1 = sym.eye(2)
@@ -555,7 +555,7 @@ def test_ge_svg_rejects_removed_name_specs_alias():
 
 
 def test_ge_svg_rhs_callout_labels_follow_rhs_size():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -593,7 +593,7 @@ def test_ge_svg_rhs_callout_labels_follow_rhs_size():
 
 
 def test_ge_svg_supports_canonical_n_rhs_keyword():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2, 3], [4, 5, 6]])]]
@@ -614,7 +614,7 @@ def test_ge_svg_supports_canonical_n_rhs_keyword():
 
 
 def test_ge_svg_with_n_rhs_delegates_to_stack_renderer():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2, 3], [4, 5, 6]])]]
@@ -638,7 +638,7 @@ def test_ge_svg_with_n_rhs_delegates_to_stack_renderer():
 
 
 def test_ge_svg_with_stack_only_option_delegates_to_stack_renderer():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
@@ -661,7 +661,7 @@ def test_ge_svg_with_stack_only_option_delegates_to_stack_renderer():
 
 
 def test_ge_svg_detects_numpy_matrix_stack_without_n_rhs(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     A = np.array([[1, 2, 1], [2, 1, 1]])
@@ -685,7 +685,7 @@ def test_ge_svg_detects_numpy_matrix_stack_without_n_rhs(monkeypatch):
 
 
 def test_ge_svg_uses_canonical_tex_hook_names(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
@@ -704,7 +704,7 @@ def test_ge_svg_uses_canonical_tex_hook_names(monkeypatch):
 
 
 def test_ge_svg_rejects_removed_tex_hook_aliases(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
@@ -730,7 +730,7 @@ def test_ge_svg_rejects_removed_tex_hook_aliases(monkeypatch):
 
 
 def test_ge_svg_generates_n_rhs_separator_decorations(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     captured = {}
@@ -752,7 +752,7 @@ def test_ge_svg_generates_n_rhs_separator_decorations(monkeypatch):
 
 
 def test_ge_svg_generates_n_rhs_list_separator_decorations(monkeypatch):
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
 
     captured = {}

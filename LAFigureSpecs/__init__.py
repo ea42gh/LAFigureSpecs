@@ -71,7 +71,7 @@ from .show_ge import (
     solutions,
 )
 from .convenience_utils import bundle_summary
-from .convenience_ge import (
+from .ge_convenience import (
     ge_bundle,
     ge_layout_spec,
     ge_spec,

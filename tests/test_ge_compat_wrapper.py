@@ -22,7 +22,7 @@ def test_pivot_selectors_to_pivot_locs():
 
 
 def test_ge_svg_rejects_removed_ref_path_list_keyword():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     import sympy as sym
 
     A0 = sym.Matrix([[1, 2], [3, 4]])
@@ -39,7 +39,7 @@ def test_ge_svg_rejects_removed_ref_path_list_keyword():
 
 
 def test_ge_svg_rejects_tuple_rowechelon_path_entries():
-    from LAFigureSpecs.convenience_ge import ge_svg
+    from LAFigureSpecs.ge_convenience import ge_svg
     import sympy as sym
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
