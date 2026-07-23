@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
+import matrixlayout
 import LAFigureSpecs.convenience as lf_conv
 import LAFigureSpecs.convenience_qr as lf_qr
 import LAFigureSpecs.ge_convenience as lf_ge
@@ -20,7 +21,7 @@ def test_eig_svg_passes_render_opts(monkeypatch):
         recorded.update(kwargs)
         return "<svg/>"
 
-    monkeypatch.setattr(lf_conv, "_import_render_eig_svg", lambda: fake_render_eig_svg)
+    monkeypatch.setattr(matrixlayout, "render_eig_svg", fake_render_eig_svg)
 
     svg = lf_conv.eig_svg(
         [[1, 0], [0, 1]],

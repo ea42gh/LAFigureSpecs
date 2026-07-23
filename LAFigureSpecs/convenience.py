@@ -43,27 +43,6 @@ def _filter_tex_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     return {k: v for k, v in kwargs.items() if k not in skip}
 
 
-def _import_render_eig_tex():
-    try:
-        from matrixlayout import render_eig_tex
-
-        return render_eig_tex
-    except Exception:
-        from matrixlayout.eigproblem import render_eig_tex
-
-        return render_eig_tex
-
-
-def _import_render_eig_svg():
-    try:
-        from matrixlayout import render_eig_svg
-
-        return render_eig_svg
-    except Exception:
-        from matrixlayout.eigproblem import render_eig_svg
-
-        return render_eig_svg
-
 
 def _render_eig_tex_from_spec(
     spec: Dict[str, Any],
@@ -84,8 +63,9 @@ def _render_eig_tex_from_spec(
     decorators: Optional[Any],
     strict: Optional[bool],
 ) -> str:
-    render_eig_tex = _import_render_eig_tex()
-    return render_eig_tex(
+    import matrixlayout
+
+    return matrixlayout.render_eig_tex(
         spec,
         case=norm_str(case),
         formatter=formatter,
@@ -131,7 +111,8 @@ def _render_eig_svg_from_spec(
     output_dir: Optional[Any],
     render_opts: Optional[Dict[str, Any]],
 ) -> str:
-    render_eig_svg = _import_render_eig_svg()
+    import matrixlayout
+
     opts = resolve_render_svg_opts(
         toolchain_name=toolchain_name,
         crop=crop,
@@ -141,7 +122,7 @@ def _render_eig_svg_from_spec(
         output_dir=output_dir,
         render_opts=render_opts,
     )
-    return render_eig_svg(
+    return matrixlayout.render_eig_svg(
         spec,
         case=norm_str(case),
         formatter=formatter,
