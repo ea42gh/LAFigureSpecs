@@ -104,7 +104,7 @@ def test_rowechelon_paths_interior_pivot_anchors_for_all_cases():
         _assert_manhattan_path(path)
 
 
-def test_rowechelon_path_vh_uses_right_boundary_for_nonzero_columns():
+def test_rowechelon_path_vh_uses_left_boundary_for_nonzero_columns():
     matrices = [[None, [[1, 2, 3, 4, 5, 6], [7, 8, 9, 10, 11, 12], [13, 14, 15, 16, 17, 18]]]]
     pivots = [(0, 0), (1, 4), (2, 5)]
     path_specs = [_path_spec((0, 1), pivots, "vh")]
@@ -112,6 +112,9 @@ def test_rowechelon_path_vh_uses_right_boundary_for_nonzero_columns():
     assert paths
     path = paths[0]
     assert "|-" not in path
+    assert "(1-|A0x1-left)" in path
+    assert "(2-|8)" in path
+    assert "(3-|9)" in path
     _assert_no_cell_anchor_path(path)
     _assert_manhattan_path(path)
 
