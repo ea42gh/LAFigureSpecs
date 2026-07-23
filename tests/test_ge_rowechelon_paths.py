@@ -11,15 +11,15 @@ def _path_spec(
     *,
     adj=None,
     left_pad=None,
-    node_offsets=None,
+    path_offsets=None,
 ):
     spec = {"grid": grid, "pivots": pivots, "case": case, "color": color}
     if adj is not None:
         spec["adj"] = adj
     if left_pad is not None:
         spec["left_pad"] = left_pad
-    if node_offsets is not None:
-        spec["node_offsets"] = node_offsets
+    if path_offsets is not None:
+        spec["path_offsets"] = path_offsets
     return spec
 
 
@@ -64,7 +64,7 @@ def test_canonical_structured_specs_use_nicematrix_rule_coordinates():
             "pivots": [(0, 0), (1, 1)],
             "case": "vh",
             "color": "red",
-            "node_offsets": (0.2, -0.05),
+            "path_offsets": (0.2, -0.05),
         }
     ]
     paths = rowechelon_paths_from_specs(matrices, structured, submatrix_name_style="grid")
@@ -177,10 +177,10 @@ def test_rowechelon_paths_always_use_left_bottom_pivot_edges_for_all_cases():
         _assert_manhattan_path(paths[0])
 
 
-def test_rowechelon_path_node_offsets_shift_staircase_nodes():
+def test_rowechelon_path_path_offsets_shift_staircase_nodes():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
-    path_specs = [_path_spec((0, 1), pivots, "vh", "red", adj=0.1, left_pad=0.0, node_offsets=(0.2, -0.05))]
+    path_specs = [_path_spec((0, 1), pivots, "vh", "red", adj=0.1, left_pad=0.0, path_offsets=(0.2, -0.05))]
     paths = _paths(matrices, path_specs)
     assert paths == [
         r"\draw[red] ($ (1-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|A0x1-left) + (0.3,-0.05) $) -- ($ (2-|5) + (0.2,-0.05) $) -- ($ (3-|5) + (0.2,-0.05) $) -- ($ (3-|8) + (0.2,-0.05) $);"

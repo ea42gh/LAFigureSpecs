@@ -150,7 +150,7 @@ def test_ge_svg_accepts_structured_rowechelon_paths(monkeypatch):
     assert paths[0] == r"\draw[red] ($ (4-|A1x1-left) + (0.1,0) $) -- (4-|4) -- (5-|4) -- (5-|5);"
 
 
-def test_ge_svg_structured_rowechelon_paths_accept_node_offsets(monkeypatch):
+def test_ge_svg_structured_rowechelon_paths_accept_path_offsets(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge_svg
     from matrixlayout import ge as ml_ge
 
@@ -170,7 +170,7 @@ def test_ge_svg_structured_rowechelon_paths_accept_node_offsets(monkeypatch):
                 "grid": (0, 1),
                 "pivots": [(0, 0), (1, 1)],
                 "case": "hh",
-                "node_offsets": (0.2, -0.05),
+                "path_offsets": (0.2, -0.05),
             }
         ],
     )

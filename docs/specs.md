@@ -89,7 +89,7 @@ GE stack parameters accepted by `ge_svg(matrices, ...)` (subset shown):
 For stack renderers, `pivot_locs` may use structured selectors:
 `{"grid": (block_row, block_col), "entries": [(row, col)], "style": "draw=blue"}`.
 `rowechelon_paths` should usually use structured selectors:
-`{"grid": (block_row, block_col), "pivots": [(row, col)], "case": "hh", "color": "blue"}`.
+`{"grid": (block_row, block_col), "pivots": [(row, col)], "case": "hh", "color": "blue", "path_offsets": (dx, dy)}`.
 Raw `\draw ...;` snippets remain accepted for advanced renderer-level uses.
 Use `decorations` for grid-targeted backgrounds and row/column separator
 lines, for example:
