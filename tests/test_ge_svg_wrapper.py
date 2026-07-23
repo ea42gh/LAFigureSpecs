@@ -181,6 +181,24 @@ def test_ge_svg_structured_rowechelon_paths_accept_path_offsets(monkeypatch):
     assert "($ (3-|4) + (0.2,-0.05) $)" in path
 
 
+def test_ge_svg_structured_rowechelon_paths_reject_removed_node_offsets():
+    from LAFigureSpecs.convenience_ge import ge_svg
+
+    matrices = [[None, sym.Matrix([[1, 2], [0, 1]])]]
+    with pytest.raises(ValueError, match="node_offsets.*path_offsets"):
+        ge_svg(
+            matrices,
+            rowechelon_paths=[
+                {
+                    "grid": (0, 1),
+                    "pivots": [(0, 0), (1, 1)],
+                    "case": "hh",
+                    "node_offsets": (0.2, -0.05),
+                }
+            ],
+        )
+
+
 def test_ge_svg_accepts_grid_row_text_annotations(monkeypatch):
     from LAFigureSpecs.convenience_ge import ge_svg
     from matrixlayout import ge as ml_ge
