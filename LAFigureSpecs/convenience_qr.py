@@ -5,10 +5,32 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from .formatting import latexify
-from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
+from .convenience_utils import make_bundle, reject_unknown_kwargs, resolve_crop_padding, resolve_render_svg_opts
 from .qr import gram_schmidt_qr_matrices, qr_spec, qr_spec_from_matrices
 
 _UNSET = object()
+
+_QR_BUNDLE_KEYS = {
+    "callouts",
+    "array_names",
+    "fig_scale",
+    "body_preamble",
+    "document_preamble",
+    "nice_options",
+    "label_color",
+    "label_text_color",
+    "known_zero_color",
+    "decorators",
+    "strict",
+    "formatter",
+    "toolchain_name",
+    "crop",
+    "padding",
+    "frame",
+    "exact_bbox",
+    "output_dir",
+    "render_opts",
+}
 
 
 def _is_qr_stack_matrix_cell(value: Any) -> bool:
@@ -221,6 +243,8 @@ def qr_bundle(
     **kwargs: Any,
 ) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
+
+    reject_unknown_kwargs(kwargs, _QR_BUNDLE_KEYS, func_name="qr_bundle")
 
     spec_kwargs = {k: kwargs[k] for k in _QR_SPEC_KEYS if k in kwargs}
     spec = qr_spec(A, **spec_kwargs)

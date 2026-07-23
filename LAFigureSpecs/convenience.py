@@ -14,12 +14,43 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Tuple, Union
 
 from .formatting import latexify
-from .convenience_utils import make_bundle, norm_str, resolve_crop_padding, resolve_render_svg_opts
+from .convenience_utils import make_bundle, norm_str, reject_unknown_kwargs, resolve_crop_padding, resolve_render_svg_opts
 
 from .eig import eig_spec
 from .svd import svd_spec
 
 _UNSET = object()
+
+_EIG_BUNDLE_KEYS = {
+    "case",
+    "normal",
+    "Ascale",
+    "eig_digits",
+    "vec_digits",
+    "formatter",
+    "color",
+    "mmLambda",
+    "mmSigma",
+    "mmS",
+    "mmU",
+    "mmV",
+    "mmQ",
+    "fig_scale",
+    "body_preamble",
+    "sz",
+    "factor_out",
+    "decorators",
+    "strict",
+    "toolchain_name",
+    "crop",
+    "padding",
+    "frame",
+    "exact_bbox",
+    "output_dir",
+    "render_opts",
+}
+
+_SVD_BUNDLE_KEYS = (_EIG_BUNDLE_KEYS - {"case", "normal"}) | {"sigma_digits"}
 
 def _julia_str(x: Any) -> Any:
     """Alias for :func:`norm_str` used by Julia interop tests."""
@@ -281,6 +312,8 @@ def eig_bundle(
 ) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
 
+    reject_unknown_kwargs(kwargs, _EIG_BUNDLE_KEYS, func_name="eig_bundle")
+
     case = kwargs.get("case")
     normal = kwargs.get("normal", False)
     if case is None:
@@ -490,8 +523,7 @@ def svd_svg(
 def svd_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
     """Bundle: compute once, then return a standardized bundle contract."""
 
-    if "sigma2_digits" in kwargs:
-        raise TypeError("sigma2_digits is removed; use eig_digits instead.")
+    reject_unknown_kwargs(kwargs, _SVD_BUNDLE_KEYS, func_name="svd_bundle")
 
     spec = svd_spec(
         A,

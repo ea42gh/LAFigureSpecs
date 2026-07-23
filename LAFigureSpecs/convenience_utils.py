@@ -101,6 +101,15 @@ def resolve_render_svg_opts(
     return opts
 
 
+def reject_unknown_kwargs(kwargs: Mapping[str, Any], allowed: set[str], *, func_name: str) -> None:
+    """Reject ignored keyword arguments in convenience wrappers."""
+
+    unknown = sorted(set(kwargs) - allowed)
+    if unknown:
+        names = ", ".join(unknown)
+        raise TypeError(f"{func_name} got unexpected keyword argument(s): {names}")
+
+
 def resolve_crop_padding(
     *,
     crop_is_unset: bool,
@@ -163,6 +172,7 @@ __all__ = [
     "merge_render_opts",
     "resolve_render_svg_opts",
     "resolve_crop_padding",
+    "reject_unknown_kwargs",
     "make_bundle",
     "bundle_summary",
 ]

@@ -107,5 +107,18 @@ def test_svd_high_level_apis_reject_removed_sigma2_digits_alias():
         LAFigureSpecs.svd_tex([[1, 0], [0, 1]], sigma2_digits=0)
     with pytest.raises(TypeError, match="sigma2_digits"):
         LAFigureSpecs.svd_svg([[1, 0], [0, 1]], sigma2_digits=0)
-    with pytest.raises(TypeError, match="eig_digits"):
+    with pytest.raises(TypeError, match="sigma2_digits"):
         LAFigureSpecs.svd_bundle([[1, 0], [0, 1]], sigma2_digits=0)
+
+
+def test_bundle_apis_reject_unknown_keywords():
+    import pytest
+
+    import LAFigureSpecs
+
+    with pytest.raises(TypeError, match="unexpected keyword.*bogus"):
+        LAFigureSpecs.eig_bundle([[1, 0], [0, 1]], bogus=True)
+    with pytest.raises(TypeError, match="unexpected keyword.*bogus"):
+        LAFigureSpecs.svd_bundle([[1, 0], [0, 1]], bogus=True)
+    with pytest.raises(TypeError, match="unexpected keyword.*bogus"):
+        LAFigureSpecs.qr_bundle([[1, 0], [0, 1]], bogus=True)
