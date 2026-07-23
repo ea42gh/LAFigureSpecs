@@ -181,11 +181,12 @@ def test_ge_svg_structured_rowechelon_paths_accept_path_offsets(monkeypatch):
     assert "($ (3-|4) + (0.2,-0.05) $)" in path
 
 
-def test_ge_svg_structured_rowechelon_paths_reject_removed_node_offsets():
+@pytest.mark.parametrize("removed", ["node_offsets", "adj", "left_pad"])
+def test_ge_svg_structured_rowechelon_paths_reject_removed_offset_keywords(removed):
     from LAFigureSpecs.convenience_ge import ge_svg
 
     matrices = [[None, sym.Matrix([[1, 2], [0, 1]])]]
-    with pytest.raises(ValueError, match="node_offsets.*path_offsets"):
+    with pytest.raises(ValueError, match=rf"{removed}.*path_offsets"):
         ge_svg(
             matrices,
             rowechelon_paths=[
@@ -193,7 +194,7 @@ def test_ge_svg_structured_rowechelon_paths_reject_removed_node_offsets():
                     "grid": (0, 1),
                     "pivots": [(0, 0), (1, 1)],
                     "case": "hh",
-                    "node_offsets": (0.2, -0.05),
+                    removed: (0.2, -0.05),
                 }
             ],
         )
