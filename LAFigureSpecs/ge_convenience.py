@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 _UNSET = object()
 _REMOVED_GE_STACK_KEYWORDS = frozenset({"pivot_list", "bg_for_entries", "ref_path_list", "comment_list"})
 _REMOVED_GE_TEX_HOOKS = frozenset({"preamble", "extension"})
+_REMOVED_GE_ARTIFACT_KEYWORDS = frozenset({"tmp_dir", "keep_file"})
 _REMOVED_MATRIX_LABEL_ALIAS_MESSAGE = "Removed GE matrix-label alias: {alias}. Use callouts= instead."
 
 
@@ -48,6 +49,12 @@ def _reject_removed_ge_stack_keywords(render_opts: Dict[str, Any]) -> None:
         "Use pivot_locs=, decorations=, rowechelon_paths=, or text_annotations= instead.",
     )
 
+def _reject_removed_ge_artifact_keywords(render_opts: Dict[str, Any]) -> None:
+    _reject_removed_keywords(
+        render_opts,
+        _REMOVED_GE_ARTIFACT_KEYWORDS,
+        "Removed GE artifact keyword(s): {names}. Use output_dir= and output_stem= instead.",
+    )
 
 def _reject_removed_ge_tex_hooks(render_opts: Dict[str, Any]) -> None:
     _reject_removed_keywords(
@@ -656,7 +663,6 @@ def _render_ge_stack_svg(
     start_index: Optional[int] = 1,
     fig_scale: Optional[Any] = None,
     outer_hspace_mm: int = 9,
-    keep_file: Optional[str] = None,
     output_dir: Optional[Any] = None,
     output_stem: Optional[str] = None,
     frame: Any = None,
@@ -674,6 +680,7 @@ def _render_ge_stack_svg(
     if "specs" in render_opts:
         raise TypeError(_REMOVED_MATRIX_LABEL_ALIAS_MESSAGE.format(alias="specs="))
     _reject_removed_ge_stack_keywords(render_opts)
+    _reject_removed_ge_artifact_keywords(render_opts)
     _reject_annotation_callout_alias(render_opts.get("annotations"))
     _reject_removed_ge_tex_hooks(render_opts)
     n_rhs = _resolve_n_rhs(n_rhs=n_rhs)
@@ -689,7 +696,6 @@ def _render_ge_stack_svg(
         matrices = [[None, matrices]]
 
     render_dir, preserve_output_dir, output_stem = _ge_helpers._resolve_output_targets(
-        keep_file=keep_file,
         output_dir=output_dir,
         output_stem=output_stem,
     )
@@ -750,7 +756,6 @@ def _render_ge_stack_svg(
         **render_opts,
     )
     _ge_helpers._preserve_output_artifacts(
-        keep_file=keep_file,
         render_dir=render_dir,
         output_dir=preserve_output_dir,
         output_stem=output_stem or "output",

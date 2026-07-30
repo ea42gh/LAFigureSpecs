@@ -367,19 +367,14 @@ def _pivot_selectors_to_pivot_locs(
 
 def _resolve_output_targets(
     *,
-    keep_file: Optional[str],
     output_dir: Optional[Any],
     output_stem: Optional[str],
 ) -> Tuple[Optional[Any], Optional[Any], Optional[str]]:
     from pathlib import Path
 
     resolved_output_stem: Optional[str] = output_stem
-    if keep_file and resolved_output_stem is None:
-        p = Path(str(keep_file)).expanduser()
-        suffix = p.suffix.lower()
-        resolved_output_stem = p.stem if suffix in (".tex", ".svg", ".pdf", ".dvi", ".xdv") else p.name
     # Always render on a container-local scratch filesystem so latexmk sees
-    # consistent mtimes. output_dir/keep_file are preserve targets, not the live
+    # consistent mtimes. output_dir is a preserve target, not the live
     # TeX workdir.
     scratch_root = Path("/tmp/la/run")
     scratch_root.mkdir(parents=True, exist_ok=True)
@@ -410,7 +405,6 @@ def _find_artifact_source_base(
 
 def _preserve_output_artifacts(
     *,
-    keep_file: Optional[str],
     render_dir: Optional[Any],
     output_dir: Optional[Any],
     output_stem: str,
@@ -432,21 +426,6 @@ def _preserve_output_artifacts(
             if src.exists():
                 shutil.copy2(src, output_target_dir / src.name)
 
-    if not keep_file:
-        return
-
-    target = Path(str(keep_file)).expanduser()
-    suffix = target.suffix.lower()
-    if suffix in artifact_exts:
-        target_base = target.with_suffix("")
-    else:
-        target_base = target
-
-    target_base.parent.mkdir(parents=True, exist_ok=True)
-    for ext in artifact_exts:
-        src = source_base.with_suffix(ext)
-        if src.exists():
-            shutil.copy2(src, target_base.with_suffix(ext))
 
 
 def _array_name_callouts(
