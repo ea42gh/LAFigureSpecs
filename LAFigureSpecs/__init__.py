@@ -8,8 +8,8 @@ The core design keeps responsibilities separate:
 
 - LAFigureSpecs owns linear-algebra/spec-building decisions.
 - matrixlayout owns formatting, layout, and rendering mechanics.
-- LAFigureSpecs re-exports selected matrixlayout render helpers so Python users
-  can access the full teaching surface from one top-level package.
+- matrixlayout render helpers stay in matrixlayout; LAFigureSpecs exposes the
+  algorithm-facing spec, TeX, SVG, and bundle helpers.
 """
 
 from .__about__ import __version__, __build__
@@ -79,9 +79,6 @@ from .ge_convenience import (
     ge_tex,
 )
 from .rendering import latex_svg, latex_document_svg, lshow_svg
-from matrixlayout.ge import render_ge_svg, render_ge_tex
-from matrixlayout.qr import render_qr_svg, render_qr_tex
-from matrixlayout import render_eig_svg, render_eig_tex
 from .formatting import (
     decorate_tex_entries,
     latexify,
@@ -172,12 +169,6 @@ __all__ = [
     "ge_bundle",
     "eig_svg",
     "svd_svg",
-    "render_ge_svg",
-    "render_ge_tex",
-    "render_qr_svg",
-    "render_qr_tex",
-    "render_eig_svg",
-    "render_eig_tex",
     "latex_svg",
     "latex_document_svg",
     "lshow_svg",

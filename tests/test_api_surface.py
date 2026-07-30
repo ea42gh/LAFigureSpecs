@@ -28,9 +28,6 @@ def test_public_api_contains_canonical_render_names():
     assert "show_backsubstitution" in LAFigureSpecs.__all__
     assert "show_solution" in LAFigureSpecs.__all__
     assert "solutions" in LAFigureSpecs.__all__
-    assert "render_ge_svg" in LAFigureSpecs.__all__
-    assert "render_qr_svg" in LAFigureSpecs.__all__
-    assert "render_eig_svg" in LAFigureSpecs.__all__
     assert "latex_svg" in LAFigureSpecs.__all__
     assert "latex_document_svg" in LAFigureSpecs.__all__
     assert "lshow_svg" in LAFigureSpecs.__all__
@@ -50,6 +47,18 @@ def test_public_api_does_not_export_legacy_names():
     assert not hasattr(LAFigureSpecs, "rhs_block")
     assert "decorate_ge" not in LAFigureSpecs.__all__
     assert not hasattr(LAFigureSpecs, "decorate_ge")
+    assert "render_ge_svg" not in LAFigureSpecs.__all__
+    assert "render_ge_tex" not in LAFigureSpecs.__all__
+    assert "render_qr_svg" not in LAFigureSpecs.__all__
+    assert "render_qr_tex" not in LAFigureSpecs.__all__
+    assert "render_eig_svg" not in LAFigureSpecs.__all__
+    assert "render_eig_tex" not in LAFigureSpecs.__all__
+    assert not hasattr(LAFigureSpecs, "render_ge_svg")
+    assert not hasattr(LAFigureSpecs, "render_ge_tex")
+    assert not hasattr(LAFigureSpecs, "render_qr_svg")
+    assert not hasattr(LAFigureSpecs, "render_qr_tex")
+    assert not hasattr(LAFigureSpecs, "render_eig_svg")
+    assert not hasattr(LAFigureSpecs, "render_eig_tex")
     assert "ge_stack_svg" not in LAFigureSpecs.__all__
     assert "qr_stack_svg" not in LAFigureSpecs.__all__
     assert not hasattr(LAFigureSpecs, "ge_stack_svg")

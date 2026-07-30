@@ -29,7 +29,7 @@ Preferred cross-language top-level names:
   - Access GE intermediates via `bundle["data"]["..."]` (not top-level keys).
   - Use `bundle_summary(bundle)` for a quick status-only view.
 - If you already have prepared matrices/specs and want low-level renderer control:
-  - `render_ge_*`, `render_qr_*`, `render_eig_*` (re-exported matrixlayout functions)
+  - `matrixlayout.ge.render_ge_*`, `matrixlayout.qr.render_qr_*`, `matrixlayout.render_eig_*`
   - `ge_svg` and `qr_svg` for precomputed matrix grids
 - If you already have LaTeX and just need SVG:
   - `latex_svg` for fragments
@@ -143,13 +143,13 @@ In that example, displayed right singular vectors can factor out common scalar
 prefixes, the rendered `U` and `V` matrices factor out common scalar prefixes,
 and `\Sigma` stays entrywise.
 
-## Re-exported matrixlayout renderers (advanced)
+## Low-level matrixlayout renderers (advanced)
 
-These are re-exported for convenience and parity with matrixlayout:
+Direct rendering entry points live in `matrixlayout`:
 
-- `LAFigureSpecs.render_ge_tex`, `LAFigureSpecs.render_ge_svg`
-- `LAFigureSpecs.render_qr_tex`, `LAFigureSpecs.render_qr_svg`
-- `LAFigureSpecs.render_eig_tex`, `LAFigureSpecs.render_eig_svg`
+- `matrixlayout.ge.render_ge_tex`, `matrixlayout.ge.render_ge_svg`
+- `matrixlayout.qr.render_qr_tex`, `matrixlayout.qr.render_qr_svg`
+- `matrixlayout.render_eig_tex`, `matrixlayout.render_eig_svg`
 
 Prefer the higher-level LAFigureSpecs wrappers unless you specifically need direct
 matrixlayout rendering entry points.
