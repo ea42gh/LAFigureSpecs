@@ -31,6 +31,7 @@ if TYPE_CHECKING:
 _UNSET = object()
 _REMOVED_GE_STACK_KEYWORDS = frozenset({"pivot_list", "bg_for_entries", "ref_path_list", "comment_list"})
 _REMOVED_GE_TEX_HOOKS = frozenset({"preamble", "extension"})
+_REMOVED_MATRIX_LABEL_ALIAS_MESSAGE = "Removed GE matrix-label alias: {alias}. Use callouts= instead."
 
 
 def _reject_removed_keywords(render_opts: Dict[str, Any], removed: frozenset[str], message: str) -> None:
@@ -671,7 +672,7 @@ def _render_ge_stack_svg(
             "text_annotations=, or rowechelon_paths= instead."
         )
     if "specs" in render_opts:
-        raise TypeError("Removed GE matrix-label alias: specs=. Use callouts= instead.")
+        raise TypeError(_REMOVED_MATRIX_LABEL_ALIAS_MESSAGE.format(alias="specs="))
     _reject_removed_ge_stack_keywords(render_opts)
     _reject_annotation_callout_alias(render_opts.get("annotations"))
     _reject_removed_ge_tex_hooks(render_opts)
@@ -823,7 +824,7 @@ def _reject_annotation_callout_alias(annotations: Optional[Any]) -> None:
     items = annotations if isinstance(annotations, (list, tuple)) else [annotations]
     for item in items:
         if isinstance(item, dict) and "label" in item and "labels" not in item:
-            raise TypeError("Removed GE matrix-label alias: annotations=[{label=...}]. Use callouts= instead.")
+            raise TypeError(_REMOVED_MATRIX_LABEL_ALIAS_MESSAGE.format(alias="annotations=[{label=...}]"))
 
 
 def _ge_stack_render_inputs(
