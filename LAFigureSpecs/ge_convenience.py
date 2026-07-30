@@ -33,24 +33,28 @@ _REMOVED_GE_STACK_KEYWORDS = frozenset({"pivot_list", "bg_for_entries", "ref_pat
 _REMOVED_GE_TEX_HOOKS = frozenset({"preamble", "extension"})
 
 
+def _reject_removed_keywords(render_opts: Dict[str, Any], removed: frozenset[str], message: str) -> None:
+    names = removed & set(render_opts)
+    if names:
+        raise TypeError(message.format(names=", ".join(sorted(names))))
+
+
 def _reject_removed_ge_stack_keywords(render_opts: Dict[str, Any]) -> None:
-    removed_stack_keywords = _REMOVED_GE_STACK_KEYWORDS & set(render_opts)
-    if removed_stack_keywords:
-        names = ", ".join(sorted(removed_stack_keywords))
-        raise TypeError(
-            f"Removed GE stack keyword(s): {names}. "
-            "Use pivot_locs=, decorations=, rowechelon_paths=, or text_annotations= instead."
-        )
+    _reject_removed_keywords(
+        render_opts,
+        _REMOVED_GE_STACK_KEYWORDS,
+        "Removed GE stack keyword(s): {names}. "
+        "Use pivot_locs=, decorations=, rowechelon_paths=, or text_annotations= instead.",
+    )
 
 
 def _reject_removed_ge_tex_hooks(render_opts: Dict[str, Any]) -> None:
-    removed_tex_hooks = _REMOVED_GE_TEX_HOOKS & set(render_opts)
-    if removed_tex_hooks:
-        names = ", ".join(sorted(removed_tex_hooks))
-        raise TypeError(
-            f"Removed GE TeX hook alias(es): {names}. "
-            "Use body_preamble= for document-body setup and document_preamble= for true LaTeX preamble insertion."
-        )
+    _reject_removed_keywords(
+        render_opts,
+        _REMOVED_GE_TEX_HOOKS,
+        "Removed GE TeX hook alias(es): {names}. "
+        "Use body_preamble= for document-body setup and document_preamble= for true LaTeX preamble insertion.",
+    )
 
 
 def _is_stack_matrix_cell(value: Any) -> bool:
