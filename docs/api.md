@@ -106,8 +106,8 @@ entry points, for example:
 Matrix-block column spacing is controlled with millimeter kwargs:
 `mmLambda` for `\Lambda`, `mmSigma` for `\Sigma`, `mmS` for ordinary eigenvector
 matrix `S`, `mmQ` for `Q`, `mmV` for `V`, and `mmU` for `U`. When omitted,
-`mmSigma` defaults to `mmLambda`, while `mmQ`, `mmV`, and `mmU` default to
-`mmS`.
+`mmSigma` defaults to `mmLambda`; `mmS`, `mmQ`, `mmV`, and `mmU` each default
+to `4`.
 
 Selected eig/SVD basis vectors and matrix blocks can factor out a common scalar
 for display with `factor_out`. Accepted forms are:

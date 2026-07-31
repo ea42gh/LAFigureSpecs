@@ -45,8 +45,8 @@ def test_eig_svg_passes_matrix_specific_spacing(monkeypatch):
     assert calls["kwargs"]["mmLambda"] == 10
     assert calls["kwargs"]["mmQ"] == 6
     assert calls["kwargs"]["mmSigma"] is None
-    assert calls["kwargs"]["mmU"] is None
-    assert calls["kwargs"]["mmV"] is None
+    assert calls["kwargs"]["mmU"] == 4
+    assert calls["kwargs"]["mmV"] == 4
 
 
 def test_svd_svg_passes_matrix_specific_spacing(monkeypatch):
