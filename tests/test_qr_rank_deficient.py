@@ -57,6 +57,8 @@ def test_qr_documentation_example_keeps_second_w_column():
 
     assert r"\mathbf{w_1}" in tex
     assert r"\mathbf{w_2}" in tex
+    assert r"\mathbf{q_{1}^T}" in tex
+    assert r"\mathbf{q_{2}^T}" in tex
     assert "3 & 1 & 3 & -8" in tex
     assert "4 & 2 & 4 & 6" in tex
 
