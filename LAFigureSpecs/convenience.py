@@ -14,7 +14,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional, Tuple, Union
 
 from .formatting import latexify
-from .convenience_utils import make_bundle, norm_str, reject_unknown_kwargs, resolve_crop_padding, resolve_render_svg_opts
+from .convenience_utils import make_bundle, norm_str, reject_unknown_kwargs, resolve_artifact_opts, resolve_crop_padding, resolve_render_svg_opts
 
 from .eig import eig_spec
 from .svd import svd_spec
@@ -47,6 +47,8 @@ _EIG_BUNDLE_KEYS = {
     "frame",
     "exact_bbox",
     "output_dir",
+    "output_stem",
+    "artifact_opts",
     "render_opts",
 }
 
@@ -140,6 +142,7 @@ def _render_eig_svg_from_spec(
     frame: Any,
     exact_bbox: Optional[bool],
     output_dir: Optional[Any],
+    output_stem: Optional[str],
     render_opts: Optional[Dict[str, Any]],
 ) -> str:
     import matrixlayout
@@ -151,6 +154,7 @@ def _render_eig_svg_from_spec(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
+        output_stem=output_stem,
         render_opts=render_opts,
     )
     return matrixlayout.render_eig_svg(
@@ -257,9 +261,15 @@ def eig_svg(
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
     output_dir: Optional[Any] = None,
+    output_stem: Optional[str] = None,
+    artifact_opts: Optional[Dict[str, Any]] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Compute + render: build an eigen spec from ``A`` and return SVG."""
+
+    output_dir, output_stem = resolve_artifact_opts(
+        artifact_opts, output_dir=output_dir, output_stem=output_stem
+    )
 
     if case is None:
         case = "Q" if normal else "S"
@@ -302,6 +312,7 @@ def eig_svg(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
+        output_stem=output_stem,
         render_opts=render_opts,
     )
 
@@ -356,6 +367,11 @@ def eig_bundle(
             padding=kwargs.get("padding"),
             render_opts=render_opts,
         )
+        output_dir, output_stem = resolve_artifact_opts(
+            kwargs.get("artifact_opts"),
+            output_dir=kwargs.get("output_dir"),
+            output_stem=kwargs.get("output_stem"),
+        )
         svg = _render_eig_svg_from_spec(
             spec,
             case=case,
@@ -378,7 +394,8 @@ def eig_bundle(
             padding=padding,
             frame=kwargs.get("frame"),
             exact_bbox=kwargs.get("exact_bbox"),
-            output_dir=kwargs.get("output_dir"),
+            output_dir=output_dir,
+            output_stem=output_stem,
             render_opts=render_opts,
         )
     except Exception as e:
@@ -470,9 +487,15 @@ def svd_svg(
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
     output_dir: Optional[Any] = None,
+    output_stem: Optional[str] = None,
+    artifact_opts: Optional[Dict[str, Any]] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Compute + render: build an SVD spec from ``A`` and return SVG."""
+
+    output_dir, output_stem = resolve_artifact_opts(
+        artifact_opts, output_dir=output_dir, output_stem=output_stem
+    )
 
     spec = svd_spec(
         A,
@@ -516,6 +539,7 @@ def svd_svg(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
+        output_stem=output_stem,
         render_opts=render_opts,
     )
 
@@ -562,6 +586,11 @@ def svd_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
             padding=kwargs.get("padding"),
             render_opts=render_opts,
         )
+        output_dir, output_stem = resolve_artifact_opts(
+            kwargs.get("artifact_opts"),
+            output_dir=kwargs.get("output_dir"),
+            output_stem=kwargs.get("output_stem"),
+        )
         svg = _render_eig_svg_from_spec(
             spec,
             case="SVD",
@@ -584,7 +613,8 @@ def svd_bundle(A: Any, **kwargs: Any) -> Dict[str, Any]:
             padding=padding,
             frame=kwargs.get("frame"),
             exact_bbox=kwargs.get("exact_bbox"),
-            output_dir=kwargs.get("output_dir"),
+            output_dir=output_dir,
+            output_stem=output_stem,
             render_opts=render_opts,
         )
     except Exception as e:

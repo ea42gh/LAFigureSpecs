@@ -20,7 +20,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Sequence, 
 
 from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
 from .formatting import latexify, make_decorator
-from .convenience_utils import make_bundle, resolve_crop_padding, resolve_render_svg_opts
+from .convenience_utils import make_bundle, resolve_artifact_opts, resolve_crop_padding, resolve_render_svg_opts
 from .ge_paths import rowechelon_paths_from_specs
 from . import ge_stack_helpers as _ge_helpers
 
@@ -513,7 +513,7 @@ def ge_spec(
     pivoting: str = "none",
     gj: bool = False,
     show_pivots: Optional[bool] = True,
-    index_base: int = 0,
+    index_base: int = 1,
     pivot_style: str = "",
     pivot_text_color: str = "red",
     body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
@@ -543,7 +543,7 @@ def ge_spec(
         rhs,
         pivoting=pivoting,
         gj=gj,
-        show_pivots=show_pivots,
+        show_pivots=True if show_pivots is None else show_pivots,
         index_base=index_base,
         pivot_style=pivot_style,
         pivot_text_color=pivot_text_color,
@@ -573,7 +573,7 @@ def ge_layout_spec(
     pivoting: str = "none",
     gj: bool = False,
     show_pivots: Optional[bool] = True,
-    index_base: int = 0,
+    index_base: int = 1,
     pivot_style: str = "",
     pivot_text_color: str = "red",
     body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
@@ -1147,11 +1147,11 @@ def ge_svg(
     n_rhs: Any = _UNSET,
     pivoting: str = "none",
     gj: bool = False,
-    show_pivots: Optional[bool] = False,
+    show_pivots: Optional[bool] = None,
     index_base: int = 1,
     pivot_style: str = "",
     pivot_text_color: str = "red",
-    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 1pt}" + "\n",
+    body_preamble: str = r" \NiceMatrixOptions{cell-space-limits = 2pt, left-margin=6pt, right-margin=6pt}" + "\n",
     document_preamble: str = "",
     row_stretch: Optional[float] = None,
     nice_options: str = "",
@@ -1164,6 +1164,8 @@ def ge_svg(
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
     output_dir: Optional[Any] = None,
+    output_stem: Optional[str] = None,
+    artifact_opts: Optional[Dict[str, Any]] = None,
     render_opts: Optional[Dict[str, Any]] = None,
     callouts: Optional[Any] = None,
     array_names: Optional[Any] = None,
@@ -1178,6 +1180,10 @@ def ge_svg(
 ) -> str:
     """Compute + render: build GE data from reference inputs and return SVG."""
 
+    output_dir, output_stem = resolve_artifact_opts(
+        artifact_opts, output_dir=output_dir, output_stem=output_stem
+    )
+
     if _looks_like_ge_stack(A) or n_rhs is not _UNSET or stack_opts:
         if rhs is not None:
             raise TypeError("ge_svg stack rendering does not accept rhs=; pass rhs only for algorithmic GE")
@@ -1185,7 +1191,7 @@ def ge_svg(
             raise TypeError("ge_svg stack rendering does not support pivoting=; use algorithmic ge_svg(A, rhs=...)")
         if gj:
             raise TypeError("ge_svg stack rendering does not support gj=; use algorithmic ge_svg(A, rhs=...)")
-        if show_pivots:
+        if show_pivots is True:
             raise TypeError("ge_svg stack rendering does not support show_pivots=; pass pivot_locs= instead")
         if index_base != 1:
             raise TypeError("ge_svg stack rendering does not support index_base=")
@@ -1223,6 +1229,7 @@ def ge_svg(
             pivot_text_color=pivot_text_color,
             outer_hspace_mm=outer_hspace_mm,
             output_dir=output_dir,
+            output_stem=output_stem,
             frame=frame,
             callouts=callouts,
             array_names=array_names,
@@ -1279,6 +1286,7 @@ def ge_svg(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
+        output_stem=output_stem,
         render_opts=render_opts,
     )
     return render_ge_svg(**spec, **opts)

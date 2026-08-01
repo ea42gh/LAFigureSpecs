@@ -73,6 +73,30 @@ def merge_render_opts(
     return opts
 
 
+def resolve_artifact_opts(
+    artifact_opts: Optional[Mapping[str, Any]] = None,
+    *,
+    output_dir: Any = None,
+    output_stem: Any = None,
+) -> tuple[Any, Any]:
+    """Resolve artifact destination options with explicit keyword overrides."""
+
+    opts: Dict[str, Any] = {}
+    if artifact_opts is not None:
+        if not isinstance(artifact_opts, Mapping):
+            raise TypeError("artifact_opts must be a mapping with output_dir/output_stem keys")
+        unknown = sorted(set(artifact_opts) - {"output_dir", "output_stem"})
+        if unknown:
+            names = ", ".join(unknown)
+            raise TypeError(f"artifact_opts got unexpected key(s): {names}")
+        opts.update(artifact_opts)
+    if output_dir is not None:
+        opts["output_dir"] = output_dir
+    if output_stem is not None:
+        opts["output_stem"] = output_stem
+    return opts.get("output_dir"), opts.get("output_stem")
+
+
 def resolve_render_svg_opts(
     *,
     toolchain_name: Any = None,
@@ -171,6 +195,7 @@ __all__ = [
     "resolve_output_dir",
     "merge_render_opts",
     "resolve_render_svg_opts",
+    "resolve_artifact_opts",
     "resolve_crop_padding",
     "reject_unknown_kwargs",
     "make_bundle",

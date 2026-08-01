@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any, Dict, Optional
 
 from .formatting import latexify
-from .convenience_utils import make_bundle, reject_unknown_kwargs, resolve_crop_padding, resolve_render_svg_opts
+from .convenience_utils import make_bundle, reject_unknown_kwargs, resolve_artifact_opts, resolve_crop_padding, resolve_render_svg_opts
 from .qr import gram_schmidt_qr_matrices, qr_spec, qr_spec_from_matrices
 
 _UNSET = object()
@@ -29,6 +29,8 @@ _QR_BUNDLE_KEYS = {
     "frame",
     "exact_bbox",
     "output_dir",
+    "output_stem",
+    "artifact_opts",
     "render_opts",
 }
 
@@ -108,6 +110,7 @@ def _render_qr_svg_from_spec(
     frame: Any,
     exact_bbox: Optional[bool],
     output_dir: Optional[Any],
+    output_stem: Optional[str],
     render_opts: Optional[Dict[str, Any]],
 ) -> str:
     from matrixlayout.qr import render_qr_svg
@@ -119,6 +122,7 @@ def _render_qr_svg_from_spec(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
+        output_stem=output_stem,
         render_opts=render_opts,
     )
     return render_qr_svg(
@@ -197,9 +201,15 @@ def qr_svg(
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
     output_dir: Optional[Any] = None,
+    output_stem: Optional[str] = None,
+    artifact_opts: Optional[Dict[str, Any]] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Compute + render: build a QR spec from ``A`` and return SVG."""
+
+    output_dir, output_stem = resolve_artifact_opts(
+        artifact_opts, output_dir=output_dir, output_stem=output_stem
+    )
 
     spec_builder = qr_spec_from_matrices if _looks_like_qr_stack(A) else qr_spec
     spec = spec_builder(
@@ -234,6 +244,7 @@ def qr_svg(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
+        output_stem=output_stem,
         render_opts=render_opts,
     )
 
@@ -264,6 +275,11 @@ def qr_bundle(
             padding=kwargs.get("padding"),
             render_opts=render_opts,
         )
+        output_dir, output_stem = resolve_artifact_opts(
+            kwargs.get("artifact_opts"),
+            output_dir=kwargs.get("output_dir"),
+            output_stem=kwargs.get("output_stem"),
+        )
         svg = _render_qr_svg_from_spec(
             spec,
             formatter=kwargs.get("formatter", latexify),
@@ -273,7 +289,8 @@ def qr_bundle(
             padding=padding,
             frame=kwargs.get("frame"),
             exact_bbox=kwargs.get("exact_bbox"),
-            output_dir=kwargs.get("output_dir"),
+            output_dir=output_dir,
+            output_stem=output_stem,
             render_opts=render_opts,
         )
     except Exception as e:
@@ -305,9 +322,15 @@ def qr_figure(
     frame: Any = None,
     exact_bbox: Optional[bool] = None,
     output_dir: Optional[Any] = None,
+    output_stem: Optional[str] = None,
+    artifact_opts: Optional[Dict[str, Any]] = None,
     render_opts: Optional[Dict[str, Any]] = None,
 ) -> str:
     """Compute + render: build Gram–Schmidt QR matrices and return SVG."""
+
+    output_dir, output_stem = resolve_artifact_opts(
+        artifact_opts, output_dir=output_dir, output_stem=output_stem
+    )
 
     matrices = gram_schmidt_qr_matrices(
         A,
@@ -346,5 +369,6 @@ def qr_figure(
         frame=frame,
         exact_bbox=exact_bbox,
         output_dir=output_dir,
+        output_stem=output_stem,
         render_opts=render_opts,
     )
