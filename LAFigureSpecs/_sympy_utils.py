@@ -56,13 +56,14 @@ def _normalize_bridge_scalar(x: Any) -> Any:
         return re + sym.I * im
     items = _juliacall_sequence_items(x)
     if items is not None:
-        if _is_rational_pair(items):
+        is_tuple = _looks_like_juliacall_tuple(x)
+        if is_tuple and _is_rational_pair(items):
             return sym.Rational(_as_int(items[0]), _as_int(items[1]))
-        if _is_complex_rational_pair(items):
+        if is_tuple and _is_complex_rational_pair(items):
             re = sym.Rational(_as_int(items[0][0]), _as_int(items[0][1]))
             im = sym.Rational(_as_int(items[1][0]), _as_int(items[1][1]))
             return re + sym.I * im
-        if _looks_like_juliacall_tuple(x) and len(items) == 2 and all(isinstance(v, sym.Rational) for v in items):
+        if is_tuple and len(items) == 2 and all(isinstance(v, sym.Rational) for v in items):
             return items[0] + sym.I * items[1]
         return items
     return x

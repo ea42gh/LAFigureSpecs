@@ -191,6 +191,29 @@ def test_to_sympy_matrix_accepts_juliacall_complex_tuple_rationals():
     assert M == sym.Matrix([[sym.Rational(1, 2) + sym.I * sym.Rational(3, 4), sym.Rational(-5, 6) + sym.I * sym.Rational(7, 8)]])
 
 
+def test_to_sympy_matrix_preserves_two_element_juliacall_rows():
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
+
+    class FakeVectorValue:
+        __module__ = "juliacall"
+
+        def __init__(self, data):
+            self._data = data
+            self.shape = (len(data),)
+
+        def __len__(self):
+            return len(self._data)
+
+        def __getitem__(self, idx):
+            if idx < 1:
+                raise IndexError("1-based")
+            return self._data[idx - 1]
+
+    A = FakeVectorValue([FakeVectorValue([3, 1]), FakeVectorValue([4, 2])])
+
+    M = to_sympy_matrix(A)
+    assert M == sym.Matrix([[3, 1], [4, 2]])
+
 def test_to_sympy_matrix_accepts_juliacall_nested_vector_literal():
     from LAFigureSpecs._sympy_utils import to_sympy_matrix
 
