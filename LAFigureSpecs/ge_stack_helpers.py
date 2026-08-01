@@ -11,7 +11,6 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence, Tuple
 
 
-
 def _matrix_shape(mat: Any) -> Tuple[int, int]:
     if mat is None:
         return (0, 0)
@@ -32,14 +31,12 @@ def _matrix_shape(mat: Any) -> Tuple[int, int]:
     return (0, 0)
 
 
-def _grid_offsets(
+def _grid_metrics(
     matrices: Sequence[Sequence[Any]],
-    *,
-    index_base: int = 1,
-) -> Tuple[List[int], List[int], List[int], List[int]]:
+) -> Tuple[List[List[Any]], List[int], List[int], List[List[int]], List[List[int]]]:
     grid: List[List[Any]] = [list(r) for r in (matrices or [])]
     if not grid:
-        return ([], [], [], [])
+        return ([], [], [], [], [])
     n_block_rows = len(grid)
     n_block_cols = max((len(r) for r in grid), default=0)
     for r in range(n_block_rows):
@@ -48,9 +45,13 @@ def _grid_offsets(
 
     block_heights = [0] * n_block_rows
     block_widths = [0] * n_block_cols
+    cell_heights: List[List[int]] = [[0] * n_block_cols for _ in range(n_block_rows)]
+    cell_widths: List[List[int]] = [[0] * n_block_cols for _ in range(n_block_rows)]
     for br in range(n_block_rows):
         for bc in range(n_block_cols):
             h, w = _matrix_shape(grid[br][bc])
+            cell_heights[br][bc] = h
+            cell_widths[br][bc] = w
             block_heights[br] = max(block_heights[br], h)
             block_widths[bc] = max(block_widths[bc], w)
 
@@ -58,6 +59,18 @@ def _grid_offsets(
     for bc in range(n_block_cols):
         if block_widths[bc] == 0 and max_h > 0:
             block_widths[bc] = max_h
+
+    return grid, block_heights, block_widths, cell_heights, cell_widths
+
+
+def _grid_offsets(
+    matrices: Sequence[Sequence[Any]],
+    *,
+    index_base: int = 1,
+) -> Tuple[List[int], List[int], List[int], List[int]]:
+    _, block_heights, block_widths, _, _ = _grid_metrics(matrices)
+    if not block_heights and not block_widths:
+        return ([], [], [], [])
 
     row_starts: List[int] = []
     acc = int(index_base)
@@ -105,32 +118,14 @@ def _grid_block_padding(
     block_align: Optional[str] = None,
     block_valign: Optional[str] = None,
     index_base: int = 1,
-) -> Tuple[List[int], List[int], List[int], List[int], List[List[int]], List[List[int]], List[List[int]], List[List[int]]]:
-    grid: List[List[Any]] = [list(r) for r in (matrices or [])]
-    if not grid:
+) -> Tuple[
+    List[int], List[int], List[int], List[int], List[List[int]], List[List[int]], List[List[int]], List[List[int]]
+]:
+    _, block_heights, block_widths, cell_heights, cell_widths = _grid_metrics(matrices)
+    if not block_heights and not block_widths:
         return ([], [], [], [], [], [], [], [])
-    n_block_rows = len(grid)
-    n_block_cols = max((len(r) for r in grid), default=0)
-    for r in range(n_block_rows):
-        if len(grid[r]) < n_block_cols:
-            grid[r].extend([None] * (n_block_cols - len(grid[r])))
-
-    block_heights = [0] * n_block_rows
-    block_widths = [0] * n_block_cols
-    cell_heights: List[List[int]] = [[0] * n_block_cols for _ in range(n_block_rows)]
-    cell_widths: List[List[int]] = [[0] * n_block_cols for _ in range(n_block_rows)]
-    for br in range(n_block_rows):
-        for bc in range(n_block_cols):
-            h, w = _matrix_shape(grid[br][bc])
-            cell_heights[br][bc] = h
-            cell_widths[br][bc] = w
-            block_heights[br] = max(block_heights[br], h)
-            block_widths[bc] = max(block_widths[bc], w)
-
-    max_h = max(block_heights) if block_heights else 0
-    for bc in range(n_block_cols):
-        if block_widths[bc] == 0 and max_h > 0:
-            block_widths[bc] = max_h
+    n_block_rows = len(block_heights)
+    n_block_cols = len(block_widths)
 
     row_starts: List[int] = []
     acc = int(index_base)
@@ -326,7 +321,6 @@ def _callout_specs_to_callouts(
     return out
 
 
-
 def _pivot_selectors_to_pivot_locs(
     matrices: Sequence[Sequence[Any]],
     pivot_selectors: Sequence[Any],
@@ -350,7 +344,7 @@ def _pivot_selectors_to_pivot_locs(
             continue
         if gM >= len(row_starts) or gN >= len(col_starts):
             continue
-        for (i, j) in pivots:
+        for i, j in pivots:
             coord = _grid_cell_coord(
                 matrices,
                 gM=gM,
@@ -413,7 +407,19 @@ def _preserve_output_artifacts(
         return
     from pathlib import Path
 
-    artifact_exts = (".svg", ".tex", ".pdf", ".dvi", ".xdv", ".log", ".aux", ".fls", ".fdb_latexmk", ".stdout.txt", ".stderr.txt")
+    artifact_exts = (
+        ".svg",
+        ".tex",
+        ".pdf",
+        ".dvi",
+        ".xdv",
+        ".log",
+        ".aux",
+        ".fls",
+        ".fdb_latexmk",
+        ".stdout.txt",
+        ".stderr.txt",
+    )
     source_base = _find_artifact_source_base(render_dir, output_stem, artifact_exts)
 
     if output_dir:
@@ -425,7 +431,6 @@ def _preserve_output_artifacts(
             src = source_base.with_suffix(ext)
             if src.exists():
                 shutil.copy2(src, output_target_dir / src.name)
-
 
 
 def _array_name_callouts(
@@ -458,4 +463,3 @@ def _array_name_callouts(
         array_name_indices=array_name_indices,
     )
     return _callout_specs_to_callouts(matrices, callout_specs, color="blue")
-
