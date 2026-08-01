@@ -194,7 +194,7 @@ Decoration roles:
 - `decorators` are callable or structured entry formatters that change selected
   matrix entries before TeX is emitted.
 
-Keep these roles distinct in new code: labels go in `callouts`, layout effects
+Keep these roles distinct in new code: matrix arrow labels go in `callouts` using singular `label`; row/column annotation payloads use plural `labels`. Layout effects
 in `decorations`, and entry formatting in `decorators`.
 
 Fragment-specific options on `latex_svg(...)`:
