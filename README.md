@@ -117,7 +117,18 @@ For this example, `V` is rendered with a leading `\frac{\sqrt{2}}{2}` factor,
 `U` with a leading `4`, and `\Sigma` remains entrywise because
 `factor_out["sigma"]` is `False`.
 
-## Decorators
+## Render And Decoration Options
+
+SVG helpers accept direct artifact keywords `output_dir` and `output_stem`, or a
+grouped `artifact_opts={"output_dir": ..., "output_stem": ...}` mapping. Direct
+keywords override grouped values.
+
+Use these names consistently:
+
+- `callouts`: labels attached to whole matrix blocks.
+- `decorations`: high-level structured layout effects such as grid lines,
+  background highlights, and row-echelon paths.
+- `decorators`: entry-level formatters applied to selected matrix entries.
 
 The convenience wrappers pass decorator specs through to `matrixlayout`. Use
 selector helpers from `matrixlayout.formatting` (or re-exported via

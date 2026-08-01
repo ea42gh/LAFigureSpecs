@@ -171,13 +171,31 @@ Shared render options:
 - `padding`
 - `frame`
 - `exact_bbox`
-- `output_dir`
-- `output_stem`
 - `render_opts`
 
-The SVG wrappers resolve `output_dir` once and then merge the shared render
-options; explicit keyword arguments win over values in `render_opts`.
-Use `output_dir` for all new code.
+Shared artifact options:
+
+- `output_dir`
+- `output_stem`
+- `artifact_opts={"output_dir": ..., "output_stem": ...}`
+
+The SVG wrappers resolve artifact options once before rendering. Direct
+`output_dir` and `output_stem` keyword arguments override values in
+`artifact_opts`. Direct render keyword arguments override values in
+`render_opts`. Use `output_dir`/`output_stem` or grouped `artifact_opts` for all
+new artifact-retaining code.
+
+Decoration roles:
+
+- `callouts` are labels attached to whole matrix blocks, such as `A`, `B`, or
+  `[A\mid b]`.
+- `decorations` are high-level structured layout effects, such as grid lines,
+  background highlights, and row-echelon paths.
+- `decorators` are callable or structured entry formatters that change selected
+  matrix entries before TeX is emitted.
+
+Keep these roles distinct in new code: labels go in `callouts`, layout effects
+in `decorations`, and entry formatting in `decorators`.
 
 Fragment-specific options on `latex_svg(...)`:
 
