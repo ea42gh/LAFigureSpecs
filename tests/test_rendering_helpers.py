@@ -125,7 +125,7 @@ def test_latex_svg_accepts_external_package_set(monkeypatch):
     assert calls["fragment_kwargs"]["tex_packages"] == "amsmath,amssymb,tikz-cd"
 
 
-def test_latex_svg_prefers_explicit_preamble_path(monkeypatch):
+def test_latex_svg_prefers_explicit_document_preamble_path(monkeypatch):
     import LAFigureSpecs.rendering as rendering
 
     calls = {}
@@ -148,7 +148,7 @@ def test_latex_svg_prefers_explicit_preamble_path(monkeypatch):
 
     rendering.latex_svg(
         r"\[\xi\]",
-        preamble="\\usepackage{amsmath}",
+        document_preamble="\\usepackage{amsmath}",
         tex_packages="SHOULD_NOT_BE_USED",
     )
 

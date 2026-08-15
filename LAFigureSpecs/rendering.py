@@ -81,7 +81,7 @@ def _convert_lshow_args(args: tuple[Any, ...], jl: Any) -> tuple[Any, ...]:
 def latex_svg(
     tex_body: str,
     *,
-    preamble: str | None = None,
+    document_preamble: str | None = None,
     tex_packages: str | None = DEFAULT_TEX_PACKAGES,
     tikz_libraries: str | None = None,
     pgfplots_libraries: str | None = None,
@@ -101,10 +101,10 @@ def latex_svg(
     from jupyter_tikz import TexFragment
     from matrixlayout.render import render_svg as _render_svg
 
-    if preamble:
+    if document_preamble:
         frag = TexFragment(
             tex_body,
-            preamble=preamble,
+            preamble=document_preamble,
             scale=scale,
             no_jinja=no_jinja,
         )
@@ -164,7 +164,7 @@ def latex_document_svg(
 def lshow_svg(
     *args: Any,
     lshow_kwargs: Optional[Mapping[str, Any]] = None,
-    preamble: str | None = None,
+    document_preamble: str | None = None,
     tex_packages: str | None = DEFAULT_TEX_PACKAGES,
     tikz_libraries: str | None = None,
     pgfplots_libraries: str | None = None,
@@ -191,7 +191,7 @@ def lshow_svg(
     latex = jl.LAlatex.L_show(*_convert_lshow_args(args, jl), **dict(lshow_kwargs or {}))
     return latex_svg(
         str(latex),
-        preamble=preamble,
+        document_preamble=document_preamble,
         tex_packages=tex_packages,
         tikz_libraries=tikz_libraries,
         pgfplots_libraries=pgfplots_libraries,

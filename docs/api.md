@@ -199,7 +199,7 @@ in `decorations`, and entry formatting in `decorators`.
 
 Fragment-specific options on `latex_svg(...)`:
 
-- `preamble`
+- `document_preamble`
 - `tex_packages`
 - `tikz_libraries`
 - `pgfplots_libraries`
@@ -216,7 +216,7 @@ For `tikz-cd`, prefer `latex_document_svg(...)` with a PDF-based SVG converter
 such as `toolchain_name="pdftex_pdftocairo"` instead of the fragment path on a
 DVI-based toolchain.
 
-For `latex_svg(...)` only, passing `preamble=...` selects the
+For `latex_svg(...)` only, passing `document_preamble=...` selects the
 explicit-preamble path and bypasses `tex_packages`, `tikz_libraries`, and the
 default package list. Include every needed package in the preamble when using
 that mode. This is not the matrix renderer hook; GE/QR/eigen/SVD helpers use
