@@ -81,9 +81,7 @@ def test_public_api_exports_expected_names():
 def test_ge_paths_exports_only_canonical_helper():
     import LAFigureSpecs.ge_paths as ge_paths
 
-    assert "rowechelon_paths_from_specs" in ge_paths.__all__
-    assert "rowechelon_paths_from_legacy_tuples" not in ge_paths.__all__
-    assert not hasattr(ge_paths, "rowechelon_paths_from_legacy_tuples")
+    assert set(ge_paths.__all__) == {"rowechelon_paths_from_specs"}
 
 
 def test_canonical_names_point_to_existing_top_level_helpers():
