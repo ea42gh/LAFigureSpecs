@@ -160,8 +160,6 @@ def latex_document_svg(
     return _render_svg(tex_document, **opts)
 
 
-__all__ = ["latex_svg", "latex_document_svg"]
-
 
 def lshow_svg(
     *args: Any,
