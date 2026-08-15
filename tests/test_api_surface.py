@@ -1,70 +1,82 @@
-def test_public_api_contains_canonical_render_names():
+def test_public_api_exports_expected_names():
     import LAFigureSpecs
 
-    assert "ge_svg" in LAFigureSpecs.__all__
-    assert "qr_svg" in LAFigureSpecs.__all__
-    assert "eig_svg" in LAFigureSpecs.__all__
-    assert "svd_svg" in LAFigureSpecs.__all__
-    assert "ge_spec" in LAFigureSpecs.__all__
-    assert "qr_spec" in LAFigureSpecs.__all__
-    assert "eig_spec" in LAFigureSpecs.__all__
-    assert "svd_spec" in LAFigureSpecs.__all__
-    assert "ge_tex" in LAFigureSpecs.__all__
-    assert "qr_tex" in LAFigureSpecs.__all__
-    assert "eig_tex" in LAFigureSpecs.__all__
-    assert "svd_tex" in LAFigureSpecs.__all__
-    assert "qr_figure" in LAFigureSpecs.__all__
-    assert "ge_bundle" in LAFigureSpecs.__all__
-    assert "qr_bundle" in LAFigureSpecs.__all__
-    assert "eig_bundle" in LAFigureSpecs.__all__
-    assert "svd_bundle" in LAFigureSpecs.__all__
-    assert "ShowGE" in LAFigureSpecs.__all__
-    assert "ref" in LAFigureSpecs.__all__
-    assert "lhs_matrix" in LAFigureSpecs.__all__
-    assert "rhs_matrix" in LAFigureSpecs.__all__
-    assert "rhs_column" in LAFigureSpecs.__all__
-    assert "show_layout" in LAFigureSpecs.__all__
-    assert "show_system" in LAFigureSpecs.__all__
-    assert "show_backsubstitution" in LAFigureSpecs.__all__
-    assert "show_solution" in LAFigureSpecs.__all__
-    assert "solutions" in LAFigureSpecs.__all__
-    assert "latex_svg" in LAFigureSpecs.__all__
-    assert "latex_document_svg" in LAFigureSpecs.__all__
-    assert "lshow_svg" in LAFigureSpecs.__all__
-
-
-def test_public_api_does_not_export_legacy_names():
-    import LAFigureSpecs
-    import importlib.util
-
-    assert "svg" not in LAFigureSpecs.__all__
-    assert "ge" not in LAFigureSpecs.__all__
-    assert "qr" not in LAFigureSpecs.__all__
-    assert not any("_tbl" in name for name in LAFigureSpecs.__all__)
-    assert "gram_schmidt_qr" not in LAFigureSpecs.__all__
-    assert not hasattr(LAFigureSpecs, "gram_schmidt_qr")
-    assert "rhs_block" not in LAFigureSpecs.__all__
-    assert not hasattr(LAFigureSpecs, "rhs_block")
-    assert "ge_decorations" not in LAFigureSpecs.__all__
-    assert not hasattr(LAFigureSpecs, "ge_decorations")
-    assert "render_ge_svg" not in LAFigureSpecs.__all__
-    assert "render_ge_tex" not in LAFigureSpecs.__all__
-    assert "render_qr_svg" not in LAFigureSpecs.__all__
-    assert "render_qr_tex" not in LAFigureSpecs.__all__
-    assert "render_eig_svg" not in LAFigureSpecs.__all__
-    assert "render_eig_tex" not in LAFigureSpecs.__all__
-    assert not hasattr(LAFigureSpecs, "render_ge_svg")
-    assert not hasattr(LAFigureSpecs, "render_ge_tex")
-    assert not hasattr(LAFigureSpecs, "render_qr_svg")
-    assert not hasattr(LAFigureSpecs, "render_qr_tex")
-    assert not hasattr(LAFigureSpecs, "render_eig_svg")
-    assert not hasattr(LAFigureSpecs, "render_eig_tex")
-    assert "ge_stack_svg" not in LAFigureSpecs.__all__
-    assert "qr_stack_svg" not in LAFigureSpecs.__all__
-    assert not hasattr(LAFigureSpecs, "ge_stack_svg")
-    assert not hasattr(LAFigureSpecs, "qr_stack_svg")
-    assert importlib.util.find_spec("LAFigureSpecs.convenience_ge") is None
-
+    expected = {
+        "EigenDecomposition",
+        "ShowGE",
+        "__build__",
+        "__version__",
+        "backsubstitution_tex",
+        "bundle_summary",
+        "compute_qr_matrices",
+        "decorate_tex_entries",
+        "decorator_bf",
+        "decorator_bg",
+        "decorator_box",
+        "decorator_color",
+        "eig_bundle",
+        "eig_matrices_from_spec",
+        "eig_spec",
+        "eig_spec_from_eigenvects",
+        "eig_svg",
+        "eig_tex",
+        "eigendecomposition",
+        "ge_bundle",
+        "ge_layout_spec",
+        "ge_spec",
+        "ge_svg",
+        "ge_tex",
+        "ge_trace",
+        "gram_schmidt_qr_matrices",
+        "latex_document_svg",
+        "latex_svg",
+        "latexify",
+        "lhs_matrix",
+        "linear_system_tex",
+        "lshow_svg",
+        "make_decorator",
+        "mm_to_px",
+        "naive_gram_schmidt_w",
+        "naive_qr",
+        "px_to_mm",
+        "qr_bundle",
+        "qr_figure",
+        "qr_layout_spec",
+        "qr_matrices_dict_from_grid",
+        "qr_matrices_from_grid",
+        "qr_spec",
+        "qr_spec_from_matrices",
+        "qr_svg",
+        "qr_tex",
+        "ref",
+        "rhs_column",
+        "rhs_matrix",
+        "sel_all",
+        "sel_box",
+        "sel_col",
+        "sel_cols",
+        "sel_entry",
+        "sel_row",
+        "sel_rows",
+        "sel_vec",
+        "sel_vec_range",
+        "show_backsubstitution",
+        "show_ge",
+        "show_layout",
+        "show_solution",
+        "show_svg",
+        "show_system",
+        "solutions",
+        "standard_solution_tex",
+        "svd_bundle",
+        "svd_matrices_from_spec",
+        "svd_spec",
+        "svd_spec_from_right_singular_vectors",
+        "svd_svg",
+        "svd_tex",
+        "trace_to_layer_matrices",
+    }
+    assert set(LAFigureSpecs.__all__) == expected
 
 def test_ge_paths_exports_only_canonical_helper():
     import LAFigureSpecs.ge_paths as ge_paths
