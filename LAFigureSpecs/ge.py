@@ -518,7 +518,7 @@ def trace_to_layer_matrices(
     }
 
 
-def decorate_ge(
+def ge_decorations(
     trace: GETrace,
     *,
     index_base: int = 1,
@@ -531,7 +531,7 @@ def decorate_ge(
 ) -> Dict[str, Any]:
     """Compute presentation decorations from a :class:`GETrace`.
 
-    This is the Python analogue of the Julia-side ``decorate_ge`` helper.
+    This is the Python analogue of the Julia-side ``ge_decorations`` helper.
     It is intentionally *data-only*: it returns plain Python containers
     (strings, ints, lists, tuples) so the result can be passed across
     language boundaries (e.g. Julia via PyCall/PythonCall) and later

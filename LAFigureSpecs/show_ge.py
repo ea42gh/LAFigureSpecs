@@ -55,7 +55,7 @@ def _decorated_stack_render_kwargs(
     show_pivots: Optional[bool],
     pivot_text_color: str,
 ) -> Dict[str, Any]:
-    """Build canonical stack-render kwargs from ``decorate_ge`` output."""
+    """Build canonical stack-render kwargs from ``ge_decorations`` output."""
 
     pivot_locs = None
     if show_pivots and decor.get("pivot_selectors"):
@@ -359,12 +359,12 @@ class ShowGE:
                 else:
                     array_names = ["E", ["A", "B"]]
         if self.normal_eq:
-            from .ge import decorate_ge
+            from .ge import ge_decorations
             from .ge_convenience import _render_ge_stack_svg
 
             trace = self._get_trace()
             layers = self._get_layers()
-            decor = decorate_ge(trace, index_base=self.index_base)
+            decor = ge_decorations(trace, index_base=self.index_base)
             var_summary = self.variable_summary
             if var_summary is None:
                 var_summary = decor.get("variable_types")
@@ -411,11 +411,11 @@ class ShowGE:
             layers = self._get_layers()
             mats = layers.get("matrices") or []
             if len(mats) > 1:
-                from .ge import decorate_ge
+                from .ge import ge_decorations
                 from .ge_convenience import _render_ge_stack_svg
 
                 trace = self._get_trace()
-                decor = decorate_ge(trace, index_base=self.index_base)
+                decor = ge_decorations(trace, index_base=self.index_base)
                 var_summary = self.variable_summary
                 if var_summary is None:
                     var_summary = decor.get("variable_types")

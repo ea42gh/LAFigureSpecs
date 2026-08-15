@@ -45,8 +45,8 @@ def test_public_api_does_not_export_legacy_names():
     assert not hasattr(LAFigureSpecs, "gram_schmidt_qr")
     assert "rhs_block" not in LAFigureSpecs.__all__
     assert not hasattr(LAFigureSpecs, "rhs_block")
-    assert "decorate_ge" not in LAFigureSpecs.__all__
-    assert not hasattr(LAFigureSpecs, "decorate_ge")
+    assert "ge_decorations" not in LAFigureSpecs.__all__
+    assert not hasattr(LAFigureSpecs, "ge_decorations")
     assert "render_ge_svg" not in LAFigureSpecs.__all__
     assert "render_ge_tex" not in LAFigureSpecs.__all__
     assert "render_qr_svg" not in LAFigureSpecs.__all__

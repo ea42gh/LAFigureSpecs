@@ -3,7 +3,7 @@
 This module is intentionally thin: it ties together
 
 - :func:`LAFigureSpecs.ge.ge_trace` (algorithmic trace)
-- :func:`LAFigureSpecs.ge.decorate_ge` (data-only decorations)
+- :func:`LAFigureSpecs.ge.ge_decorations` (data-only decorations)
 - :func:`LAFigureSpecs.ge.trace_to_layer_matrices` (matrix stack)
 - :func:`matrixlayout.ge.render_ge_tex` / :func:`matrixlayout.ge.render_ge_svg` (layout/render)
 
@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, Any, Dict, List, Literal, Optional, Sequence, Tuple, cast
 
-from .ge import GETrace, decorate_ge, ge_trace, trace_to_layer_matrices
+from .ge import GETrace, ge_decorations, ge_trace, trace_to_layer_matrices
 from .formatting import latexify, make_decorator
 from .convenience_utils import make_bundle, resolve_artifact_opts, resolve_crop_padding, resolve_render_svg_opts
 from .ge_paths import rowechelon_paths_from_specs
@@ -332,7 +332,7 @@ def _build_ge_bundle(
     pivots_enabled = bool(show_pivots)
     eff_pivot_style = str(pivot_style or "").strip()
 
-    decor = decorate_ge(tr, index_base=index_base, pivot_style=eff_pivot_style)
+    decor = ge_decorations(tr, index_base=index_base, pivot_style=eff_pivot_style)
     layers = trace_to_layer_matrices(tr, augmented=True)
 
     # Rebase pivot locations to the last layer and to the A-block column offset.
