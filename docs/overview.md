@@ -30,16 +30,16 @@ wrappers that delegate to *matrixlayout* and *jupyter_tikz*.
 
 ## Data flow
 
-Input matrices → algorithm trace → spec dictionary → matrixlayout renderer.
+Input matrices -> algorithm trace -> spec dictionary -> LAFigureSpecs renderer wrapper.
 
 ```
-matrices -> LAFigureSpecs (trace/spec) -> matrixlayout (tex/svg)
+matrices -> LAFigureSpecs (trace/spec) -> LAFigureSpecs *_tex/*_svg wrappers
 ```
 
 Example:
 
 ```
-A -> ge_spec(A) -> render_ge_svg(spec=spec)
+A -> ge_bundle(A) -> {spec, tex, svg, data}
 ```
 
 For standalone LaTeX fragments:
