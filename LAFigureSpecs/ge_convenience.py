@@ -710,7 +710,7 @@ def _render_ge_stack_svg(
         block_align=block_align,
         block_valign=block_valign,
     )
-    rowechelon_paths = _normalize_stack_rowechelon_paths(matrices, rowechelon_paths)
+    rowechelon_paths = _canonicalize_stack_rowechelon_paths(matrices, rowechelon_paths)
 
     render_inputs = _ge_stack_render_inputs(
         matrices,
@@ -796,7 +796,7 @@ def _normalize_stack_pivot_locs(
     return out or None
 
 
-def _normalize_stack_rowechelon_paths(
+def _canonicalize_stack_rowechelon_paths(
     matrices: Sequence[Sequence[Any]],
     rowechelon_paths: Optional[Sequence[Any]],
 ) -> Optional[List[Any]]:
@@ -814,8 +814,8 @@ def _normalize_stack_rowechelon_paths(
             continue
         if not isinstance(item, dict) or "grid" not in item:
             raise TypeError(
-                "rowechelon_paths entries must be raw TikZ strings or dict specs with grid= and pivots=. "
-                "Use rowechelon_paths=[{...}] instead of removed ref_path_list tuple entries."
+                "rowechelon_paths entries must be raw TikZ strings, {tikz=...} mappings, "
+                "or structured dict specs with grid= and pivots=."
             )
         out.extend(rowechelon_paths_from_specs(matrices, [item], submatrix_name_style="grid"))
     return out or None

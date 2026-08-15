@@ -44,7 +44,7 @@ def test_ge_svg_rejects_tuple_rowechelon_path_entries():
 
     matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
 
-    with pytest.raises(TypeError, match="rowechelon_paths.*ref_path_list"):
+    with pytest.raises(TypeError, match="rowechelon_paths entries.*grid=.*pivots="):
         ge_svg(
             matrices,
             rowechelon_paths=[(0, 1, [(0, 0), (1, 1)], "hh")],
