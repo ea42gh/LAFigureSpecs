@@ -28,9 +28,10 @@ Preferred cross-language top-level names:
     of being ignored.
   - Access GE intermediates via `bundle["data"]["..."]` (not top-level keys).
   - Use `bundle_summary(bundle)` for a quick status-only view.
-- If you already have prepared matrices/specs and want low-level renderer control:
-  - `matrixlayout.ge.render_ge_*`, `matrixlayout.qr.render_qr_*`, `matrixlayout.render_eig_*`
-  - `ge_svg` and `qr_svg` for precomputed matrix grids
+- If you already have prepared matrices/specs:
+  - `ge_svg` and `qr_svg` accept precomputed matrix grids
+  - `*_tex` and `*_svg` render from the corresponding LAFigureSpecs spec path
+  - use the advanced matrixlayout entry points only when you need renderer internals
 - If you already have LaTeX and just need SVG:
   - `latex_svg` for fragments
   - `latex_document_svg` for complete documents
