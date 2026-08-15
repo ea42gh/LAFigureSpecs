@@ -61,7 +61,7 @@ GE convenience wrappers render TeX to SVG via matrixlayout. Shared renderer
 parameters: `toolchain_name`, `crop`, `padding`, `output_dir`, `output_stem`,
 `frame`.
 
-For most users, prefer `ge_svg(...)` over direct `render_ge_svg(...)`.
+Use `ge_svg(...)` for the normal compute-and-render path.
 
 `ge_tex`, `ge_svg`, and `ge_bundle` accept the same algorithmic parameters as
 `ge_spec` plus renderer options (for SVG).
@@ -148,7 +148,7 @@ options (for SVG).
 
 Bundle return contract (`qr_bundle`): `spec`, `tex`, `svg`, `data`, `render_error`.
 
-For most users, prefer `qr_svg(...)` over direct `render_qr_svg(...)`.
+Use `qr_svg(...)` for the normal compute-and-render path.
 
 QR callout labels are nudged vertically to align with their arrows. For 2x2
 inputs, the Q^T label uses a longer arrow to avoid overlapping the R label.
@@ -178,5 +178,4 @@ corresponding spec parameters, along with renderer options (for SVG).
 Bundle return contract (`eig_bundle`, `svd_bundle`):
 `spec`, `tex`, `svg`, `data`, `render_error`.
 
-For most users, prefer `eig_svg(...)` / `svd_svg(...)` over direct
-`render_eig_svg(...)`.
+Use `eig_svg(...)` / `svd_svg(...)` for the normal compute-and-render path.
