@@ -57,12 +57,10 @@ A = sym.Matrix([[1, 2], [3, 4]])
 spec = LAFigureSpecs.ge_spec(A)
 ```
 
-Minimal render from a spec:
+Minimal render from a matrix:
 
 ```python
-from matrixlayout.ge import render_ge_svg
-
-svg = render_ge_svg(spec=spec)
+svg = LAFigureSpecs.ge_svg(A)
 ```
 
 ## Stateful GE helper (ShowGE)
@@ -107,12 +105,10 @@ spec = LAFigureSpecs.qr_spec(A)
 
 ```python
 import sympy as sym
-from LAFigureSpecs import qr_spec
-from matrixlayout.qr import render_qr_svg
+import LAFigureSpecs
 
 A = sym.Matrix([[1, 2], [3, 4]])
-spec = qr_spec(A)
-svg = render_qr_svg(spec=spec)
+svg = LAFigureSpecs.qr_svg(A)
 ```
 
 ## Eigen/SVD specs
@@ -131,17 +127,19 @@ U, Σ, V, rank = LAFigureSpecs.svd_matrices_from_spec(svd_spec)
 ## Backsubstitution blocks
 
 ```python
-from LAFigureSpecs import linear_system_tex, backsubstitution_tex, standard_solution_tex
-from matrixlayout.backsubst import backsubst_svg
+import LAFigureSpecs
 
 A = [[1, 0, 1], [0, 1, 1]]
 b = [1, 2]
 
-svg = backsubst_svg(
-    system_txt=linear_system_tex(A, b),
-    cascade_txt=backsubstitution_tex(A, b),
-    solution_txt=standard_solution_tex(A, b),
-)
+parts = [
+    LAFigureSpecs.linear_system_tex(A, b),
+    r"\quad\Longleftrightarrow\quad",
+    "\n".join(LAFigureSpecs.backsubstitution_tex(A, b)),
+    r"\quad",
+    LAFigureSpecs.standard_solution_tex(A, b),
+]
+svg = LAFigureSpecs.latex_svg("$" + "".join(parts) + "$")
 ```
 
 ## Generic LaTeX to SVG
