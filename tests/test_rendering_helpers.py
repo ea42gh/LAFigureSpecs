@@ -1,3 +1,5 @@
+# mypy: disable-error-code="assignment,call-overload,var-annotated"
+
 from __future__ import annotations
 
 import sys

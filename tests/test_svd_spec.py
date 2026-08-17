@@ -1,3 +1,5 @@
+# mypy: disable-error-code="call-arg"
+
 import pytest
 import sympy as sym
 

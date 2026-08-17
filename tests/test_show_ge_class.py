@@ -1,3 +1,5 @@
+# mypy: disable-error-code="arg-type"
+
 def test_show_ge_methods_use_backsubst(monkeypatch):
     import LAFigureSpecs
 

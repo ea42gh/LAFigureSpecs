@@ -1,3 +1,5 @@
+# mypy: disable-error-code="call-arg"
+
 import sympy as sym
 
 

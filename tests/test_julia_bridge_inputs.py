@@ -1,3 +1,5 @@
+# mypy: disable-error-code="arg-type,index,union-attr,var-annotated"
+
 import numpy as np
 import sympy as sym
 

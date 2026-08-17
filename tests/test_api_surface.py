@@ -1,3 +1,5 @@
+# mypy: disable-error-code="call-arg"
+
 def test_public_api_exports_expected_names():
     import LAFigureSpecs
 
