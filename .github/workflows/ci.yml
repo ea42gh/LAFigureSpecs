@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MATRIXLAYOUT_REF: e3c0153aede5013827f55fd9cff7e4ec34520612
-  JUPYTER_TIKZ_REF: 83ef5874089f42e6fe5b3b1395ebcc515ee0f2a2
+  MATRIXLAYOUT_REF: 5bd86bcfa1c330fd05b1048e9c41e6d9ff7f623d
+  JUPYTER_TIKZ_REF: 65d15771165e161427806d691eddfd319e93ceb5
 
 jobs:
   tests:
