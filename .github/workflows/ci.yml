@@ -15,8 +15,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  MATRIXLAYOUT_REF: main
-  JUPYTER_TIKZ_REF: 8e18e495934c907e9e6568135d2e84d55762ae91
+  MATRIXLAYOUT_REF: e3c0153aede5013827f55fd9cff7e4ec34520612
+  JUPYTER_TIKZ_REF: 83ef5874089f42e6fe5b3b1395ebcc515ee0f2a2
 
 jobs:
   tests:
@@ -197,3 +197,4 @@ jobs:
             --execute LAFigureSpecs_demo.ipynb \
             --output /tmp/LAFigureSpecs_demo.executed.ipynb \
             --ExecutePreprocessor.timeout=300
+
