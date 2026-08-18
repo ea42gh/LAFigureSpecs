@@ -91,6 +91,11 @@ For stack renderers, `pivot_locs` may use structured selectors:
 `rowechelon_paths` should usually use structured selectors:
 `{"grid": (block_row, block_col), "pivots": [(row, col)], "case": "hh", "color": "blue", "path_offsets": (dx, dy)}`.
 Raw `\draw ...;` snippets remain accepted for advanced renderer-level uses.
+Structured row-echelon paths use the restored staircase rule inherited from
+matrixlayout: vertical segments follow the left edge of pivot columns,
+horizontal segments follow the bottom edge of pivot rows, and generated paths
+use NiceMatrix projected rule coordinates rather than cell-anchor points.
+
 Use `decorations` for grid-targeted backgrounds and row/column separator
 lines, for example:
 `{"grid": (block_row, block_col), "entries": [(row, col)], "background": "yellow!35"}`.

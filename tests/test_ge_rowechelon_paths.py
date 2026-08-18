@@ -174,6 +174,14 @@ def test_rowechelon_paths_always_use_left_bottom_pivot_edges_for_all_cases():
         _assert_manhattan_path(paths[0])
 
 
+def test_specs_docs_describe_public_rowechelon_staircase_policy():
+    text = __import__("pathlib").Path("docs/specs.md").read_text(encoding="utf-8")
+    normalized = " ".join(text.split())
+
+    assert "vertical segments follow the left edge of pivot columns" in normalized
+    assert "horizontal segments follow the bottom edge of pivot rows" in normalized
+    assert "NiceMatrix projected rule coordinates" in normalized
+
 def test_rowechelon_path_path_offsets_shift_staircase_nodes():
     matrices = [[None, [[1, 2, 4, 1], [0, "k^2-1", 8, "k"], [0, 0, 0, 0]]]]
     pivots = [(0, 0), (1, 1)]
