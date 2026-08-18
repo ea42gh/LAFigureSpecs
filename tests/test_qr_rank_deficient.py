@@ -61,6 +61,20 @@ def test_qr_documentation_example_keeps_second_w_column():
     assert "4 & 2 & 4 & 6" in tex
 
 
+def test_compute_qr_matrices_documentation_example_keeps_full_grid_width():
+    from LAFigureSpecs.qr import compute_qr_matrices
+
+    A = sym.Matrix([[3, 1], [4, 2]])
+    mats = compute_qr_matrices(A)
+
+    assert mats[0][2].shape == (2, 2)  # V
+    assert mats[0][3].shape == (2, 2)  # W
+    assert mats[1][2].shape == (2, 2)  # WtA
+    assert mats[1][3].shape == (2, 2)  # WtW
+    assert mats[2][0].shape == (2, 2)  # S
+    assert mats[2][1].shape == (2, 2)  # Qt
+    assert mats[2][2].shape == (2, 2)  # R
+
 def test_naive_gram_schmidt_handles_empty_and_fractional_columns():
     import pytest
 
