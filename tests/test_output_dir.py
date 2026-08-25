@@ -71,13 +71,6 @@ def test_ge_svg_rejects_tmp_dir():
         LAFigureSpecs.ge_svg([[1, 0], [0, 1]], tmp_dir="tmp-out")
 
 
-def test_ge_svg_rejects_keep_file():
-    import LAFigureSpecs
-
-    with pytest.raises(TypeError, match="keep_file.*output_dir.*output_stem"):
-        LAFigureSpecs.ge_svg([[[1, 0], [0, 1]]], keep_file="tmp-out")
-
-
 def test_eig_svg_uses_output_stem(monkeypatch):
     import LAFigureSpecs
 

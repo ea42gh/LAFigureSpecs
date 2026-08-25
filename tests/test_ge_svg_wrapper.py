@@ -3,32 +3,6 @@ import numpy as np
 import pytest
 
 
-def test_ge_svg_rejects_removed_func_hook():
-    from LAFigureSpecs.ge_convenience import ge_svg
-
-    A = sym.Matrix([[1, 2], [3, 4]])
-
-    with pytest.raises(TypeError, match="func=.*decorators"):
-        ge_svg([[None, A]], func=lambda m: m)
-
-@pytest.mark.parametrize(
-    ("old_keyword", "value"),
-    [
-        ("pivot_list", [((0, 1), [(0, 0)])]),
-        ("bg_for_entries", [(0, 1, [(0, 0)], "red!15", 0)]),
-        ("ref_path_list", [(0, 1, [(0, 0)], "vv")]),
-        ("comment_list", ["note"]),
-    ],
-)
-def test_ge_svg_rejects_removed_stack_keywords(old_keyword, value):
-    from LAFigureSpecs.ge_convenience import ge_svg
-
-    A = sym.Matrix([[1, 2], [3, 4]])
-
-    with pytest.raises(TypeError, match=old_keyword):
-        ge_svg([[None, A]], **{old_keyword: value})
-
-
 def test_ge_svg_forwards_structured_decorations(monkeypatch):
     from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
@@ -204,25 +178,6 @@ def test_ge_svg_structured_rowechelon_paths_are_canonicalized_before_render(monk
     ]
 
 
-@pytest.mark.parametrize("removed", ["node_offsets", "adj", "left_pad"])
-def test_ge_svg_structured_rowechelon_paths_reject_removed_offset_keywords(removed):
-    from LAFigureSpecs.ge_convenience import ge_svg
-
-    matrices = [[None, sym.Matrix([[1, 2], [0, 1]])]]
-    with pytest.raises(ValueError, match=rf"{removed}.*path_offsets"):
-        ge_svg(
-            matrices,
-            rowechelon_paths=[
-                {
-                    "grid": (0, 1),
-                    "pivots": [(0, 0), (1, 1)],
-                    "case": "hh",
-                    removed: (0.2, -0.05),
-                }
-            ],
-        )
-
-
 def test_ge_svg_accepts_grid_row_text_annotations(monkeypatch):
     from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
@@ -318,7 +273,7 @@ def test_ge_svg_rejects_annotations_label_callout_alias():
 
     A = sym.Matrix([[1, 2, 3], [4, 5, 6]])
 
-    with pytest.raises(TypeError, match="annotations=.*label=.*callouts="):
+    with pytest.raises(TypeError, match="annotations\\[0\\].*singular.*callouts"):
         ge_svg(
             [[A]],
             annotations=[{"grid": (0, 0), "label": r"$[A\mid b]$", "side": "right", "color": "blue"}],
@@ -543,40 +498,6 @@ def test_ge_svg_forwards_explicit_callouts():
     assert captured["callouts"] == callouts
 
 
-def test_ge_svg_rejects_removed_specs_alias():
-    from LAFigureSpecs.ge_convenience import ge_svg
-
-    A0 = sym.Matrix([[1, 2], [3, 4]])
-    matrices = [[None, A0]]
-
-    with pytest.raises(TypeError, match="specs=.*callouts="):
-        ge_svg(
-            matrices,
-            specs=[
-                {
-                    "grid": (0, 0),
-                    "label": "A",
-                    "side": "right",
-                }
-            ],
-        )
-
-
-def test_ge_svg_rejects_removed_name_specs_alias():
-    from LAFigureSpecs.ge_convenience import ge_svg
-
-    A0 = sym.Matrix([[1, 2], [3, 4]])
-    E1 = sym.eye(2)
-    A1 = sym.Matrix([[1, 2], [0, 1]])
-    matrices = [[None, A0], [E1, A1]]
-
-    with pytest.raises(TypeError, match="name_specs.*callouts"):
-        ge_svg(
-            matrices,
-            array_names={"name_specs": [((0, 1), "ar", "$A$")]},
-        )
-
-
 def test_ge_svg_rhs_callout_labels_follow_rhs_size():
     from LAFigureSpecs.ge_convenience import ge_svg
     from matrixlayout import ge as ml_ge
@@ -724,32 +645,6 @@ def test_ge_svg_uses_canonical_tex_hook_names(monkeypatch):
 
     assert captured["body_preamble"] == "%body"
     assert captured["document_preamble"] == "%doc"
-
-
-def test_ge_svg_rejects_removed_tex_hook_aliases(monkeypatch):
-    from LAFigureSpecs.ge_convenience import ge_svg
-    from matrixlayout import ge as ml_ge
-
-    matrices = [[None, sym.Matrix([[1, 2], [3, 4]])]]
-
-    def fake_svg(**kwargs):
-        raise AssertionError("render_ge_svg should not be called")
-        return "<svg/>"
-
-    monkeypatch.setattr(ml_ge, "render_ge_svg", fake_svg)
-
-    try:
-        ge_svg(matrices, preamble="%old-body", extension="%old-doc")
-    except TypeError as exc:
-        msg = str(exc)
-        assert "preamble" in msg
-        assert "extension" in msg
-        assert "body_preamble" in msg
-        assert "document_preamble" in msg
-    else:
-        raise AssertionError("expected removed GE TeX hook aliases to be rejected")
-
-
 
 
 def test_ge_svg_generates_n_rhs_separator_decorations(monkeypatch):

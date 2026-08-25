@@ -29,42 +29,6 @@ if TYPE_CHECKING:
     from matrixlayout.specs import GELayoutSpec
 
 _UNSET = object()
-_REMOVED_GE_STACK_KEYWORDS = frozenset({"pivot_list", "bg_for_entries", "ref_path_list", "comment_list"})
-_REMOVED_GE_TEX_HOOKS = frozenset({"preamble", "extension"})
-_REMOVED_GE_ARTIFACT_KEYWORDS = frozenset({"tmp_dir", "keep_file"})
-_REMOVED_MATRIX_LABEL_ALIAS_MESSAGE = "Removed GE matrix-label alias: {alias}. Use callouts= instead."
-
-
-def _reject_removed_keywords(render_opts: Dict[str, Any], removed: frozenset[str], message: str) -> None:
-    names = removed & set(render_opts)
-    if names:
-        raise TypeError(message.format(names=", ".join(sorted(names))))
-
-
-def _reject_removed_ge_stack_keywords(render_opts: Dict[str, Any]) -> None:
-    _reject_removed_keywords(
-        render_opts,
-        _REMOVED_GE_STACK_KEYWORDS,
-        "Removed GE stack keyword(s): {names}. "
-        "Use pivot_locs=, decorations=, rowechelon_paths=, or text_annotations= instead.",
-    )
-
-def _reject_removed_ge_artifact_keywords(render_opts: Dict[str, Any]) -> None:
-    _reject_removed_keywords(
-        render_opts,
-        _REMOVED_GE_ARTIFACT_KEYWORDS,
-        "Removed GE artifact keyword(s): {names}. Use output_dir= and output_stem= instead.",
-    )
-
-def _reject_removed_ge_tex_hooks(render_opts: Dict[str, Any]) -> None:
-    _reject_removed_keywords(
-        render_opts,
-        _REMOVED_GE_TEX_HOOKS,
-        "Removed GE TeX hook alias(es): {names}. "
-        "Use body_preamble= for document-body setup and document_preamble= for true LaTeX preamble insertion.",
-    )
-
-
 def _is_stack_matrix_cell(value: Any) -> bool:
     """Return true for matrix-like objects used as cells in a GE stack."""
 
@@ -672,17 +636,6 @@ def _render_ge_stack_svg(
     **render_opts: Any,
 ) -> str:
     """Render-only wrapper: render SVG from a precomputed GE matrix stack."""
-    if "func" in render_opts:
-        raise TypeError(
-            "Removed GE mutation hook: func=. Use decorators=, decorations=, callouts=, "
-            "text_annotations=, or rowechelon_paths= instead."
-        )
-    if "specs" in render_opts:
-        raise TypeError(_REMOVED_MATRIX_LABEL_ALIAS_MESSAGE.format(alias="specs="))
-    _reject_removed_ge_stack_keywords(render_opts)
-    _reject_removed_ge_artifact_keywords(render_opts)
-    _reject_annotation_callout_alias(render_opts.get("annotations"))
-    _reject_removed_ge_tex_hooks(render_opts)
     n_rhs = _resolve_n_rhs(n_rhs=n_rhs)
     body_preamble = render_opts.pop("body_preamble", None)
     document_preamble = render_opts.pop("document_preamble", None)
@@ -819,17 +772,6 @@ def _canonicalize_stack_rowechelon_paths(
             )
         out.extend(rowechelon_paths_from_specs(matrices, [item], submatrix_name_style="grid"))
     return out or None
-
-
-def _reject_annotation_callout_alias(annotations: Optional[Any]) -> None:
-    """Reject removed matrix-label callouts passed through ``annotations=``."""
-
-    if not annotations:
-        return
-    items = annotations if isinstance(annotations, (list, tuple)) else [annotations]
-    for item in items:
-        if isinstance(item, dict) and "label" in item and "labels" not in item:
-            raise TypeError(_REMOVED_MATRIX_LABEL_ALIAS_MESSAGE.format(alias="annotations=[{label=...}]"))
 
 
 def _ge_stack_render_inputs(

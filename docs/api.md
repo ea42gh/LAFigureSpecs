@@ -222,9 +222,7 @@ explicit-preamble path and bypasses `tex_packages`, `tikz_libraries`, and the
 default package list. Include every needed package in the preamble when using
 that mode. This is not the matrix renderer hook; GE/QR/eigen/SVD helpers use
 `document_preamble` for true LaTeX preamble insertion and `body_preamble` for
-document-body setup. The old matrix-renderer hook aliases `preamble` and
-`extension` are removed for those helpers and raise an error with the canonical
-replacement names.
+document-body setup.
 
 Because fragments are scaled with `\scalebox{...}{...}`, environments that use
 alignment markers may need package-specific escaping. In `tikz-cd`, prefer
