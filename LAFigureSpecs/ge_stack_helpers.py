@@ -443,8 +443,8 @@ def _array_name_callouts(
 ) -> List[Dict[str, Any]]:
     if array_names is None:
         return []
-    if isinstance(array_names, dict) and "name_specs" in array_names:
-        raise TypeError("array_names={'name_specs': ...} is removed; use top-level callouts instead.")
+    if isinstance(array_names, dict):
+        raise TypeError("array_names must be None, True, or a (lhs, rhs) pair; use callouts for explicit labels.")
     explicit_names = array_names is not True
     try:
         lhs, rhs = array_names

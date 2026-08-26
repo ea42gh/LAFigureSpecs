@@ -268,7 +268,7 @@ def test_ge_svg_grid_row_text_annotations_ignore_below_variable_summary_rows(mon
     ]
 
 
-def test_ge_svg_rejects_annotations_label_callout_alias():
+def test_ge_svg_rejects_label_callouts_in_annotations():
     from LAFigureSpecs.ge_convenience import ge_svg
 
     A = sym.Matrix([[1, 2, 3], [4, 5, 6]])
