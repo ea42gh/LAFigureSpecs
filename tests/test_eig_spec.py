@@ -62,7 +62,7 @@ def test_eig_spec_descending_order_uses_scaled_display_values():
     assert spec["lambda"] == [-1, -2]
 
 
-def test_eig_spec_order_rejects_removed_old_names():
+def test_eig_spec_order_rejects_invalid_values():
     import pytest
 
     import LAFigureSpecs

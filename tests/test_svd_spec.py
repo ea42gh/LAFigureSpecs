@@ -138,7 +138,7 @@ def test_svd_spec_from_right_singular_vectors_respects_eig_digits():
     assert [float(x) for x in got["lambda"]] == pytest.approx([4.8, 1.2], abs=0.01)
 
 
-def test_svd_spec_from_right_singular_vectors_rejects_removed_sigma2_digits_alias():
+def test_svd_spec_from_right_singular_vectors_rejects_unknown_keyword():
     import LAFigureSpecs
 
     A = sym.Matrix([[1, 0], [0, 1]])
