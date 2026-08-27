@@ -46,7 +46,7 @@ jobs:
 
       - name: Run coverage report
         if: matrix.python-version == '3.11'
-        run: python -m pytest --cov=LAFigureSpecs --cov-report=term-missing --cov-fail-under=82
+        run: python -m pytest --cov=LAFigureSpecs --cov-report=term-missing --cov-fail-under=82.5
 
   lint:
     name: Static quality
