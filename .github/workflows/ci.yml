@@ -14,9 +14,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-env:
-  MATRIXLAYOUT_REF: 5bd86bcfa1c330fd05b1048e9c41e6d9ff7f623d
-  JUPYTER_TIKZ_REF: 65d15771165e161427806d691eddfd319e93ceb5
 
 jobs:
   tests:
@@ -41,7 +38,7 @@ jobs:
       - name: Install package and test dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "matrixlayout @ git+https://github.com/ea42gh/matrixlayout.git@${MATRIXLAYOUT_REF}"
+          python -m pip install "matrixlayout @ git+https://github.com/ea42gh/matrixlayout.git"
           python -m pip install -e .[dev]
 
       - name: Run tests
@@ -65,7 +62,7 @@ jobs:
       - name: Install package and static quality dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "matrixlayout @ git+https://github.com/ea42gh/matrixlayout.git@${MATRIXLAYOUT_REF}"
+          python -m pip install "matrixlayout @ git+https://github.com/ea42gh/matrixlayout.git"
           python -m pip install -e .[dev]
 
       - name: Run ruff
@@ -94,7 +91,7 @@ jobs:
 
       - name: Install wheel and import package
         run: |
-          python -m pip install "matrixlayout @ git+https://github.com/ea42gh/matrixlayout.git@${MATRIXLAYOUT_REF}"
+          python -m pip install "matrixlayout @ git+https://github.com/ea42gh/matrixlayout.git"
           python -m pip install dist/*.whl
           cd /tmp
           python - <<'PY'
@@ -139,8 +136,8 @@ jobs:
       - name: Install render dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "jupyter-tikz @ git+https://github.com/ea42gh/jupyter-tikz.git@${JUPYTER_TIKZ_REF}"
-          python -m pip install "matrixlayout[render] @ git+https://github.com/ea42gh/matrixlayout.git@${MATRIXLAYOUT_REF}"
+          python -m pip install "jupyter-tikz @ git+https://github.com/ea42gh/jupyter-tikz.git"
+          python -m pip install "matrixlayout[render] @ git+https://github.com/ea42gh/matrixlayout.git"
           python -m pip install -e .[dev]
 
       - name: Verify required TeX packages
@@ -181,8 +178,8 @@ jobs:
       - name: Install notebook dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m pip install "jupyter-tikz @ git+https://github.com/ea42gh/jupyter-tikz.git@${JUPYTER_TIKZ_REF}"
-          python -m pip install "matrixlayout[render] @ git+https://github.com/ea42gh/matrixlayout.git@${MATRIXLAYOUT_REF}"
+          python -m pip install "jupyter-tikz @ git+https://github.com/ea42gh/jupyter-tikz.git"
+          python -m pip install "matrixlayout[render] @ git+https://github.com/ea42gh/matrixlayout.git"
           python -m pip install -e .[dev]
           python -m pip install ipykernel ipython nbconvert
           python -m ipykernel install --user --name python3 --display-name "Python 3"
