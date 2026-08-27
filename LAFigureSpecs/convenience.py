@@ -54,11 +54,6 @@ _EIG_BUNDLE_KEYS = {
 
 _SVD_BUNDLE_KEYS = (_EIG_BUNDLE_KEYS - {"case", "normal"}) | {"sigma_digits"}
 
-def _julia_str(x: Any) -> Any:
-    """Alias for :func:`norm_str` used by Julia interop tests."""
-
-    return norm_str(x)
-
 
 def _filter_tex_kwargs(kwargs: Dict[str, Any]) -> Dict[str, Any]:
     """Remove kwargs only used by SVG renderers."""

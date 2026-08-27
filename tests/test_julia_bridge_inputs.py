@@ -350,7 +350,7 @@ def test_to_sympy_matrix_numpy_tuple_vector_and_invalid_rhs():
 
 
 def test_julia_symbol_normalization_in_convenience_wrappers():
-    from LAFigureSpecs.convenience import _julia_str
+    from LAFigureSpecs.convenience_utils import norm_str
 
     class FakeSymbol:
         __module__ = "juliacall"
@@ -364,8 +364,8 @@ def test_julia_symbol_normalization_in_convenience_wrappers():
         def __str__(self):
             return "Symbol(:tight)"
 
-    assert _julia_str(FakeSymbol()) == "tight"
-    assert _julia_str(FakePyCallSymbol()) == "tight"
+    assert norm_str(FakeSymbol()) == "tight"
+    assert norm_str(FakePyCallSymbol()) == "tight"
 
 
 def test_convenience_tex_wrappers_smoke():

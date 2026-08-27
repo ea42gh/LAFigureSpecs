@@ -21,10 +21,10 @@ def test_filter_tex_kwargs_removes_svg_only_options():
 
 
 def test_julia_str_normalizes_symbol_like_strings():
-    import LAFigureSpecs.convenience as conv
+    from LAFigureSpecs.convenience_utils import norm_str
 
-    assert conv._julia_str(":foo") == "foo"
-    assert conv._julia_str("Symbol(:bar)") == "bar"
+    assert norm_str(":foo") == "foo"
+    assert norm_str("Symbol(:bar)") == "bar"
 
 
 def test_eig_svg_passes_matrix_specific_spacing(monkeypatch):
