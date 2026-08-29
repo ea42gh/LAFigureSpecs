@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "LAFigureSpecs"
-version = "0.0.1"
+version = "0.1.0"
 description = "Linear algebra algorithms and description objects for matrixlayout figures"
 readme = "README.md"
 requires-python = ">=3.10"
