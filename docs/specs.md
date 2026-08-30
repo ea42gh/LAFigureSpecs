@@ -87,9 +87,9 @@ GE stack parameters accepted by `ge_svg(matrices, ...)` (subset shown):
 | `decorators` | list | None | Entry decorators. |
 | `decorations` | list | None | High-level matrix decorations such as backgrounds and separator lines. |
 For stack renderers, `pivot_locs` may use structured selectors:
-`{"grid": (block_row, block_col), "entries": [(row, col)], "style": "draw=blue"}`.
+`{"grid": (row, col), "entries": [(row, col)], "style": "draw=blue"}`.
 `rowechelon_paths` should usually use structured selectors:
-`{"grid": (block_row, block_col), "pivots": [(row, col)], "case": "hh", "color": "blue", "path_offsets": (dx, dy)}`.
+`{"grid": (row, col), "pivots": [(row, col)], "case": "hh", "color": "blue", "path_offsets": (dx, dy)}`.
 Raw `\draw ...;` snippets remain accepted for advanced renderer-level uses.
 Structured row-echelon paths use the restored staircase rule inherited from
 matrixlayout: vertical segments follow the left edge of pivot columns,
@@ -98,7 +98,7 @@ use NiceMatrix projected rule coordinates rather than cell-anchor points.
 
 Use `decorations` for grid-targeted backgrounds and row/column separator
 lines, for example:
-`{"grid": (block_row, block_col), "entries": [(row, col)], "background": "yellow!35"}`.
+`{"grid": (row, col), "entries": [(row, col)], "background": "yellow!35"}`.
 Right-side stack comments can be expressed as structured `text_annotations`:
 `{"grid_row": 0, "text": "\\qquad note", "color": "violet", "shift_mm": (50, 0)}`.
 

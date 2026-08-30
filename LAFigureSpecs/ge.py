@@ -548,7 +548,7 @@ def ge_decorations(
         Optional TikZ style fragment appended to pivot "fit" nodes when the
         decoration is rendered (e.g. ``"thick, draw=red"``).
     rowechelon_path_grid:
-        ``(block_row, block_col)`` grid position for the defensive fallback
+        ``(row, col)`` grid position for the defensive fallback
         row-echelon path when the event stream does not produce explicit paths.
         A negative row selects the final GE layer.
 
