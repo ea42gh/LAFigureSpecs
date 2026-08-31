@@ -46,7 +46,7 @@ jobs:
 
       - name: Run coverage report
         if: matrix.python-version == '3.11'
-        run: python -m pytest --cov=LAFigureSpecs --cov-report=term-missing --cov-fail-under=82.5
+        run: python -m pytest --cov=LAFigureSpecs --cov-report=term-missing --cov-fail-under=84.0
 
   lint:
     name: Static quality
@@ -57,7 +57,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install package and static quality dependencies
         run: |
@@ -80,7 +80,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Build and check artifacts
         run: |
@@ -114,7 +114,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install TeX and SVG toolchain
         run: |
@@ -156,7 +156,7 @@ jobs:
 
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Install TeX and SVG toolchain
         run: |
