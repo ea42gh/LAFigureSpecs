@@ -1,3 +1,5 @@
+import pytest
+
 from LAFigureSpecs.convenience_utils import (
     bundle_summary,
     make_bundle,
@@ -24,8 +26,21 @@ def test_norm_str_passthrough_none():
 def test_norm_padding_normalizes_sequences():
     assert norm_padding((1, 2, 3, 4)) == (1, 2, 3, 4)
     assert norm_padding([1, 2, 3, 4]) == (1, 2, 3, 4)
-    assert norm_padding([1, 2]) == (1, 2)
+    assert norm_padding(2) == (2, 2, 2, 2)
+    with pytest.raises(ValueError, match="exactly four"):
+        norm_padding([1, 2])
 
+
+def test_norm_padding_rejects_non_numeric_or_negative_values():
+    with pytest.raises(TypeError, match="real numbers"):
+        norm_padding((1, 2, "3", 4))
+    with pytest.raises(ValueError, match="nonnegative"):
+        norm_padding((1, 2, -1, 4))
+
+
+def test_merge_render_opts_rejects_non_mapping_render_opts():
+    with pytest.raises(TypeError, match="render_opts must be a mapping"):
+        merge_render_opts(render_opts=[("crop", "tight")])
 
 def test_norm_padding_passthrough_none():
     assert norm_padding(None) is None

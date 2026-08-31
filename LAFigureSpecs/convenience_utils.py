@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from numbers import Real
 from typing import Any, Dict, Mapping, Optional
 
 
@@ -30,13 +31,23 @@ def norm_padding(padding: Any) -> Any:
     """Normalize padding inputs into a 4-tuple when possible."""
     if padding is None:
         return None
-    if isinstance(padding, tuple) and len(padding) == 4:
-        return padding
+    if isinstance(padding, bool):
+        raise TypeError("padding values must be real numbers")
+    if isinstance(padding, Real):
+        if padding < 0:
+            raise ValueError("padding values must be nonnegative")
+        return (padding, padding, padding, padding)
     try:
-        seq = list(padding)
-    except Exception:
-        return padding
-    return tuple(seq)
+        seq = tuple(padding)
+    except Exception as exc:
+        raise TypeError("padding must be a four-item numeric sequence") from exc
+    if len(seq) != 4:
+        raise ValueError("padding must contain exactly four values")
+    if any(isinstance(value, bool) or not isinstance(value, Real) for value in seq):
+        raise TypeError("padding values must be real numbers")
+    if any(value < 0 for value in seq):
+        raise ValueError("padding values must be nonnegative")
+    return seq
 
 
 def resolve_output_dir(*, output_dir: Any = None) -> Any:
@@ -57,6 +68,8 @@ def merge_render_opts(
     render_opts: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Merge render options with explicit keyword overrides."""
+    if render_opts is not None and not isinstance(render_opts, Mapping):
+        raise TypeError("render_opts must be a mapping")
     opts: Dict[str, Any] = dict(render_opts or {})
     if toolchain_name is not None:
         opts["toolchain_name"] = norm_str(toolchain_name)
