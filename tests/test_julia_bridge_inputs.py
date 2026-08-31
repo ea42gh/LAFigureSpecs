@@ -380,3 +380,24 @@ def test_convenience_tex_wrappers_smoke():
 
     tex_svd = LAFigureSpecs.svd_tex([[1, 0], [0, 0]])
     assert "\\begin{tabular}" in tex_svd
+
+
+def test_to_sympy_matrix_converts_rank_three_rational_arrays_and_sympy_matrices():
+    from LAFigureSpecs._sympy_utils import to_sympy_matrix
+
+    encoded = np.array([[[1, 2], [3, 4]]], dtype=int)
+    matrix = to_sympy_matrix(encoded)
+    assert matrix == sym.Matrix([[sym.Rational(1, 2), sym.Rational(3, 4)]])
+
+    original = sym.Matrix([[1, 2], [3, 4]])
+    converted = to_sympy_matrix(original)
+    assert converted == original
+    assert converted is not original
+
+
+def test_to_sympy_col_accepts_row_vectors_and_none():
+    from LAFigureSpecs._sympy_utils import to_sympy_col
+
+    assert to_sympy_col(None) is None
+    row = to_sympy_col([[1, 2, 3]])
+    assert row == sym.Matrix([1, 2, 3])

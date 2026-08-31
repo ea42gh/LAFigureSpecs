@@ -166,3 +166,40 @@ def test_qr_specs_from_matrices_and_layout_spec():
     layout = qr_layout_spec([[1, 0], [1, 1]], callouts=callouts, array_names=False)
     assert layout.matrices
     assert layout.callouts == callouts
+
+
+def test_compute_qr_matrices_rejects_empty_input():
+    from LAFigureSpecs.qr import compute_qr_matrices
+
+    with pytest.raises(ValueError, match="non-empty A"):
+        compute_qr_matrices(None)
+
+
+def test_naive_gram_schmidt_preserves_dependent_columns_as_zero_columns():
+    from LAFigureSpecs.qr import naive_gram_schmidt_w
+
+    W = naive_gram_schmidt_w(sym.Matrix([[1, 1], [0, 0]]))
+    assert W.shape == (2, 2)
+    assert W[:, 0] == sym.Matrix([1, 0])
+    assert W[:, 1] == sym.zeros(2, 1)
+
+
+def test_rank_deficient_diag_mode_inverts_nonzero_diagonal_entries():
+    A = sym.Matrix([[1, 2], [2, 4]])
+    mats = gram_schmidt_qr_matrices(A, rank_deficient="diag")
+    S = mats[2][0]
+    assert S.shape == (2, 2)
+    assert S[0, 0] != 0
+    assert S[1, 1] == 1
+    assert S[0, 1] == 0
+    assert S[1, 0] == 0
+
+
+def test_qr_grid_views_have_fixed_iteration_order():
+    from LAFigureSpecs.qr import QRGridMatrices
+
+    values = {key: key for key in QRGridMatrices._order}
+    grid = QRGridMatrices(**values)
+    assert tuple(grid) == tuple(values[key] for key in QRGridMatrices._order)
+    assert grid.as_tuple() == tuple(values[key] for key in QRGridMatrices._order)
+    assert grid.as_dict() == values

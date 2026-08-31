@@ -69,7 +69,7 @@ select = ["E", "F", "B", "C4"]
 ignore = ["E501"]
 
 [tool.mypy]
-python_version = "3.10"
+python_version = "3.12"
 ignore_missing_imports = true
 follow_imports = "skip"
 check_untyped_defs = true

@@ -104,31 +104,38 @@ def gram_schmidt_qr_matrices(
     if mode is None and not allow_rank_deficient:
         if any(d == 0 for d in diag_entries):
             raise ValueError("W^T W is singular; set rank_deficient or allow_rank_deficient")
-    try:
-        S = sym.Matrix(WtW)**(-1)
-    except Exception as exc:
-        if mode is None and allow_rank_deficient:
-            mode = "pinv"
-        handled = False
-        if mode == "pinv":
-            pinv = getattr(WtW, "pinv", None)
-            if callable(pinv):
-                try:
-                    S = pinv()
-                    handled = True
-                except Exception:
+    if mode == "diag":
+        S = sym.zeros(*WtW.shape)
+        n = min(WtW.shape)
+        for i in range(n):
+            if WtW[i, i] != 0:
+                S[i, i] = 1 / WtW[i, i]
+    else:
+        try:
+            S = sym.Matrix(WtW)**(-1)
+        except Exception as exc:
+            if mode is None and allow_rank_deficient:
+                mode = "pinv"
+            handled = False
+            if mode == "pinv":
+                pinv = getattr(WtW, "pinv", None)
+                if callable(pinv):
+                    try:
+                        S = pinv()
+                        handled = True
+                    except Exception:
+                        mode = "diag"
+                else:
                     mode = "diag"
-            else:
-                mode = "diag"
-        if mode == "diag":
-            S = sym.zeros(*WtW.shape)
-            n = min(WtW.shape)
-            for i in range(n):
-                if WtW[i, i] != 0:
-                    S[i, i] = 1 / WtW[i, i]
-            handled = True
-        if not handled:
-            raise ValueError("W^T W is singular; set rank_deficient or allow_rank_deficient") from exc
+            if mode == "diag":
+                S = sym.zeros(*WtW.shape)
+                n = min(WtW.shape)
+                for i in range(n):
+                    if WtW[i, i] != 0:
+                        S[i, i] = 1 / WtW[i, i]
+                handled = True
+            if not handled:
+                raise ValueError("W^T W is singular; set rank_deficient or allow_rank_deficient") from exc
 
     S = sym.Matrix(S)
     for i in range(min(S.shape)):
