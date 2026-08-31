@@ -45,7 +45,7 @@ jobs:
         run: python -m pytest
 
       - name: Run coverage report
-        if: matrix.python-version == '3.11'
+        if: matrix.python-version == '3.12'
         run: python -m pytest --cov=LAFigureSpecs --cov-report=term-missing --cov-fail-under=84.0
 
   lint:
