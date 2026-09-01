@@ -47,7 +47,7 @@ source = ["LAFigureSpecs"]
 branch = true
 
 [tool.coverage.report]
-fail_under = 84.0
+fail_under = 85.0
 show_missing = true
 skip_covered = false
 
