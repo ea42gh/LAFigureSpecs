@@ -70,6 +70,7 @@ ignore = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"
+exclude = ["^tests/"]
 ignore_missing_imports = true
 follow_imports = "skip"
 check_untyped_defs = true
