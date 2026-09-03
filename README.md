@@ -81,7 +81,7 @@ toolchain:
 python -m pip install -e .[render]
 ```
 
-Binder uses the pinned `jupyter-tikz` version in `binder/requirements.txt` so
+Binder installs the maintained `jupyter-tikz` source from `binder/requirements.txt` so
 notebook rendering stays aligned with the tested toolchain.
 
 ## Quick Example
