@@ -7,7 +7,7 @@ name = "LAFigureSpecs"
 version = "0.1.0"
 description = "Linear algebra algorithms and description objects for matrixlayout figures"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = "MIT"
 dependencies = [
   "sympy>=1.12",
@@ -53,7 +53,7 @@ skip_covered = false
 
 [tool.ruff]
 line-length = 120
-target-version = "py310"
+target-version = "py312"
 exclude = [
   ".git",
   ".pytest_cache",
