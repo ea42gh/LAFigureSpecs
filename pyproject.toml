@@ -68,6 +68,7 @@ exclude = [
 select = ["E", "F", "B", "C4"]
 ignore = ["E501"]
 
+# NumPy 2.x stubs currently require Python 3.12 syntax for mypy.
 [tool.mypy]
 python_version = "3.12"
 exclude = ["^tests/"]
